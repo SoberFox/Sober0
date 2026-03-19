@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服装报价工具</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>服装报价工具</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-page="quotation">
+                    <span class="nav-icon">&#128221;</span>
+                    <span>新建报价</span>
+                </li>
+                <li class="nav-item" data-page="history">
+                    <span class="nav-icon">&#128197;</span>
+                    <span>报价记录</span>
+                </li>
+                <li class="nav-item" data-page="customers">
+                    <span class="nav-icon">&#128101;</span>
+                    <span>客户管理</span>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="content">
+            <!-- 新建报价页面 -->
+            <div id="page-quotation" class="page active">
+                <div class="page-header">
+                    <h1>新建报价</h1>
+                </div>
+                <div class="quotation-form">
+                    <section class="form-section">
+                        <h3>基本信息</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>报价单号</label>
+                                <input type="text" id="quote-number" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>日期</label>
+                                <input type="date" id="quote-date">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>客户</label>
+                                <select id="quote-customer">
+                                    <option value="">-- 选择客户 --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>款式名称</label>
+                                <input type="text" id="quote-style" placeholder="例：女士连衣裙">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>数量（件）</label>
+                                <input type="number" id="quote-quantity" min="1" value="100">
+                            </div>
+                            <div class="form-group">
+                                <label>备注</label>
+                                <input type="text" id="quote-remark" placeholder="其他备注信息">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="form-section">
+                        <h3>成本项目</h3>
+                        <table class="cost-table" id="cost-table">
+                            <thead>
+                                <tr>
+                                    <th>类别</th>
+                                    <th>项目名称</th>
+                                    <th>规格/说明</th>
+                                    <th>单位</th>
+                                    <th>用量</th>
+                                    <th>单价 (¥)</th>
+                                    <th>小计 (¥)</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cost-body">
+                            </tbody>
+                        </table>
+                        <div class="add-cost-row">
+                            <button class="btn btn-outline" id="btn-add-cost">+ 添加成本项</button>
+                            <div class="quick-add">
+                                <span>快速添加：</span>
+                                <button class="btn btn-sm" data-template="fabric">面料</button>
+                                <button class="btn btn-sm" data-template="lining">里料</button>
+                                <button class="btn btn-sm" data-template="zipper">拉链</button>
+                                <button class="btn btn-sm" data-template="button">纽扣</button>
+                                <button class="btn btn-sm" data-template="thread">缝纫线</button>
+                                <button class="btn btn-sm" data-template="label">唛头</button>
+                                <button class="btn btn-sm" data-template="labor">加工费</button>
+                                <button class="btn btn-sm" data-template="packing">包装</button>
+                                <button class="btn btn-sm" data-template="shipping">运输</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="form-section">
+                        <h3>报价汇总</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <span class="summary-label">成本合计</span>
+                                <span class="summary-value" id="total-cost">¥0.00</span>
+                            </div>
+                            <div class="summary-item">
+                                <label class="summary-label">利润率 (%)</label>
+                                <input type="number" id="profit-rate" value="15" min="0" max="100" step="0.5">
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">利润金额</span>
+                                <span class="summary-value" id="profit-amount">¥0.00</span>
+                            </div>
+                            <div class="summary-item">
+                                <label class="summary-label">税率 (%)</label>
+                                <input type="number" id="tax-rate" value="13" min="0" max="100" step="0.5">
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">税费</span>
+                                <span class="summary-value" id="tax-amount">¥0.00</span>
+                            </div>
+                            <div class="summary-item highlight">
+                                <span class="summary-label">单件报价</span>
+                                <span class="summary-value" id="unit-price">¥0.00</span>
+                            </div>
+                            <div class="summary-item highlight">
+                                <span class="summary-label">总报价</span>
+                                <span class="summary-value" id="total-price">¥0.00</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="form-actions">
+                        <button class="btn btn-primary" id="btn-save-quote">保存报价</button>
+                        <button class="btn btn-success" id="btn-export-quote">导出报价单</button>
+                        <button class="btn btn-outline" id="btn-clear-quote">清空</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 报价记录页面 -->
+            <div id="page-history" class="page">
+                <div class="page-header">
+                    <h1>报价记录</h1>
+                    <div class="header-actions">
+                        <input type="text" id="history-search" placeholder="搜索报价单号/客户/款式...">
+                    </div>
+                </div>
+                <table class="data-table" id="history-table">
+                    <thead>
+                        <tr>
+                            <th>报价单号</th>
+                            <th>日期</th>
+                            <th>客户</th>
+                            <th>款式</th>
+                            <th>数量</th>
+                            <th>单价</th>
+                            <th>总价</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-body">
+                    </tbody>
+                </table>
+                <div class="empty-state" id="history-empty">
+                    <p>暂无报价记录</p>
+                </div>
+            </div>
+
+            <!-- 客户管理页面 -->
+            <div id="page-customers" class="page">
+                <div class="page-header">
+                    <h1>客户管理</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="btn-add-customer">+ 新增客户</button>
+                    </div>
+                </div>
+                <table class="data-table" id="customer-table">
+                    <thead>
+                        <tr>
+                            <th>客户名称</th>
+                            <th>联系人</th>
+                            <th>电话</th>
+                            <th>邮箱</th>
+                            <th>地址</th>
+                            <th>报价次数</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customer-body">
+                    </tbody>
+                </table>
+                <div class="empty-state" id="customer-empty">
+                    <p>暂无客户信息，请点击"新增客户"添加</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 客户表单弹窗 -->
+    <div class="modal" id="customer-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="customer-modal-title">新增客户</h3>
+                <button class="modal-close" id="customer-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>客户名称 *</label>
+                    <input type="text" id="cust-name" placeholder="公司或个人名称">
+                </div>
+                <div class="form-group">
+                    <label>联系人</label>
+                    <input type="text" id="cust-contact" placeholder="联系人姓名">
+                </div>
+                <div class="form-group">
+                    <label>电话</label>
+                    <input type="text" id="cust-phone" placeholder="联系电话">
+                </div>
+                <div class="form-group">
+                    <label>邮箱</label>
+                    <input type="email" id="cust-email" placeholder="电子邮箱">
+                </div>
+                <div class="form-group">
+                    <label>地址</label>
+                    <input type="text" id="cust-address" placeholder="详细地址">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="btn-cancel-customer">取消</button>
+                <button class="btn btn-primary" id="btn-save-customer">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 报价单预览/导出弹窗 -->
+    <div class="modal" id="export-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>报价单预览</h3>
+                <button class="modal-close" id="export-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="quote-preview"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="btn-cancel-export">关闭</button>
+                <button class="btn btn-primary" id="btn-print-quote">打印 / 导出PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
