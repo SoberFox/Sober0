@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>服装报价工具</title>
+    <title>服装工具平台</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
 </head>
 <body>
     <div class="app">
         <nav class="sidebar">
             <div class="logo">
-                <h2>服装报价工具</h2>
+                <h2>服装工具平台</h2>
             </div>
             <ul class="nav-menu">
                 <li class="nav-item active" data-page="quotation">
@@ -24,6 +26,10 @@
                 <li class="nav-item" data-page="customers">
                     <span class="nav-icon">&#128101;</span>
                     <span>客户管理</span>
+                </li>
+                <li class="nav-item" data-page="compare">
+                    <span class="nav-icon">&#128269;</span>
+                    <span>手册对比</span>
                 </li>
             </ul>
         </nav>
@@ -177,6 +183,103 @@
                 </div>
             </div>
 
+            <!-- 操作手册对比页面 -->
+            <div id="page-compare" class="page">
+                <div class="page-header">
+                    <h1>操作手册对比</h1>
+                </div>
+
+                <!-- 上传区域 -->
+                <section class="form-section">
+                    <h3>上传操作手册</h3>
+                    <p class="compare-hint">
+                        支持 Excel（.xlsx/.xls）、PDF、图片（PNG/JPG/BMP/GIF）等格式。<br>
+                        上传旧订单手册作为基准，新订单手册作为对比对象，系统自动识别格式并进行对比。
+                    </p>
+                    <div class="compare-upload-area">
+                        <div class="upload-box" id="upload-base">
+                            <div class="upload-icon">&#128196;</div>
+                            <div class="upload-label">基准手册（旧订单）</div>
+                            <input type="file" id="file-base" accept=".xlsx,.xls,.pdf,.png,.jpg,.jpeg,.gif,.bmp,.webp" class="file-input">
+                            <label for="file-base" class="btn btn-outline upload-btn">选择文件</label>
+                            <span class="file-name" id="file-base-name">未选择文件</span>
+                            <div class="upload-preview" id="preview-base"></div>
+                        </div>
+                        <div class="upload-box" id="upload-compare">
+                            <div class="upload-icon">&#128196;</div>
+                            <div class="upload-label">对比手册（新订单）</div>
+                            <input type="file" id="file-compare" accept=".xlsx,.xls,.pdf,.png,.jpg,.jpeg,.gif,.bmp,.webp" class="file-input">
+                            <label for="file-compare" class="btn btn-outline upload-btn">选择文件</label>
+                            <span class="file-name" id="file-compare-name">未选择文件</span>
+                            <div class="upload-preview" id="preview-compare"></div>
+                        </div>
+                    </div>
+                    <div class="compare-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="opt-ignore-whitespace" checked>
+                            忽略空格差异
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="opt-ignore-case">
+                            忽略大小写
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="opt-show-all">
+                            显示所有内容（默认仅显示有差异的行）
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" id="btn-start-compare">开始对比</button>
+                        <button class="btn btn-outline" id="btn-clear-compare">清空</button>
+                    </div>
+                    <!-- 进度条 -->
+                    <div class="progress-bar-wrap" id="compare-progress" style="display:none">
+                        <div class="progress-bar-label" id="progress-label">正在解析文件...</div>
+                        <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill"></div></div>
+                    </div>
+                </section>
+
+                <!-- 页面/Sheet 选择器 -->
+                <div id="compare-page-selector" class="form-section" style="display:none">
+                    <h3>选择页面 / 工作表</h3>
+                    <div class="sheet-tabs" id="page-tabs"></div>
+                </div>
+
+                <!-- 对比统计 -->
+                <div id="compare-stats" class="form-section" style="display:none">
+                    <h3>对比结果概览</h3>
+                    <div class="stats-grid" id="stats-grid"></div>
+                </div>
+
+                <!-- 对比结果 - 文本模式 -->
+                <div id="compare-result-text" class="form-section" style="display:none">
+                    <h3>
+                        <span>文本对比</span>
+                        <div class="compare-legend">
+                            <span class="legend-item legend-added">新增</span>
+                            <span class="legend-item legend-removed">删除</span>
+                            <span class="legend-item legend-changed">修改</span>
+                            <span class="legend-item legend-same">相同</span>
+                        </div>
+                    </h3>
+                    <div class="compare-table-wrapper" id="compare-table-wrapper"></div>
+                </div>
+
+                <!-- 对比结果 - 视觉模式 (图片/PDF) -->
+                <div id="compare-result-visual" class="form-section" style="display:none">
+                    <h3>
+                        <span>视觉对比</span>
+                        <div class="visual-mode-tabs">
+                            <button class="btn btn-sm visual-tab active" data-mode="side">并排</button>
+                            <button class="btn btn-sm visual-tab" data-mode="overlay">叠加</button>
+                            <button class="btn btn-sm visual-tab" data-mode="diff">差异高亮</button>
+                            <button class="btn btn-sm visual-tab" data-mode="slider">滑动</button>
+                        </div>
+                    </h3>
+                    <div id="visual-compare-container"></div>
+                </div>
+            </div>
+
             <!-- 客户管理页面 -->
             <div id="page-customers" class="page">
                 <div class="page-header">
@@ -261,5 +364,6 @@
     </div>
 
     <script src="app.js"></script>
+    <script src="compare.js"></script>
 </body>
 </html>
