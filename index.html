@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>服装报价工具</title>
+    <title>服装工具平台</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="app">
         <nav class="sidebar">
             <div class="logo">
-                <h2>服装报价工具</h2>
+                <h2>服装工具平台</h2>
             </div>
             <ul class="nav-menu">
                 <li class="nav-item active" data-page="quotation">
@@ -24,6 +25,10 @@
                 <li class="nav-item" data-page="customers">
                     <span class="nav-icon">&#128101;</span>
                     <span>客户管理</span>
+                </li>
+                <li class="nav-item" data-page="compare">
+                    <span class="nav-icon">&#128269;</span>
+                    <span>手册对比</span>
                 </li>
             </ul>
         </nav>
@@ -177,6 +182,78 @@
                 </div>
             </div>
 
+            <!-- 操作手册对比页面 -->
+            <div id="page-compare" class="page">
+                <div class="page-header">
+                    <h1>操作手册对比</h1>
+                </div>
+
+                <section class="form-section">
+                    <h3>上传操作手册</h3>
+                    <p class="compare-hint">支持 Excel 文件（.xlsx / .xls），上传2个或多个文件进行对比。第一个文件作为基准（旧订单），后续文件为对比对象（新订单）。</p>
+                    <div class="compare-upload-area">
+                        <div class="upload-box" id="upload-base">
+                            <div class="upload-icon">&#128196;</div>
+                            <div class="upload-label">基准手册（旧订单）</div>
+                            <input type="file" id="file-base" accept=".xlsx,.xls" class="file-input">
+                            <label for="file-base" class="btn btn-outline upload-btn">选择文件</label>
+                            <span class="file-name" id="file-base-name">未选择文件</span>
+                        </div>
+                        <div class="upload-box" id="upload-compare">
+                            <div class="upload-icon">&#128196;</div>
+                            <div class="upload-label">对比手册（新订单）</div>
+                            <input type="file" id="file-compare" accept=".xlsx,.xls" multiple class="file-input">
+                            <label for="file-compare" class="btn btn-outline upload-btn">选择文件（可多选）</label>
+                            <span class="file-name" id="file-compare-name">未选择文件</span>
+                        </div>
+                    </div>
+                    <div class="compare-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="opt-ignore-whitespace" checked>
+                            忽略空格差异
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="opt-ignore-case">
+                            忽略大小写
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="opt-show-all">
+                            显示所有内容（默认仅显示有差异的行）
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" id="btn-start-compare">开始对比</button>
+                        <button class="btn btn-outline" id="btn-clear-compare">清空</button>
+                    </div>
+                </section>
+
+                <!-- Sheet选择器 -->
+                <div id="compare-sheet-selector" class="form-section" style="display:none">
+                    <h3>选择工作表</h3>
+                    <div class="sheet-tabs" id="sheet-tabs"></div>
+                </div>
+
+                <!-- 对比统计 -->
+                <div id="compare-stats" class="form-section" style="display:none">
+                    <h3>对比结果概览</h3>
+                    <div class="stats-grid" id="stats-grid"></div>
+                </div>
+
+                <!-- 对比结果 -->
+                <div id="compare-result" class="form-section" style="display:none">
+                    <h3>
+                        <span>详细对比</span>
+                        <div class="compare-legend">
+                            <span class="legend-item legend-added">新增</span>
+                            <span class="legend-item legend-removed">删除</span>
+                            <span class="legend-item legend-changed">修改</span>
+                            <span class="legend-item legend-same">相同</span>
+                        </div>
+                    </h3>
+                    <div class="compare-table-wrapper" id="compare-table-wrapper"></div>
+                </div>
+            </div>
+
             <!-- 客户管理页面 -->
             <div id="page-customers" class="page">
                 <div class="page-header">
@@ -261,5 +338,6 @@
     </div>
 
     <script src="app.js"></script>
+    <script src="compare.js"></script>
 </body>
 </html>
