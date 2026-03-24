@@ -1191,3 +1191,284 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* ============================================================
+   供应商比价模块
+   ============================================================ */
+.sp-supplier-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    min-height: 28px;
+}
+
+.sp-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    background: #f8fafc;
+}
+
+.sp-chip .sp-chip-color {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.sp-chip .sp-chip-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 16px;
+    line-height: 1;
+    padding: 0 2px;
+}
+
+.sp-chip .sp-chip-remove:hover {
+    color: var(--danger);
+}
+
+.sp-add-supplier-row,
+.sp-add-item-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.sp-input-inline {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+    flex: 1;
+    max-width: 300px;
+}
+
+.sp-input-inline:focus {
+    border-color: var(--primary);
+}
+
+.sp-input-short {
+    max-width: 80px;
+    flex: 0 0 80px;
+}
+
+.sp-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.sp-item-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.sp-item-row .sp-item-name { font-weight: 500; flex: 1; }
+.sp-item-row .sp-item-unit { color: var(--text-secondary); font-size: 12px; }
+.sp-item-row .sp-item-remove {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-secondary); font-size: 16px; padding: 2px 6px; border-radius: 4px;
+}
+.sp-item-row .sp-item-remove:hover { color: var(--danger); background: #fef2f2; }
+
+.sp-matrix-wrapper { overflow-x: auto; }
+
+.sp-matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 500px;
+}
+
+.sp-matrix-table th,
+.sp-matrix-table td {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    text-align: center;
+}
+
+.sp-matrix-table thead th {
+    background: var(--sidebar-bg);
+    color: #fff;
+    font-weight: 600;
+}
+
+.sp-matrix-table thead th .sp-th-color {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+.sp-matrix-table tbody td:first-child {
+    text-align: left;
+    font-weight: 500;
+    background: #f8fafc;
+}
+
+.sp-matrix-table tbody td.sp-unit-col {
+    color: var(--text-secondary);
+    font-size: 12px;
+    background: #f8fafc;
+}
+
+.sp-matrix-table input[type="number"] {
+    width: 90px;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 13px;
+    text-align: right;
+    outline: none;
+}
+
+.sp-matrix-table input[type="number"]:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.15);
+}
+
+.sp-matrix-table tfoot td {
+    font-weight: 700;
+    background: #f0f2f5;
+    font-size: 14px;
+}
+
+.sp-cell-cheapest { background: #d1fae5 !important; font-weight: 600; }
+.sp-cell-expensive { background: #fee2e2 !important; }
+
+.sp-schemes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.sp-scheme-card {
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    background: #fff;
+}
+
+.sp-scheme-card.sp-scheme-best {
+    border-color: var(--success);
+    background: linear-gradient(135deg, #f0fdf4, #fff);
+}
+
+.sp-scheme-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.sp-badge-best { background: #d1fae5; color: #065f46; }
+.sp-badge-single { background: #dbeafe; color: #1d4ed8; }
+
+.sp-scheme-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.sp-scheme-desc { font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; }
+.sp-scheme-price { font-size: 28px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+.sp-scheme-unit-price { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+
+.sp-scheme-detail { font-size: 12px; color: var(--text-secondary); line-height: 1.8; }
+.sp-scheme-detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px dashed var(--border);
+}
+.sp-scheme-detail-row:last-child { border-bottom: none; }
+
+.sp-scheme-savings {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.sp-savings-positive { background: #d1fae5; color: #065f46; }
+
+.sp-custom-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 12px;
+    align-items: start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.sp-custom-item-label { font-weight: 500; font-size: 14px; padding-top: 8px; }
+.sp-custom-suppliers { display: flex; flex-direction: column; gap: 6px; }
+
+.sp-custom-supplier-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+}
+
+.sp-custom-supplier-row select,
+.sp-custom-supplier-row input[type="number"] {
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 13px;
+    outline: none;
+}
+
+.sp-custom-supplier-row input[type="number"] { width: 100px; }
+.sp-custom-subtotal { font-weight: 600; color: var(--primary); min-width: 80px; text-align: right; }
+
+.sp-custom-add-split {
+    background: none;
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.sp-custom-add-split:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.sp-custom-summary {
+    margin-top: 16px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #f0f2f5, #fff);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.sp-custom-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+}
+
+.sp-custom-total-amount {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary);
+}
