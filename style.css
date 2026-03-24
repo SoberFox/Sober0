@@ -1541,3 +1541,351 @@ body {
     background: var(--primary) !important;
     color: #fff !important;
 }
+
+/* ============================================================
+   面辅料跟进模块
+   ============================================================ */
+
+.mat-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.mat-dash-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.mat-dash-num {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.mat-dash-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+.mat-cat-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    background: #e2e8f0;
+    color: var(--text);
+    white-space: nowrap;
+}
+
+/* Order progress cards */
+.mat-order-progress-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 12px;
+}
+
+.mat-order-card {
+    background: #f8fafc;
+    border-radius: 6px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+}
+
+.mat-order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.mat-order-pct {
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.mat-order-pct.has-fail {
+    color: var(--danger) !important;
+}
+
+.mat-progress-bar {
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.mat-progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s;
+}
+
+.mat-order-items {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.mat-mini-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+/* Alerts */
+.mat-alert {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.alert-overdue {
+    background: #fef2f2;
+    color: #b91c1c;
+    border-left: 3px solid #ef4444;
+}
+
+.alert-urgent {
+    background: #fffbeb;
+    color: #92400e;
+    border-left: 3px solid #f59e0b;
+}
+
+.alert-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+/* ============================================================
+   甘特图/时间计划模块
+   ============================================================ */
+
+.gantt-wrapper {
+    overflow-x: auto;
+    min-height: 200px;
+}
+
+.gantt-header,
+.gantt-order-title,
+.gantt-row {
+    display: flex;
+    align-items: stretch;
+    min-height: 32px;
+}
+
+.gantt-label-col {
+    width: 200px;
+    min-width: 200px;
+    flex-shrink: 0;
+    padding: 6px 10px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.gantt-timeline-col {
+    flex: 1;
+    position: relative;
+    min-width: 500px;
+    border-left: 1px solid var(--border);
+}
+
+.gantt-header {
+    background: #f1f5f9;
+    border-bottom: 2px solid var(--border);
+    border-radius: var(--radius) var(--radius) 0 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.gantt-header .gantt-label-col {
+    font-weight: 700;
+    color: var(--text);
+}
+
+.gantt-months {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+}
+
+.gantt-month {
+    padding: 4px 8px;
+    font-size: 11px;
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.gantt-days {
+    position: relative;
+    height: 20px;
+}
+
+.gantt-day-mark {
+    position: absolute;
+    font-size: 10px;
+    color: var(--text-secondary);
+    transform: translateX(-50%);
+    top: 2px;
+}
+
+.gantt-body {
+    position: relative;
+}
+
+.gantt-order-group {
+    border-bottom: 2px solid var(--border);
+}
+
+.gantt-order-title {
+    background: #f8fafc;
+    border-bottom: 1px solid var(--border);
+}
+
+.gantt-order-title .gantt-label-col {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.gantt-overall-pct {
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 700;
+    margin-left: 4px;
+}
+
+.gantt-order-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 4px;
+}
+
+.gantt-order-actions .btn-icon {
+    font-size: 12px;
+    padding: 2px 4px;
+}
+
+.gantt-row {
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.gantt-row:hover {
+    background: #fafbfc;
+}
+
+.gantt-phase-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    flex-wrap: wrap;
+}
+
+.gantt-phase-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.gantt-phase-dates {
+    display: block;
+    font-size: 10px;
+    color: #94a3b8;
+    width: 100%;
+}
+
+.gantt-row-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+}
+
+.gantt-bar {
+    position: absolute;
+    top: 4px;
+    height: calc(100% - 8px);
+    border-radius: 4px;
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    cursor: default;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+}
+
+.gantt-bar:hover {
+    opacity: 1;
+}
+
+.gantt-bar-overdue {
+    outline: 2px dashed #ef4444;
+    outline-offset: 1px;
+}
+
+.gantt-bar-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    border-radius: 4px;
+}
+
+.gantt-bar-text {
+    position: relative;
+    z-index: 1;
+    font-size: 10px;
+    color: #fff;
+    font-weight: 600;
+    padding: 0 6px;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.gantt-today-marker {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #ef4444;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.gantt-today-marker::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -3px;
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+}
+
+.plan-pct-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary);
+    display: inline-block;
+    width: 36px;
+    text-align: right;
+}

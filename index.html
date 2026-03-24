@@ -1457,6 +1457,79 @@ body {
     background: var(--primary) !important;
     color: #fff !important;
 }
+
+/* Material Tracking */
+.mat-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.mat-dash-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+.mat-dash-num { font-size: 26px; font-weight: 700; color: var(--text); }
+.mat-dash-label { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+.mat-cat-tag {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 11px; background: #e2e8f0; color: var(--text); white-space: nowrap;
+}
+.mat-order-progress-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 12px;
+}
+.mat-order-card {
+    background: #f8fafc; border-radius: 6px; padding: 14px 16px; border: 1px solid var(--border);
+}
+.mat-order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; }
+.mat-order-pct { font-weight: 700; font-size: 15px; }
+.mat-order-pct.has-fail { color: var(--danger) !important; }
+.mat-progress-bar { height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+.mat-progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+.mat-order-items { display: flex; gap: 4px; flex-wrap: wrap; }
+.mat-mini-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; color: #fff; font-size: 10px; font-weight: 600; }
+.mat-alert { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 6px; }
+.alert-overdue { background: #fef2f2; color: #b91c1c; border-left: 3px solid #ef4444; }
+.alert-urgent { background: #fffbeb; color: #92400e; border-left: 3px solid #f59e0b; }
+.alert-icon { font-size: 16px; flex-shrink: 0; }
+
+/* Gantt / Timeline */
+.gantt-wrapper { overflow-x: auto; min-height: 200px; }
+.gantt-header, .gantt-order-title, .gantt-row { display: flex; align-items: stretch; min-height: 32px; }
+.gantt-label-col { width: 200px; min-width: 200px; flex-shrink: 0; padding: 6px 10px; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+.gantt-timeline-col { flex: 1; position: relative; min-width: 500px; border-left: 1px solid var(--border); }
+.gantt-header { background: #f1f5f9; border-bottom: 2px solid var(--border); border-radius: var(--radius) var(--radius) 0 0; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+.gantt-header .gantt-label-col { font-weight: 700; color: var(--text); }
+.gantt-months { display: flex; border-bottom: 1px solid var(--border); }
+.gantt-month { padding: 4px 8px; font-size: 11px; border-right: 1px solid var(--border); white-space: nowrap; overflow: hidden; }
+.gantt-days { position: relative; height: 20px; }
+.gantt-day-mark { position: absolute; font-size: 10px; color: var(--text-secondary); transform: translateX(-50%); top: 2px; }
+.gantt-body { position: relative; }
+.gantt-order-group { border-bottom: 2px solid var(--border); }
+.gantt-order-title { background: #f8fafc; border-bottom: 1px solid var(--border); }
+.gantt-order-title .gantt-label-col { font-weight: 600; font-size: 13px; }
+.gantt-overall-pct { font-size: 12px; color: var(--primary); font-weight: 700; margin-left: 4px; }
+.gantt-order-actions { margin-left: auto; display: flex; gap: 4px; }
+.gantt-order-actions .btn-icon { font-size: 12px; padding: 2px 4px; }
+.gantt-row { border-bottom: 1px solid #f1f5f9; }
+.gantt-row:hover { background: #fafbfc; }
+.gantt-phase-label { font-size: 12px; color: var(--text-secondary); flex-wrap: wrap; }
+.gantt-phase-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.gantt-phase-dates { display: block; font-size: 10px; color: #94a3b8; width: 100%; }
+.gantt-row-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
+.gantt-bar { position: absolute; top: 4px; height: calc(100% - 8px); border-radius: 4px; min-height: 20px; display: flex; align-items: center; overflow: hidden; cursor: default; opacity: 0.85; transition: opacity 0.2s; }
+.gantt-bar:hover { opacity: 1; }
+.gantt-bar-overdue { outline: 2px dashed #ef4444; outline-offset: 1px; }
+.gantt-bar-fill { position: absolute; top: 0; left: 0; height: 100%; border-radius: 4px; }
+.gantt-bar-text { position: relative; z-index: 1; font-size: 10px; color: #fff; font-weight: 600; padding: 0 6px; white-space: nowrap; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+.gantt-today-marker { position: absolute; top: 0; bottom: 0; width: 2px; background: #ef4444; z-index: 5; pointer-events: none; opacity: 0.6; }
+.gantt-today-marker::before { content: ''; position: absolute; top: -2px; left: -3px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; }
+.plan-pct-label { font-size: 12px; font-weight: 600; color: var(--primary); display: inline-block; width: 36px; text-align: right; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
@@ -1485,11 +1558,15 @@ body {
                     <span class="nav-icon">&#128101;</span>
                     <span>客户管理</span>
                 </li>
-                <li class="nav-section-label">外贸工具</li>
-                <li class="nav-item" data-page="currency">
-                    <span class="nav-icon">&#128178;</span>
-                    <span>汇率换算</span>
+                <li class="nav-item" data-page="materials">
+                    <span class="nav-icon">&#127808;</span>
+                    <span>面辅料跟进</span>
                 </li>
+                <li class="nav-item" data-page="timeline">
+                    <span class="nav-icon">&#128197;</span>
+                    <span>时间计划</span>
+                </li>
+                <li class="nav-section-label">外贸工具</li>
                 <li class="nav-item" data-page="packing">
                     <span class="nav-icon">&#128666;</span>
                     <span>装箱计算</span>
@@ -1797,88 +1874,79 @@ body {
                 </div>
             </div>
 
-            <!-- 汇率换算页面 -->
-            <div id="page-currency" class="page">
+            <!-- 面辅料跟进页面 -->
+            <div id="page-materials" class="page">
                 <div class="page-header">
-                    <h1>汇率换算 & 贸易术语</h1>
+                    <h1>面辅料跟进</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-outline" id="btn-batch-add-mat">批量添加常用辅料</button>
+                        <button class="btn btn-primary" id="btn-add-material">+ 新增物料</button>
+                    </div>
+                </div>
+
+                <!-- 状态看板 -->
+                <div class="mat-dashboard" id="mat-dashboard"></div>
+
+                <!-- 预警区 -->
+                <section class="form-section" style="padding:12px 20px">
+                    <h3 style="margin-bottom:8px">预警提醒</h3>
+                    <div id="mat-alerts"></div>
+                </section>
+
+                <!-- 按订单分组进度 -->
+                <section class="form-section">
+                    <h3>订单齐料进度</h3>
+                    <div class="mat-order-progress-grid" id="mat-order-progress"></div>
+                </section>
+
+                <!-- 物料明细 -->
+                <section class="form-section">
+                    <h3>物料明细</h3>
+                    <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+                        <input type="text" id="mat-search" placeholder="搜索物料/供应商/订单号..." style="padding:8px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;width:240px">
+                        <select id="mat-cat-filter" style="padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px"></select>
+                        <select id="mat-status-filter" style="padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px"></select>
+                    </div>
+                    <div style="overflow-x:auto">
+                        <table class="data-table" id="mat-table">
+                            <thead>
+                                <tr>
+                                    <th>订单号</th>
+                                    <th>类别</th>
+                                    <th>物料名称</th>
+                                    <th>供应商</th>
+                                    <th>数量</th>
+                                    <th>状态</th>
+                                    <th>下单日期</th>
+                                    <th>预计到货</th>
+                                    <th>实际到货</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mat-body"></tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state" id="mat-empty">
+                        <p>暂无物料记录</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 订单时间计划页面 -->
+            <div id="page-timeline" class="page">
+                <div class="page-header">
+                    <h1>订单时间计划</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="btn-new-plan">+ 新建计划</button>
+                    </div>
                 </div>
 
                 <section class="form-section">
-                    <h3>快速换算</h3>
-                    <div class="currency-converter">
-                        <div class="cur-input-group">
-                            <select id="cur-from"></select>
-                            <input type="number" id="cur-amount" value="1000" min="0" step="0.01" placeholder="金额">
-                        </div>
-                        <button class="btn btn-outline cur-swap-btn" id="btn-swap-currency" title="交换">&#8646;</button>
-                        <div class="cur-input-group">
-                            <select id="cur-to"></select>
-                            <div class="cur-result-display">
-                                <span id="cur-result" class="cur-result-num">0</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="cur-rate-info" id="cur-rate-display"></div>
-                    <div class="batch-convert-section">
-                        <h4 style="margin:16px 0 10px;font-size:14px;color:var(--text-secondary)">批量换算</h4>
-                        <div class="batch-convert-grid" id="batch-convert-grid"></div>
-                    </div>
-                </section>
-
-                <section class="form-section">
-                    <h3>贸易术语价格计算</h3>
-                    <p class="compare-hint">输入FOB价格和各项费用，自动计算 EXW / FOB / CFR / CIF / DDP 等条款下的价格。</p>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>FOB 单价 (USD)</label>
-                            <input type="number" id="trade-fob" value="5.00" min="0" step="0.01">
-                        </div>
-                        <div class="form-group">
-                            <label>海运费/件 (USD)</label>
-                            <input type="number" id="trade-freight" value="0.30" min="0" step="0.01">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>保险费率 (%)</label>
-                            <input type="number" id="trade-insurance-rate" value="0.3" min="0" step="0.1">
-                        </div>
-                        <div class="form-group">
-                            <label>清关费/件 (USD)</label>
-                            <input type="number" id="trade-customs" value="0.20" min="0" step="0.01">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>内陆运输/件 (USD)</label>
-                            <input type="number" id="trade-inland" value="0.10" min="0" step="0.01">
-                        </div>
-                        <div class="form-group">
-                            <label>佣金率 (%)</label>
-                            <input type="number" id="trade-commission-rate" value="0" min="0" step="0.5">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>订单数量 (件)</label>
-                            <input type="number" id="trade-quantity" value="1000" min="1">
-                        </div>
-                    </div>
-
-                    <table class="data-table" style="margin-top:16px">
-                        <thead>
-                            <tr>
-                                <th>术语</th>
-                                <th>全称</th>
-                                <th>单价 (USD)</th>
-                                <th>总价 (USD)</th>
-                                <th>说明</th>
-                            </tr>
-                        </thead>
-                        <tbody id="trade-results"></tbody>
-                    </table>
-
-                    <div class="trade-detail-grid" id="trade-detail" style="margin-top:16px"></div>
+                    <p class="compare-hint">
+                        可视化管理各订单的生产进度，跟踪面辅料采购、样品确认、裁剪、缝制、质检、包装、出货等阶段。<br>
+                        红色虚线为今日标记，点击编辑可调整各阶段日期和进度。
+                    </p>
+                    <div class="gantt-wrapper" id="gantt-container"></div>
                 </section>
             </div>
 
@@ -2139,6 +2207,124 @@ body {
         </main>
     </div>
 
+    <!-- 物料表单弹窗 -->
+    <div class="modal" id="material-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3 id="mat-modal-title">新增物料</h3>
+                <button class="modal-close" id="material-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>关联订单号</label>
+                        <input type="text" id="mat-order-num" placeholder="PO260324001">
+                    </div>
+                    <div class="form-group">
+                        <label>物料类别</label>
+                        <select id="mat-category"></select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>物料名称 *</label>
+                        <input type="text" id="mat-name" placeholder="例：全棉府绸">
+                    </div>
+                    <div class="form-group">
+                        <label>颜色/色号</label>
+                        <input type="text" id="mat-color" placeholder="例：藏青色 #19202">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>供应商</label>
+                        <input type="text" id="mat-supplier" placeholder="供应商名称">
+                    </div>
+                    <div class="form-group">
+                        <label>状态</label>
+                        <select id="mat-mat-status">
+                            <option value="pending">待下单</option>
+                            <option value="ordered">已下单</option>
+                            <option value="in_transit">运输中</option>
+                            <option value="arrived">已到货</option>
+                            <option value="qc_pass">质检通过</option>
+                            <option value="qc_fail">质检不合格</option>
+                            <option value="in_use">已投产</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>数量</label>
+                        <input type="number" id="mat-mat-quantity" min="0" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label>单位</label>
+                        <input type="text" id="mat-unit" placeholder="米/条/颗/套">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>单价</label>
+                        <input type="number" id="mat-mat-price" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>下单日期</label>
+                        <input type="date" id="mat-order-date">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>预计到货日期</label>
+                        <input type="date" id="mat-expected-date">
+                    </div>
+                    <div class="form-group">
+                        <label>实际到货日期</label>
+                        <input type="date" id="mat-actual-date">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top:8px">
+                    <label>备注</label>
+                    <input type="text" id="mat-remark" placeholder="其他备注" style="width:100%">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="btn-cancel-material">取消</button>
+                <button class="btn btn-primary" id="btn-save-material">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 计划编辑弹窗 -->
+    <div class="modal" id="plan-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3 id="plan-modal-title">编辑计划</h3>
+                <button class="modal-close" id="plan-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="overflow-x:auto">
+                    <table class="data-table" style="font-size:13px">
+                        <thead>
+                            <tr>
+                                <th>阶段</th>
+                                <th>开始日期</th>
+                                <th>结束日期</th>
+                                <th>进度</th>
+                                <th>备注</th>
+                            </tr>
+                        </thead>
+                        <tbody id="plan-phases-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="btn-cancel-plan">取消</button>
+                <button class="btn btn-primary" id="btn-save-plan">保存</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 订单表单弹窗 -->
     <div class="modal" id="order-modal">
         <div class="modal-content modal-lg">
@@ -2284,7 +2470,8 @@ body {
     <script src="app.js"></script>
     <script src="compare.js"></script>
     <script src="orders.js"></script>
-    <script src="currency.js"></script>
+    <script src="materials.js"></script>
+    <script src="timeline.js"></script>
     <script src="packing.js"></script>
     <script src="sizechart.js"></script>
     <script src="fabric.js"></script>
