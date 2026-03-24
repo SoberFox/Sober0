@@ -1187,6 +1187,275 @@ body {
     .compare-upload-area {
         grid-template-columns: 1fr;
     }
+    .order-status-cards,
+    .pack-results-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .currency-converter {
+        flex-direction: column;
+    }
+}
+
+/* Nav section labels */
+.nav-section-label {
+    padding: 16px 20px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(148, 163, 184, 0.6);
+    list-style: none;
+}
+
+/* Order Tracking */
+.order-status-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.order-stat-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+}
+.order-stat-num {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+}
+.order-stat-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+.order-status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.overdue-text {
+    color: var(--danger) !important;
+    font-weight: 600;
+}
+.order-timeline-section {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+.order-timeline {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    overflow-x: auto;
+    padding: 8px 0;
+}
+.timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+    text-align: center;
+}
+.timeline-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    margin-bottom: 6px;
+    transition: all 0.3s;
+}
+.timeline-step.current .timeline-dot {
+    box-shadow: 0 0 0 4px rgba(74, 108, 247, 0.2);
+    transform: scale(1.2);
+}
+.timeline-step.done .timeline-dot { opacity: 0.7; }
+.timeline-info { font-size: 11px; }
+.timeline-label {
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+}
+.timeline-date {
+    color: var(--text-secondary);
+    font-size: 10px;
+}
+.timeline-line {
+    flex: 1;
+    height: 2px;
+    background: #e2e8f0;
+    margin-top: 10px;
+    min-width: 20px;
+}
+
+/* Currency */
+.currency-converter {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+.cur-input-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.cur-input-group select {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+}
+.cur-input-group select:focus { border-color: var(--primary); }
+.cur-input-group input {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: 600;
+    outline: none;
+    width: 100%;
+}
+.cur-input-group input:focus { border-color: var(--primary); }
+.cur-swap-btn {
+    font-size: 24px !important;
+    padding: 8px 14px !important;
+    flex-shrink: 0;
+    margin-top: 24px;
+}
+.cur-result-display {
+    padding: 12px 14px;
+    background: #f0f9ff;
+    border: 2px solid var(--primary);
+    border-radius: 6px;
+}
+.cur-result-num {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary);
+}
+.cur-rate-info {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+.batch-convert-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+}
+.batch-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+.batch-code {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--primary);
+    min-width: 36px;
+}
+.batch-val {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+}
+.batch-name {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-left: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60px;
+}
+.trade-detail-grid {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.trade-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: #f8fafc;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+}
+.trade-detail-item strong { color: var(--text); }
+.text-right { text-align: right; }
+
+/* Packing */
+.pack-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+}
+.pack-result-card {
+    background: #f8fafc;
+    border-radius: 6px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    text-align: center;
+}
+.pack-result-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+.pack-result-val {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+}
+.fill-good { color: #10b981 !important; }
+.fill-ok { color: #f59e0b !important; }
+.fill-low { color: #ef4444 !important; }
+
+/* Size Chart */
+.size-ref-table td { text-align: center; font-size: 13px; }
+.size-ref-table th { text-align: center; white-space: nowrap; }
+.spec-edit-table input {
+    border: 1px solid transparent;
+    background: transparent;
+    padding: 4px 6px;
+    font-size: 13px;
+    outline: none;
+    border-radius: 4px;
+}
+.spec-edit-table input:focus {
+    border-color: var(--primary);
+    background: #fff;
+}
+.spec-edit-table .btn-remove-col,
+.spec-edit-table .btn-remove-row {
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 4px;
+    opacity: 0.4;
+}
+.spec-edit-table .btn-remove-col:hover,
+.spec-edit-table .btn-remove-row:hover { opacity: 1; }
+.garment-preset-btn.active {
+    background: var(--primary) !important;
+    color: #fff !important;
 }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -1199,6 +1468,7 @@ body {
                 <h2>服装工具平台</h2>
             </div>
             <ul class="nav-menu">
+                <li class="nav-section-label">报价管理</li>
                 <li class="nav-item active" data-page="quotation">
                     <span class="nav-icon">&#128221;</span>
                     <span>新建报价</span>
@@ -1207,9 +1477,31 @@ body {
                     <span class="nav-icon">&#128197;</span>
                     <span>报价记录</span>
                 </li>
+                <li class="nav-item" data-page="orders">
+                    <span class="nav-icon">&#128230;</span>
+                    <span>订单跟踪</span>
+                </li>
                 <li class="nav-item" data-page="customers">
                     <span class="nav-icon">&#128101;</span>
                     <span>客户管理</span>
+                </li>
+                <li class="nav-section-label">外贸工具</li>
+                <li class="nav-item" data-page="currency">
+                    <span class="nav-icon">&#128178;</span>
+                    <span>汇率换算</span>
+                </li>
+                <li class="nav-item" data-page="packing">
+                    <span class="nav-icon">&#128666;</span>
+                    <span>装箱计算</span>
+                </li>
+                <li class="nav-section-label">生产工具</li>
+                <li class="nav-item" data-page="sizechart">
+                    <span class="nav-icon">&#128207;</span>
+                    <span>尺码对照</span>
+                </li>
+                <li class="nav-item" data-page="fabric">
+                    <span class="nav-icon">&#129525;</span>
+                    <span>面料计算</span>
                 </li>
                 <li class="nav-item" data-page="compare">
                     <span class="nav-icon">&#128269;</span>
@@ -1464,6 +1756,359 @@ body {
                 </div>
             </div>
 
+            <!-- 订单跟踪页面 -->
+            <div id="page-orders" class="page">
+                <div class="page-header">
+                    <h1>订单跟踪</h1>
+                    <div class="header-actions">
+                        <select id="order-status-filter" style="padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px">
+                            <option value="">全部状态</option>
+                            <option value="confirmed">已确认</option>
+                            <option value="cutting">裁剪中</option>
+                            <option value="sewing">缝制中</option>
+                            <option value="qc">质检中</option>
+                            <option value="packing">包装中</option>
+                            <option value="shipped">已出货</option>
+                            <option value="delivered">已签收</option>
+                        </select>
+                        <input type="text" id="order-search" placeholder="搜索订单号/客户/款式..." style="padding:8px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;width:240px">
+                        <button class="btn btn-primary" id="btn-add-order">+ 新建订单</button>
+                    </div>
+                </div>
+                <!-- 状态统计卡片 -->
+                <div class="order-status-cards" id="order-status-cards"></div>
+                <table class="data-table" id="order-table">
+                    <thead>
+                        <tr>
+                            <th>订单号</th>
+                            <th>客户</th>
+                            <th>款式</th>
+                            <th>数量</th>
+                            <th>状态</th>
+                            <th>交期</th>
+                            <th>下单日期</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-body"></tbody>
+                </table>
+                <div class="empty-state" id="order-empty">
+                    <p>暂无订单，点击"新建订单"创建</p>
+                </div>
+            </div>
+
+            <!-- 汇率换算页面 -->
+            <div id="page-currency" class="page">
+                <div class="page-header">
+                    <h1>汇率换算 & 贸易术语</h1>
+                </div>
+
+                <section class="form-section">
+                    <h3>快速换算</h3>
+                    <div class="currency-converter">
+                        <div class="cur-input-group">
+                            <select id="cur-from"></select>
+                            <input type="number" id="cur-amount" value="1000" min="0" step="0.01" placeholder="金额">
+                        </div>
+                        <button class="btn btn-outline cur-swap-btn" id="btn-swap-currency" title="交换">&#8646;</button>
+                        <div class="cur-input-group">
+                            <select id="cur-to"></select>
+                            <div class="cur-result-display">
+                                <span id="cur-result" class="cur-result-num">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cur-rate-info" id="cur-rate-display"></div>
+                    <div class="batch-convert-section">
+                        <h4 style="margin:16px 0 10px;font-size:14px;color:var(--text-secondary)">批量换算</h4>
+                        <div class="batch-convert-grid" id="batch-convert-grid"></div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <h3>贸易术语价格计算</h3>
+                    <p class="compare-hint">输入FOB价格和各项费用，自动计算 EXW / FOB / CFR / CIF / DDP 等条款下的价格。</p>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>FOB 单价 (USD)</label>
+                            <input type="number" id="trade-fob" value="5.00" min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>海运费/件 (USD)</label>
+                            <input type="number" id="trade-freight" value="0.30" min="0" step="0.01">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>保险费率 (%)</label>
+                            <input type="number" id="trade-insurance-rate" value="0.3" min="0" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>清关费/件 (USD)</label>
+                            <input type="number" id="trade-customs" value="0.20" min="0" step="0.01">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>内陆运输/件 (USD)</label>
+                            <input type="number" id="trade-inland" value="0.10" min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>佣金率 (%)</label>
+                            <input type="number" id="trade-commission-rate" value="0" min="0" step="0.5">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>订单数量 (件)</label>
+                            <input type="number" id="trade-quantity" value="1000" min="1">
+                        </div>
+                    </div>
+
+                    <table class="data-table" style="margin-top:16px">
+                        <thead>
+                            <tr>
+                                <th>术语</th>
+                                <th>全称</th>
+                                <th>单价 (USD)</th>
+                                <th>总价 (USD)</th>
+                                <th>说明</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trade-results"></tbody>
+                    </table>
+
+                    <div class="trade-detail-grid" id="trade-detail" style="margin-top:16px"></div>
+                </section>
+            </div>
+
+            <!-- 装箱计算页面 -->
+            <div id="page-packing" class="page">
+                <div class="page-header">
+                    <h1>装箱计算器</h1>
+                </div>
+
+                <section class="form-section">
+                    <h3>单款装箱</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>纸箱长 (cm)</label>
+                            <input type="number" id="box-length" value="60" min="0" step="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label>纸箱宽 (cm)</label>
+                            <input type="number" id="box-width" value="40" min="0" step="0.5">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>纸箱高 (cm)</label>
+                            <input type="number" id="box-height" value="30" min="0" step="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label>每箱件数</label>
+                            <input type="number" id="box-qty-per" value="20" min="1">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>毛重/箱 (kg)</label>
+                            <input type="number" id="box-gross-weight" value="12" min="0" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>总件数</label>
+                            <input type="number" id="total-pieces" value="5000" min="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>集装箱类型</label>
+                            <select id="container-type"></select>
+                        </div>
+                    </div>
+                    <div id="box-presets" style="margin-bottom:16px">
+                        <span style="font-size:13px;color:var(--text-secondary)">常用规格：</span>
+                        <button class="btn btn-sm" data-preset='{"l":60,"w":40,"h":30,"qty":20}'>标准箱 60x40x30</button>
+                        <button class="btn btn-sm" data-preset='{"l":58,"w":38,"h":35,"qty":24}'>58x38x35</button>
+                        <button class="btn btn-sm" data-preset='{"l":50,"w":35,"h":25,"qty":15}'>小箱 50x35x25</button>
+                        <button class="btn btn-sm" data-preset='{"l":65,"w":45,"h":40,"qty":30}'>大箱 65x45x40</button>
+                    </div>
+
+                    <!-- 计算结果 -->
+                    <div class="pack-results-grid">
+                        <div class="pack-result-card">
+                            <div class="pack-result-label">单箱体积</div>
+                            <div class="pack-result-val" id="res-box-cbm">-</div>
+                        </div>
+                        <div class="pack-result-card">
+                            <div class="pack-result-label">需要箱数</div>
+                            <div class="pack-result-val" id="res-total-boxes">-</div>
+                        </div>
+                        <div class="pack-result-card">
+                            <div class="pack-result-label">总体积 (CBM)</div>
+                            <div class="pack-result-val" id="res-total-cbm">-</div>
+                        </div>
+                        <div class="pack-result-card">
+                            <div class="pack-result-label">总毛重</div>
+                            <div class="pack-result-val" id="res-total-weight">-</div>
+                        </div>
+                        <div class="pack-result-card">
+                            <div class="pack-result-label">每柜可装</div>
+                            <div class="pack-result-val" id="res-boxes-per-container">-</div>
+                        </div>
+                        <div class="pack-result-card">
+                            <div class="pack-result-label">每柜件数</div>
+                            <div class="pack-result-val" id="res-pieces-per-container">-</div>
+                        </div>
+                        <div class="pack-result-card">
+                            <div class="pack-result-label">需要柜数</div>
+                            <div class="pack-result-val" id="res-containers-needed">-</div>
+                        </div>
+                        <div class="pack-result-card">
+                            <div class="pack-result-label">装柜率</div>
+                            <div class="pack-result-val" id="res-fill-rate">-</div>
+                        </div>
+                    </div>
+
+                    <canvas id="container-visual" width="600" height="150" style="width:100%;max-width:600px;margin-top:16px;border:1px solid var(--border);border-radius:var(--radius)"></canvas>
+                </section>
+
+                <!-- 混装计算 -->
+                <section class="form-section">
+                    <h3>混装计算（多款装柜）</h3>
+                    <table class="cost-table" style="font-size:12px">
+                        <thead>
+                            <tr>
+                                <th>款号</th>
+                                <th>长cm</th>
+                                <th>宽cm</th>
+                                <th>高cm</th>
+                                <th>件/箱</th>
+                                <th>毛重kg</th>
+                                <th>总件数</th>
+                                <th>箱数</th>
+                                <th>CBM</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="mix-body"></tbody>
+                    </table>
+                    <div style="margin-top:12px;display:flex;gap:8px">
+                        <button class="btn btn-outline" id="btn-add-mix-item">+ 添加款式</button>
+                        <button class="btn btn-outline" id="btn-clear-mix">清空</button>
+                    </div>
+                    <div class="pack-results-grid" style="margin-top:16px">
+                        <div class="pack-result-card"><div class="pack-result-label">总箱数</div><div class="pack-result-val" id="mix-total-boxes">0</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">总体积</div><div class="pack-result-val" id="mix-total-cbm">0</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">总毛重</div><div class="pack-result-val" id="mix-total-weight">0</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">总件数</div><div class="pack-result-val" id="mix-total-pieces">0</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">建议柜型</div><div class="pack-result-val" id="mix-suggest">-</div></div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 尺码对照页面 -->
+            <div id="page-sizechart" class="page">
+                <div class="page-header">
+                    <h1>尺码对照表</h1>
+                </div>
+
+                <section class="form-section">
+                    <h3>国际尺码对照</h3>
+                    <div style="display:flex;gap:12px;margin-bottom:16px;align-items:center">
+                        <select id="size-category" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px"></select>
+                        <input type="text" id="size-search" placeholder="搜索尺码..." style="padding:8px 14px;border:1px solid var(--border);border-radius:6px;font-size:14px;width:200px">
+                    </div>
+                    <div id="size-table-container"></div>
+                </section>
+
+                <section class="form-section">
+                    <h3>自定义尺码规格表</h3>
+                    <p class="compare-hint">创建款式尺码规格表，可导出为CSV发给工厂。选择预设模板快速开始：</p>
+                    <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap">
+                        <button class="btn btn-sm spec-preset-btn" data-type="tshirt">T恤模板</button>
+                        <button class="btn btn-sm spec-preset-btn" data-type="pants">裤子模板</button>
+                        <button class="btn btn-sm spec-preset-btn" data-type="dress">连衣裙模板</button>
+                        <button class="btn btn-sm spec-preset-btn" data-type="jacket">夹克模板</button>
+                    </div>
+                    <div id="spec-table-container"></div>
+                    <div style="margin-top:12px;display:flex;gap:8px">
+                        <button class="btn btn-outline" id="btn-add-size-col">+ 添加尺码列</button>
+                        <button class="btn btn-outline" id="btn-add-measure-row">+ 添加测量部位</button>
+                        <button class="btn btn-primary" id="btn-save-spec">保存</button>
+                        <button class="btn btn-success" id="btn-export-spec">导出CSV</button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 面料用量计算页面 -->
+            <div id="page-fabric" class="page">
+                <div class="page-header">
+                    <h1>面料用量计算</h1>
+                </div>
+
+                <section class="form-section">
+                    <h3>款式参考用量</h3>
+                    <p class="compare-hint">选择款式类型快速填充参考用量（基于150cm幅宽），可手动调整。</p>
+                    <div id="garment-presets" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>单件用量 (米/件，基于150cm幅宽)</label>
+                            <input type="number" id="fab-usage-per" value="1.2" min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>损耗率 (%)</label>
+                            <input type="number" id="fab-loss-rate" value="8" min="0" max="50" step="0.5">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>实际面料幅宽</label>
+                            <div style="display:flex;gap:8px;align-items:center">
+                                <select id="fab-width" style="flex:1"></select>
+                                <input type="number" id="fab-width-custom" value="150" min="50" max="300" style="width:80px;display:none" placeholder="cm">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>面料单价 (¥/米)</label>
+                            <input type="number" id="fab-price" value="25" min="0" step="0.5">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>订单总数量 (件)</label>
+                            <input type="number" id="fab-total-qty" value="3000" min="0">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <h3>尺码配比 <span id="ratio-total" style="font-size:13px;margin-left:8px">100%</span></h3>
+                    <table class="cost-table">
+                        <thead>
+                            <tr><th>尺码</th><th>配比</th><th>数量(件)</th><th></th></tr>
+                        </thead>
+                        <tbody id="size-ratio-body"></tbody>
+                    </table>
+                    <button class="btn btn-outline" id="btn-add-fab-size" style="margin-top:8px">+ 添加尺码</button>
+                </section>
+
+                <section class="form-section">
+                    <h3>计算结果</h3>
+                    <div class="pack-results-grid">
+                        <div class="pack-result-card"><div class="pack-result-label">幅宽修正系数</div><div class="pack-result-val" id="res-width-factor">-</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">修正后用量</div><div class="pack-result-val" id="res-adjusted-usage">-</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">含损耗用量</div><div class="pack-result-val" id="res-usage-with-loss">-</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">面料总需求</div><div class="pack-result-val" id="res-total-usage" style="color:var(--primary);font-size:20px">-</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">总需求(码)</div><div class="pack-result-val" id="res-total-yards">-</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">面料总成本</div><div class="pack-result-val" id="res-total-fabric-cost" style="color:var(--danger)">-</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">面料成本/件</div><div class="pack-result-val" id="res-cost-per-piece">-</div></div>
+                    </div>
+                    <div id="size-breakdown" style="margin-top:16px"></div>
+                </section>
+            </div>
+
             <!-- 客户管理页面 -->
             <div id="page-customers" class="page">
                 <div class="page-header">
@@ -1492,6 +2137,95 @@ body {
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- 订单表单弹窗 -->
+    <div class="modal" id="order-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3 id="order-modal-title">新建订单</h3>
+                <button class="modal-close" id="order-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>订单号</label>
+                        <input type="text" id="ord-number" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>下单日期</label>
+                        <input type="date" id="ord-date">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>客户名称</label>
+                        <input type="text" id="ord-customer" placeholder="客户/买家名称">
+                    </div>
+                    <div class="form-group">
+                        <label>款式名称</label>
+                        <input type="text" id="ord-style" placeholder="款号/款式">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>数量 (件)</label>
+                        <input type="number" id="ord-quantity" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>单价 (USD)</label>
+                        <input type="number" id="ord-unit-price" min="0" step="0.01">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>交货日期</label>
+                        <input type="date" id="ord-deadline">
+                    </div>
+                    <div class="form-group">
+                        <label>当前状态</label>
+                        <select id="ord-status">
+                            <option value="confirmed">已确认</option>
+                            <option value="cutting">裁剪中</option>
+                            <option value="sewing">缝制中</option>
+                            <option value="qc">质检中</option>
+                            <option value="packing">包装中</option>
+                            <option value="shipped">已出货</option>
+                            <option value="delivered">已签收</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>买家/品牌</label>
+                        <input type="text" id="ord-buyer" placeholder="最终买家名称">
+                    </div>
+                    <div class="form-group">
+                        <label>目的地</label>
+                        <input type="text" id="ord-destination" placeholder="出口目的国/港口">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>付款条件</label>
+                        <input type="text" id="ord-payment" placeholder="例: T/T 30% deposit, 70% before shipment">
+                    </div>
+                    <div class="form-group">
+                        <label>备注</label>
+                        <input type="text" id="ord-remark" placeholder="其他备注">
+                    </div>
+                </div>
+                <!-- 状态时间线 -->
+                <div class="order-timeline-section">
+                    <h4 style="font-size:14px;margin-bottom:12px;color:var(--text-secondary)">生产进度时间线</h4>
+                    <div class="order-timeline" id="order-timeline"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="btn-cancel-order">取消</button>
+                <button class="btn btn-primary" id="btn-save-order">保存</button>
+            </div>
+        </div>
     </div>
 
     <!-- 客户表单弹窗 -->
@@ -1549,5 +2283,10 @@ body {
 
     <script src="app.js"></script>
     <script src="compare.js"></script>
+    <script src="orders.js"></script>
+    <script src="currency.js"></script>
+    <script src="packing.js"></script>
+    <script src="sizechart.js"></script>
+    <script src="fabric.js"></script>
 </body>
 </html>

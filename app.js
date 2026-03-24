@@ -87,6 +87,11 @@
 
                 if (page === 'history') renderHistory();
                 if (page === 'customers') renderCustomers();
+                if (page === 'orders' && window.initOrdersPage) window.initOrdersPage();
+                if (page === 'currency' && window.initCurrencyPage) window.initCurrencyPage();
+                if (page === 'packing' && window.initPackingPage) window.initPackingPage();
+                if (page === 'sizechart' && window.initSizeChartPage) window.initSizeChartPage();
+                if (page === 'fabric' && window.initFabricPage) window.initFabricPage();
             });
         });
     }

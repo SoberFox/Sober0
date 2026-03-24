@@ -1190,4 +1190,354 @@ body {
     .compare-upload-area {
         grid-template-columns: 1fr;
     }
+    .order-status-cards,
+    .pack-results-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .currency-converter {
+        flex-direction: column;
+    }
+}
+
+/* ============================================================
+   导航分类标签
+   ============================================================ */
+
+.nav-section-label {
+    padding: 16px 20px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(148, 163, 184, 0.6);
+    list-style: none;
+}
+
+/* ============================================================
+   订单跟踪模块
+   ============================================================ */
+
+.order-status-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.order-stat-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+}
+
+.order-stat-num {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.order-stat-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+.order-status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.overdue-text {
+    color: var(--danger) !important;
+    font-weight: 600;
+}
+
+/* Order Timeline */
+.order-timeline-section {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.order-timeline {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    overflow-x: auto;
+    padding: 8px 0;
+}
+
+.timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+    text-align: center;
+}
+
+.timeline-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    margin-bottom: 6px;
+    transition: all 0.3s;
+}
+
+.timeline-step.current .timeline-dot {
+    box-shadow: 0 0 0 4px rgba(74, 108, 247, 0.2);
+    transform: scale(1.2);
+}
+
+.timeline-step.done .timeline-dot {
+    opacity: 0.7;
+}
+
+.timeline-info {
+    font-size: 11px;
+}
+
+.timeline-label {
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+}
+
+.timeline-date {
+    color: var(--text-secondary);
+    font-size: 10px;
+}
+
+.timeline-line {
+    flex: 1;
+    height: 2px;
+    background: #e2e8f0;
+    margin-top: 10px;
+    min-width: 20px;
+}
+
+/* ============================================================
+   汇率换算模块
+   ============================================================ */
+
+.currency-converter {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.cur-input-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cur-input-group select {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+}
+
+.cur-input-group select:focus {
+    border-color: var(--primary);
+}
+
+.cur-input-group input {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: 600;
+    outline: none;
+    width: 100%;
+}
+
+.cur-input-group input:focus {
+    border-color: var(--primary);
+}
+
+.cur-swap-btn {
+    font-size: 24px !important;
+    padding: 8px 14px !important;
+    flex-shrink: 0;
+    margin-top: 24px;
+}
+
+.cur-result-display {
+    padding: 12px 14px;
+    background: #f0f9ff;
+    border: 2px solid var(--primary);
+    border-radius: 6px;
+}
+
+.cur-result-num {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.cur-rate-info {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.batch-convert-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+}
+
+.batch-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+.batch-code {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--primary);
+    min-width: 36px;
+}
+
+.batch-val {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+}
+
+.batch-name {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-left: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60px;
+}
+
+/* Trade Terms */
+.trade-detail-grid {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.trade-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: #f8fafc;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+}
+
+.trade-detail-item strong {
+    color: var(--text);
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* ============================================================
+   装箱计算模块
+   ============================================================ */
+
+.pack-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.pack-result-card {
+    background: #f8fafc;
+    border-radius: 6px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    text-align: center;
+}
+
+.pack-result-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.pack-result-val {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.fill-good { color: #10b981 !important; }
+.fill-ok { color: #f59e0b !important; }
+.fill-low { color: #ef4444 !important; }
+
+/* ============================================================
+   尺码对照模块
+   ============================================================ */
+
+.size-ref-table td {
+    text-align: center;
+    font-size: 13px;
+}
+
+.size-ref-table th {
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Spec edit table */
+.spec-edit-table input {
+    border: 1px solid transparent;
+    background: transparent;
+    padding: 4px 6px;
+    font-size: 13px;
+    outline: none;
+    border-radius: 4px;
+}
+
+.spec-edit-table input:focus {
+    border-color: var(--primary);
+    background: #fff;
+}
+
+.spec-edit-table .btn-remove-col,
+.spec-edit-table .btn-remove-row {
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 4px;
+    opacity: 0.4;
+}
+
+.spec-edit-table .btn-remove-col:hover,
+.spec-edit-table .btn-remove-row:hover {
+    opacity: 1;
+}
+
+.garment-preset-btn.active {
+    background: var(--primary) !important;
+    color: #fff !important;
 }
