@@ -1530,6 +1530,45 @@ body {
 .gantt-today-marker { position: absolute; top: 0; bottom: 0; width: 2px; background: #ef4444; z-index: 5; pointer-events: none; opacity: 0.6; }
 .gantt-today-marker::before { content: ''; position: absolute; top: -2px; left: -3px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; }
 .plan-pct-label { font-size: 12px; font-weight: 600; color: var(--primary); display: inline-block; width: 36px; text-align: right; }
+
+/* Excel Batch Search */
+.xls-search-dropzone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 40px 20px; text-align: center; transition: all 0.2s; background: #fafbfc; }
+.xls-search-dropzone.drop-hover { border-color: var(--primary); background: rgba(74, 108, 247, 0.05); }
+.dropzone-icon { font-size: 48px; margin-bottom: 8px; }
+.dropzone-text { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; }
+.dropzone-hint { font-size: 12px; color: var(--text-secondary); margin-top: 10px; }
+.search-status { margin-top: 12px; padding: 10px 14px; background: #eff6ff; border-left: 3px solid var(--primary); border-radius: 4px; font-size: 13px; color: var(--text); }
+.search-file-summary { margin-top: 10px; font-size: 13px; color: var(--success); font-weight: 500; }
+.search-file-list-wrap { margin-top: 12px; }
+.search-file-stat { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; padding: 8px 12px; background: #f8fafc; border-radius: 6px; }
+.search-file-stat strong { color: var(--text); }
+.search-file-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.search-file-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 16px; font-size: 12px; max-width: 280px; }
+.chip-icon { font-size: 14px; flex-shrink: 0; }
+.chip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px; }
+.chip-meta { color: var(--text-secondary); font-size: 10px; flex-shrink: 0; }
+.chip-remove { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 16px; line-height: 1; padding: 0 2px; opacity: 0.5; }
+.chip-remove:hover { opacity: 1; }
+.search-input-group { display: flex; gap: 10px; margin-bottom: 12px; }
+.search-keyword-input { flex: 1; padding: 10px 16px; border: 1px solid var(--border); border-radius: 6px; font-size: 15px; outline: none; transition: border-color 0.2s; }
+.search-keyword-input:focus { border-color: var(--primary); }
+.search-options { display: flex; gap: 20px; flex-wrap: wrap; }
+.search-group { margin-bottom: 24px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.search-group-header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #f1f5f9; font-size: 13px; border-bottom: 1px solid var(--border); }
+.search-group-icon { font-size: 14px; }
+.search-group-sep { color: var(--text-secondary); margin: 0 2px; }
+.search-group-sheet { color: var(--primary); font-weight: 600; }
+.search-group-count { margin-left: auto; background: var(--primary); color: #fff; padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.search-result-table { width: 100%; font-size: 13px; border: none; border-radius: 0; box-shadow: none; }
+.search-result-table th { font-size: 11px; padding: 8px 12px; }
+.search-result-table td { padding: 10px 12px; vertical-align: top; }
+.search-cell-ref { width: 70px; color: var(--text-secondary); font-family: monospace; font-size: 12px; }
+.search-cell-val { font-size: 13px; word-break: break-word; max-width: 400px; }
+.search-cell-ctx { font-size: 11px; color: var(--text-secondary); max-width: 500px; }
+.ctx-pair { display: inline-block; margin-right: 10px; white-space: nowrap; }
+.ctx-key { color: var(--text-secondary); font-weight: 600; }
+.ctx-val { color: var(--text); }
+.search-highlight { background: #fef08a; color: #854d0e; padding: 0 2px; border-radius: 2px; font-weight: 600; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
@@ -1583,6 +1622,10 @@ body {
                 <li class="nav-item" data-page="compare">
                     <span class="nav-icon">&#128269;</span>
                     <span>手册对比</span>
+                </li>
+                <li class="nav-item" data-page="xlssearch">
+                    <span class="nav-icon">&#128270;</span>
+                    <span>Excel 搜索</span>
                 </li>
             </ul>
         </nav>
@@ -2177,6 +2220,65 @@ body {
                 </section>
             </div>
 
+            <!-- Excel 批量搜索页面 -->
+            <div id="page-xlssearch" class="page">
+                <div class="page-header">
+                    <h1>Excel 批量搜索</h1>
+                </div>
+
+                <!-- 文件上传区 -->
+                <section class="form-section">
+                    <h3>上传 Excel 文件</h3>
+                    <p class="compare-hint">
+                        支持批量上传多个 Excel 文件 (.xlsx / .xls)，在所有工作表的所有单元格中搜索指定内容。<br>
+                        可用于在多个订单表、报价表、物料清单中快速定位特定款号、客户、物料等信息。
+                    </p>
+                    <div class="xls-search-dropzone" id="xls-search-dropzone">
+                        <div class="dropzone-icon">&#128228;</div>
+                        <div class="dropzone-text">拖拽 Excel 文件到这里，或</div>
+                        <input type="file" id="xls-search-input" accept=".xlsx,.xls" multiple class="file-input">
+                        <label for="xls-search-input" class="btn btn-primary upload-btn">选择多个文件</label>
+                        <div class="dropzone-hint">支持 .xlsx / .xls 格式，可一次选择多个文件</div>
+                    </div>
+                    <div id="search-status" class="search-status" style="display:none"></div>
+                    <div id="search-file-summary" class="search-file-summary"></div>
+                    <div id="search-file-list" class="search-file-list-wrap"></div>
+                    <div style="margin-top:12px">
+                        <button class="btn btn-outline" id="btn-clear-search-files">清空文件</button>
+                    </div>
+                </section>
+
+                <!-- 搜索区 -->
+                <section class="form-section">
+                    <h3>搜索</h3>
+                    <div class="search-input-group">
+                        <input type="text" id="search-keyword" placeholder="输入要搜索的内容（款号/客户/物料/数字等）..." class="search-keyword-input">
+                        <button class="btn btn-primary" id="btn-do-search">&#128270; 搜索</button>
+                        <button class="btn btn-success" id="btn-export-search">导出 CSV</button>
+                    </div>
+                    <div class="search-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="search-case-sensitive"> 区分大小写
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="search-whole-word"> 全词匹配
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="search-use-regex"> 正则表达式
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="search-show-context" checked> 显示行上下文
+                        </label>
+                    </div>
+                </section>
+
+                <!-- 搜索结果 -->
+                <section class="form-section">
+                    <h3>搜索结果 <span id="search-result-count" style="font-size:13px;color:var(--text-secondary);margin-left:8px"></span></h3>
+                    <div id="search-results"></div>
+                </section>
+            </div>
+
             <!-- 客户管理页面 -->
             <div id="page-customers" class="page">
                 <div class="page-header">
@@ -2475,5 +2577,6 @@ body {
     <script src="packing.js"></script>
     <script src="sizechart.js"></script>
     <script src="fabric.js"></script>
+    <script src="xlssearch.js"></script>
 </body>
 </html>

@@ -93,6 +93,7 @@
                 if (page === 'packing' && window.initPackingPage) window.initPackingPage();
                 if (page === 'sizechart' && window.initSizeChartPage) window.initSizeChartPage();
                 if (page === 'fabric' && window.initFabricPage) window.initFabricPage();
+                if (page === 'xlssearch' && window.initXlsSearchPage) window.initXlsSearchPage();
             });
         });
     }
