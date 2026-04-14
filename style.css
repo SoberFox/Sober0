@@ -2138,3 +2138,133 @@ body {
     border-radius: 2px;
     font-weight: 600;
 }
+
+/* ============================================================
+   文件格式转换模块
+   ============================================================ */
+
+.convert-file-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+}
+
+.convert-file-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.convert-file-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+.convert-file-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.convert-file-name {
+    font-size: 13px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+.convert-file-size {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+/* Conversion options */
+.conversion-options-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 8px;
+}
+
+.conversion-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.conversion-option:hover {
+    background: #eff6ff;
+    border-color: var(--primary);
+}
+
+.conversion-option input[type="radio"] {
+    accent-color: var(--primary);
+    margin: 0;
+}
+
+.conversion-option input[type="radio"]:checked ~ .conversion-option-label {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.conversion-option-label {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text);
+}
+
+.conversion-option-out {
+    font-size: 11px;
+    font-family: monospace;
+    color: var(--text-secondary);
+    background: #fff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+}
+
+.convert-result-msg {
+    padding: 12px 16px;
+    background: #d1fae5;
+    border-left: 3px solid var(--success);
+    border-radius: 4px;
+    font-size: 13px;
+    color: #065f46;
+    font-weight: 500;
+}
+
+.convert-notes {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+}
+
+.convert-notes ul {
+    margin: 8px 0 0 20px;
+}
+
+.convert-notes li {
+    margin-bottom: 6px;
+}
+
+.convert-notes strong {
+    color: var(--text);
+}

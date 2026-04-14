@@ -1569,9 +1569,30 @@ body {
 .ctx-key { color: var(--text-secondary); font-weight: 600; }
 .ctx-val { color: var(--text); }
 .search-highlight { background: #fef08a; color: #854d0e; padding: 0 2px; border-radius: 2px; font-weight: 600; }
+
+/* File Converter */
+.convert-file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.convert-file-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; }
+.convert-file-tag { display: inline-block; padding: 3px 10px; border-radius: 10px; color: #fff; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
+.convert-file-info { flex: 1; min-width: 0; }
+.convert-file-name { font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
+.convert-file-size { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+.conversion-options-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px; }
+.conversion-option { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: all 0.15s; }
+.conversion-option:hover { background: #eff6ff; border-color: var(--primary); }
+.conversion-option input[type="radio"] { accent-color: var(--primary); margin: 0; }
+.conversion-option-label { flex: 1; font-size: 13px; color: var(--text); }
+.conversion-option-out { font-size: 11px; font-family: monospace; color: var(--text-secondary); background: #fff; padding: 2px 8px; border-radius: 4px; border: 1px solid var(--border); }
+.convert-result-msg { padding: 12px 16px; background: #d1fae5; border-left: 3px solid var(--success); border-radius: 4px; font-size: 13px; color: #065f46; font-weight: 500; }
+.convert-notes { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
+.convert-notes ul { margin: 8px 0 0 20px; }
+.convert-notes li { margin-bottom: 6px; }
+.convert-notes strong { color: var(--text); }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 </head>
 <body>
     <div class="app">
@@ -1626,6 +1647,10 @@ body {
                 <li class="nav-item" data-page="xlssearch">
                     <span class="nav-icon">&#128270;</span>
                     <span>Excel 搜索</span>
+                </li>
+                <li class="nav-item" data-page="convert">
+                    <span class="nav-icon">&#128260;</span>
+                    <span>格式转换</span>
                 </li>
             </ul>
         </nav>
@@ -2279,6 +2304,64 @@ body {
                 </section>
             </div>
 
+            <!-- 格式转换页面 -->
+            <div id="page-convert" class="page">
+                <div class="page-header">
+                    <h1>文件格式转换</h1>
+                </div>
+
+                <section class="form-section">
+                    <h3>上传文件</h3>
+                    <p class="compare-hint">
+                        支持以下格式互转：<br>
+                        <strong>PDF</strong> ↔ 图片（PNG/JPG）、文本、Excel &nbsp;|&nbsp;
+                        <strong>Excel</strong> → CSV / JSON / HTML / PDF / Word &nbsp;|&nbsp;
+                        <strong>图片</strong> ↔ PNG/JPG/WebP，多张合并为 PDF &nbsp;|&nbsp;
+                        <strong>文本</strong> → PDF &nbsp;|&nbsp;
+                        <strong>CSV</strong> → Excel / JSON &nbsp;|&nbsp;
+                        <strong>任意文件</strong> → ZIP 打包
+                    </p>
+                    <div class="xls-search-dropzone" id="convert-dropzone">
+                        <div class="dropzone-icon">&#128260;</div>
+                        <div class="dropzone-text">拖拽文件到这里，或</div>
+                        <input type="file" id="convert-file-input" multiple class="file-input">
+                        <label for="convert-file-input" class="btn btn-primary upload-btn">选择文件</label>
+                        <div class="dropzone-hint">支持 PDF / Excel / 图片 / 文本 / CSV / ZIP，可选多个</div>
+                    </div>
+                    <div id="convert-file-list" style="margin-top:12px"></div>
+                </section>
+
+                <section class="form-section">
+                    <h3>选择转换类型</h3>
+                    <div id="conversion-options" class="conversion-options-list"></div>
+                </section>
+
+                <section class="form-section">
+                    <div style="display:flex;gap:10px;align-items:center">
+                        <button class="btn btn-primary" id="btn-do-convert" disabled>开始转换</button>
+                        <button class="btn btn-outline" id="btn-clear-convert">清空</button>
+                    </div>
+                    <div class="progress-bar-wrap" id="convert-progress" style="display:none;margin-top:16px">
+                        <div class="progress-bar-label">处理中...</div>
+                        <div class="progress-bar-track"><div class="progress-bar-fill" id="convert-progress-fill"></div></div>
+                    </div>
+                    <div id="convert-result" class="convert-result-msg" style="display:none;margin-top:12px"></div>
+                </section>
+
+                <section class="form-section">
+                    <h3>关于格式限制</h3>
+                    <div class="convert-notes">
+                        <p><strong>纯浏览器环境下不支持的转换：</strong></p>
+                        <ul>
+                            <li><strong>.ai 文件（Adobe Illustrator）</strong>：.ai 是 Adobe 专有格式，无法在浏览器中直接生成。变通方法：输出 PDF，Illustrator 可以直接打开 PDF 并编辑。</li>
+                            <li><strong>PPT/PPTX → PDF（保持排版）</strong>：需要服务器端专业渲染引擎，本地浏览器无法完美还原幻灯片。建议用 PowerPoint 自带的"另存为 PDF"功能。</li>
+                            <li><strong>PDF → Word（可编辑，保留排版）</strong>：布局还原在浏览器中极难实现。本工具提供 PDF → 文本和 PDF → Excel（按行提取），适合提纯文本内容。</li>
+                        </ul>
+                        <p style="margin-top:10px"><strong>中文字符：</strong>所有转换（包括 Excel→PDF、文本→PDF）都通过 Canvas 绘制，完美支持中文。</p>
+                    </div>
+                </section>
+            </div>
+
             <!-- 客户管理页面 -->
             <div id="page-customers" class="page">
                 <div class="page-header">
@@ -2578,5 +2661,6 @@ body {
     <script src="sizechart.js"></script>
     <script src="fabric.js"></script>
     <script src="xlssearch.js"></script>
+    <script src="convert.js"></script>
 </body>
 </html>
