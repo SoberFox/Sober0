@@ -1187,10 +1187,412 @@ body {
     .compare-upload-area {
         grid-template-columns: 1fr;
     }
+    .order-status-cards,
+    .pack-results-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .currency-converter {
+        flex-direction: column;
+    }
 }
+
+/* Nav section labels */
+.nav-section-label {
+    padding: 16px 20px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(148, 163, 184, 0.6);
+    list-style: none;
+}
+
+/* Order Tracking */
+.order-status-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.order-stat-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+}
+.order-stat-num {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+}
+.order-stat-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+.order-status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.overdue-text {
+    color: var(--danger) !important;
+    font-weight: 600;
+}
+.order-timeline-section {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+.order-timeline {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    overflow-x: auto;
+    padding: 8px 0;
+}
+.timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+    text-align: center;
+}
+.timeline-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    margin-bottom: 6px;
+    transition: all 0.3s;
+}
+.timeline-step.current .timeline-dot {
+    box-shadow: 0 0 0 4px rgba(74, 108, 247, 0.2);
+    transform: scale(1.2);
+}
+.timeline-step.done .timeline-dot { opacity: 0.7; }
+.timeline-info { font-size: 11px; }
+.timeline-label {
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+}
+.timeline-date {
+    color: var(--text-secondary);
+    font-size: 10px;
+}
+.timeline-line {
+    flex: 1;
+    height: 2px;
+    background: #e2e8f0;
+    margin-top: 10px;
+    min-width: 20px;
+}
+
+/* Currency */
+.currency-converter {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+.cur-input-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.cur-input-group select {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+}
+.cur-input-group select:focus { border-color: var(--primary); }
+.cur-input-group input {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: 600;
+    outline: none;
+    width: 100%;
+}
+.cur-input-group input:focus { border-color: var(--primary); }
+.cur-swap-btn {
+    font-size: 24px !important;
+    padding: 8px 14px !important;
+    flex-shrink: 0;
+    margin-top: 24px;
+}
+.cur-result-display {
+    padding: 12px 14px;
+    background: #f0f9ff;
+    border: 2px solid var(--primary);
+    border-radius: 6px;
+}
+.cur-result-num {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary);
+}
+.cur-rate-info {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+.batch-convert-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+}
+.batch-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+.batch-code {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--primary);
+    min-width: 36px;
+}
+.batch-val {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+}
+.batch-name {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-left: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60px;
+}
+.trade-detail-grid {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.trade-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: #f8fafc;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+}
+.trade-detail-item strong { color: var(--text); }
+.text-right { text-align: right; }
+
+/* Packing */
+.pack-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+}
+.pack-result-card {
+    background: #f8fafc;
+    border-radius: 6px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    text-align: center;
+}
+.pack-result-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+.pack-result-val {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+}
+.fill-good { color: #10b981 !important; }
+.fill-ok { color: #f59e0b !important; }
+.fill-low { color: #ef4444 !important; }
+
+/* Size Chart */
+.size-ref-table td { text-align: center; font-size: 13px; }
+.size-ref-table th { text-align: center; white-space: nowrap; }
+.spec-edit-table input {
+    border: 1px solid transparent;
+    background: transparent;
+    padding: 4px 6px;
+    font-size: 13px;
+    outline: none;
+    border-radius: 4px;
+}
+.spec-edit-table input:focus {
+    border-color: var(--primary);
+    background: #fff;
+}
+.spec-edit-table .btn-remove-col,
+.spec-edit-table .btn-remove-row {
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 4px;
+    opacity: 0.4;
+}
+.spec-edit-table .btn-remove-col:hover,
+.spec-edit-table .btn-remove-row:hover { opacity: 1; }
+.garment-preset-btn.active {
+    background: var(--primary) !important;
+    color: #fff !important;
+}
+
+/* Material Tracking */
+.mat-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.mat-dash-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+.mat-dash-num { font-size: 26px; font-weight: 700; color: var(--text); }
+.mat-dash-label { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+.mat-cat-tag {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 11px; background: #e2e8f0; color: var(--text); white-space: nowrap;
+}
+.mat-order-progress-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 12px;
+}
+.mat-order-card {
+    background: #f8fafc; border-radius: 6px; padding: 14px 16px; border: 1px solid var(--border);
+}
+.mat-order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; }
+.mat-order-pct { font-weight: 700; font-size: 15px; }
+.mat-order-pct.has-fail { color: var(--danger) !important; }
+.mat-progress-bar { height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+.mat-progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+.mat-order-items { display: flex; gap: 4px; flex-wrap: wrap; }
+.mat-mini-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; color: #fff; font-size: 10px; font-weight: 600; }
+.mat-alert { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 6px; }
+.alert-overdue { background: #fef2f2; color: #b91c1c; border-left: 3px solid #ef4444; }
+.alert-urgent { background: #fffbeb; color: #92400e; border-left: 3px solid #f59e0b; }
+.alert-icon { font-size: 16px; flex-shrink: 0; }
+
+/* Gantt / Timeline */
+.gantt-wrapper { overflow-x: auto; min-height: 200px; }
+.gantt-header, .gantt-order-title, .gantt-row { display: flex; align-items: stretch; min-height: 32px; }
+.gantt-label-col { width: 200px; min-width: 200px; flex-shrink: 0; padding: 6px 10px; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+.gantt-timeline-col { flex: 1; position: relative; min-width: 500px; border-left: 1px solid var(--border); }
+.gantt-header { background: #f1f5f9; border-bottom: 2px solid var(--border); border-radius: var(--radius) var(--radius) 0 0; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+.gantt-header .gantt-label-col { font-weight: 700; color: var(--text); }
+.gantt-months { display: flex; border-bottom: 1px solid var(--border); }
+.gantt-month { padding: 4px 8px; font-size: 11px; border-right: 1px solid var(--border); white-space: nowrap; overflow: hidden; }
+.gantt-days { position: relative; height: 20px; }
+.gantt-day-mark { position: absolute; font-size: 10px; color: var(--text-secondary); transform: translateX(-50%); top: 2px; }
+.gantt-body { position: relative; }
+.gantt-order-group { border-bottom: 2px solid var(--border); }
+.gantt-order-title { background: #f8fafc; border-bottom: 1px solid var(--border); }
+.gantt-order-title .gantt-label-col { font-weight: 600; font-size: 13px; }
+.gantt-overall-pct { font-size: 12px; color: var(--primary); font-weight: 700; margin-left: 4px; }
+.gantt-order-actions { margin-left: auto; display: flex; gap: 4px; }
+.gantt-order-actions .btn-icon { font-size: 12px; padding: 2px 4px; }
+.gantt-row { border-bottom: 1px solid #f1f5f9; }
+.gantt-row:hover { background: #fafbfc; }
+.gantt-phase-label { font-size: 12px; color: var(--text-secondary); flex-wrap: wrap; }
+.gantt-phase-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.gantt-phase-dates { display: block; font-size: 10px; color: #94a3b8; width: 100%; }
+.gantt-row-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
+.gantt-bar { position: absolute; top: 4px; height: calc(100% - 8px); border-radius: 4px; min-height: 20px; display: flex; align-items: center; overflow: hidden; cursor: default; opacity: 0.85; transition: opacity 0.2s; }
+.gantt-bar:hover { opacity: 1; }
+.gantt-bar-overdue { outline: 2px dashed #ef4444; outline-offset: 1px; }
+.gantt-bar-fill { position: absolute; top: 0; left: 0; height: 100%; border-radius: 4px; }
+.gantt-bar-text { position: relative; z-index: 1; font-size: 10px; color: #fff; font-weight: 600; padding: 0 6px; white-space: nowrap; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+.gantt-today-marker { position: absolute; top: 0; bottom: 0; width: 2px; background: #ef4444; z-index: 5; pointer-events: none; opacity: 0.6; }
+.gantt-today-marker::before { content: ''; position: absolute; top: -2px; left: -3px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; }
+.plan-pct-label { font-size: 12px; font-weight: 600; color: var(--primary); display: inline-block; width: 36px; text-align: right; }
+
+/* Excel Batch Search */
+.xls-search-dropzone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 40px 20px; text-align: center; transition: all 0.2s; background: #fafbfc; }
+.xls-search-dropzone.drop-hover { border-color: var(--primary); background: rgba(74, 108, 247, 0.05); }
+.dropzone-icon { font-size: 48px; margin-bottom: 8px; }
+.dropzone-text { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; }
+.dropzone-hint { font-size: 12px; color: var(--text-secondary); margin-top: 10px; }
+.search-status { margin-top: 12px; padding: 10px 14px; background: #eff6ff; border-left: 3px solid var(--primary); border-radius: 4px; font-size: 13px; color: var(--text); }
+.search-file-summary { margin-top: 10px; font-size: 13px; color: var(--success); font-weight: 500; }
+.search-file-list-wrap { margin-top: 12px; }
+.search-file-stat { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; padding: 8px 12px; background: #f8fafc; border-radius: 6px; }
+.search-file-stat strong { color: var(--text); }
+.search-file-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.search-file-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 16px; font-size: 12px; max-width: 280px; }
+.chip-icon { font-size: 14px; flex-shrink: 0; }
+.chip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px; }
+.chip-meta { color: var(--text-secondary); font-size: 10px; flex-shrink: 0; }
+.chip-remove { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 16px; line-height: 1; padding: 0 2px; opacity: 0.5; }
+.chip-remove:hover { opacity: 1; }
+.search-input-group { display: flex; gap: 10px; margin-bottom: 12px; }
+.search-keyword-input { flex: 1; padding: 10px 16px; border: 1px solid var(--border); border-radius: 6px; font-size: 15px; outline: none; transition: border-color 0.2s; }
+.search-keyword-input:focus { border-color: var(--primary); }
+.search-options { display: flex; gap: 20px; flex-wrap: wrap; }
+.search-group { margin-bottom: 24px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.search-group-header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #f1f5f9; font-size: 13px; border-bottom: 1px solid var(--border); }
+.search-group-icon { font-size: 14px; }
+.search-group-sep { color: var(--text-secondary); margin: 0 2px; }
+.search-group-sheet { color: var(--primary); font-weight: 600; }
+.search-group-count { margin-left: auto; background: var(--primary); color: #fff; padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.search-result-table { width: 100%; font-size: 13px; border: none; border-radius: 0; box-shadow: none; }
+.search-result-table th { font-size: 11px; padding: 8px 12px; }
+.search-result-table td { padding: 10px 12px; vertical-align: top; }
+.search-cell-ref { width: 70px; color: var(--text-secondary); font-family: monospace; font-size: 12px; }
+.search-cell-val { font-size: 13px; word-break: break-word; max-width: 400px; }
+.search-cell-ctx { font-size: 11px; color: var(--text-secondary); max-width: 500px; }
+.ctx-pair { display: inline-block; margin-right: 10px; white-space: nowrap; }
+.ctx-key { color: var(--text-secondary); font-weight: 600; }
+.ctx-val { color: var(--text); }
+.search-highlight { background: #fef08a; color: #854d0e; padding: 0 2px; border-radius: 2px; font-weight: 600; }
+
+/* File Converter */
+.convert-file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.convert-file-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; }
+.convert-file-tag { display: inline-block; padding: 3px 10px; border-radius: 10px; color: #fff; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
+.convert-file-info { flex: 1; min-width: 0; }
+.convert-file-name { font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
+.convert-file-size { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+.conversion-options-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px; }
+.conversion-option { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: all 0.15s; }
+.conversion-option:hover { background: #eff6ff; border-color: var(--primary); }
+.conversion-option input[type="radio"] { accent-color: var(--primary); margin: 0; }
+.conversion-option-label { flex: 1; font-size: 13px; color: var(--text); }
+.conversion-option-out { font-size: 11px; font-family: monospace; color: var(--text-secondary); background: #fff; padding: 2px 8px; border-radius: 4px; border: 1px solid var(--border); }
+.convert-result-msg { padding: 12px 16px; background: #d1fae5; border-left: 3px solid var(--success); border-radius: 4px; font-size: 13px; color: #065f46; font-weight: 500; }
+.convert-notes { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
+.convert-notes ul { margin: 8px 0 0 20px; }
+.convert-notes li { margin-bottom: 6px; }
+.convert-notes strong { color: var(--text); }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 </head>
 <body>
     <div class="app">
@@ -1199,6 +1601,7 @@ body {
                 <h2>服装工具平台</h2>
             </div>
             <ul class="nav-menu">
+                <li class="nav-section-label">报价管理</li>
                 <li class="nav-item active" data-page="quotation">
                     <span class="nav-icon">&#128221;</span>
                     <span>新建报价</span>
@@ -1207,13 +1610,47 @@ body {
                     <span class="nav-icon">&#128197;</span>
                     <span>报价记录</span>
                 </li>
+                <li class="nav-item" data-page="orders">
+                    <span class="nav-icon">&#128230;</span>
+                    <span>订单跟踪</span>
+                </li>
                 <li class="nav-item" data-page="customers">
                     <span class="nav-icon">&#128101;</span>
                     <span>客户管理</span>
                 </li>
+                <li class="nav-item" data-page="materials">
+                    <span class="nav-icon">&#127808;</span>
+                    <span>面辅料跟进</span>
+                </li>
+                <li class="nav-item" data-page="timeline">
+                    <span class="nav-icon">&#128197;</span>
+                    <span>时间计划</span>
+                </li>
+                <li class="nav-section-label">外贸工具</li>
+                <li class="nav-item" data-page="packing">
+                    <span class="nav-icon">&#128666;</span>
+                    <span>装箱计算</span>
+                </li>
+                <li class="nav-section-label">生产工具</li>
+                <li class="nav-item" data-page="sizechart">
+                    <span class="nav-icon">&#128207;</span>
+                    <span>尺码对照</span>
+                </li>
+                <li class="nav-item" data-page="fabric">
+                    <span class="nav-icon">&#129525;</span>
+                    <span>面料计算</span>
+                </li>
                 <li class="nav-item" data-page="compare">
                     <span class="nav-icon">&#128269;</span>
                     <span>手册对比</span>
+                </li>
+                <li class="nav-item" data-page="xlssearch">
+                    <span class="nav-icon">&#128270;</span>
+                    <span>Excel 搜索</span>
+                </li>
+                <li class="nav-item" data-page="convert">
+                    <span class="nav-icon">&#128260;</span>
+                    <span>格式转换</span>
                 </li>
             </ul>
         </nav>
@@ -1464,6 +1901,467 @@ body {
                 </div>
             </div>
 
+            <!-- 订单跟踪页面 -->
+            <div id="page-orders" class="page">
+                <div class="page-header">
+                    <h1>订单跟踪</h1>
+                    <div class="header-actions">
+                        <select id="order-status-filter" style="padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px">
+                            <option value="">全部状态</option>
+                            <option value="confirmed">已确认</option>
+                            <option value="cutting">裁剪中</option>
+                            <option value="sewing">缝制中</option>
+                            <option value="qc">质检中</option>
+                            <option value="packing">包装中</option>
+                            <option value="shipped">已出货</option>
+                            <option value="delivered">已签收</option>
+                        </select>
+                        <input type="text" id="order-search" placeholder="搜索订单号/客户/款式..." style="padding:8px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;width:240px">
+                        <button class="btn btn-primary" id="btn-add-order">+ 新建订单</button>
+                    </div>
+                </div>
+                <!-- 状态统计卡片 -->
+                <div class="order-status-cards" id="order-status-cards"></div>
+                <table class="data-table" id="order-table">
+                    <thead>
+                        <tr>
+                            <th>订单号</th>
+                            <th>客户</th>
+                            <th>款式</th>
+                            <th>数量</th>
+                            <th>状态</th>
+                            <th>交期</th>
+                            <th>下单日期</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-body"></tbody>
+                </table>
+                <div class="empty-state" id="order-empty">
+                    <p>暂无订单，点击"新建订单"创建</p>
+                </div>
+            </div>
+
+            <!-- 面辅料跟进页面 -->
+            <div id="page-materials" class="page">
+                <div class="page-header">
+                    <h1>面辅料跟进</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-outline" id="btn-batch-add-mat">批量添加常用辅料</button>
+                        <button class="btn btn-primary" id="btn-add-material">+ 新增物料</button>
+                    </div>
+                </div>
+
+                <!-- 状态看板 -->
+                <div class="mat-dashboard" id="mat-dashboard"></div>
+
+                <!-- 预警区 -->
+                <section class="form-section" style="padding:12px 20px">
+                    <h3 style="margin-bottom:8px">预警提醒</h3>
+                    <div id="mat-alerts"></div>
+                </section>
+
+                <!-- 按订单分组进度 -->
+                <section class="form-section">
+                    <h3>订单齐料进度</h3>
+                    <div class="mat-order-progress-grid" id="mat-order-progress"></div>
+                </section>
+
+                <!-- 物料明细 -->
+                <section class="form-section">
+                    <h3>物料明细</h3>
+                    <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+                        <input type="text" id="mat-search" placeholder="搜索物料/供应商/订单号..." style="padding:8px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;width:240px">
+                        <select id="mat-cat-filter" style="padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px"></select>
+                        <select id="mat-status-filter" style="padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px"></select>
+                    </div>
+                    <div style="overflow-x:auto">
+                        <table class="data-table" id="mat-table">
+                            <thead>
+                                <tr>
+                                    <th>订单号</th>
+                                    <th>类别</th>
+                                    <th>物料名称</th>
+                                    <th>供应商</th>
+                                    <th>数量</th>
+                                    <th>状态</th>
+                                    <th>下单日期</th>
+                                    <th>预计到货</th>
+                                    <th>实际到货</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mat-body"></tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state" id="mat-empty">
+                        <p>暂无物料记录</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 订单时间计划页面 -->
+            <div id="page-timeline" class="page">
+                <div class="page-header">
+                    <h1>订单时间计划</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="btn-new-plan">+ 新建计划</button>
+                    </div>
+                </div>
+
+                <section class="form-section">
+                    <p class="compare-hint">
+                        可视化管理各订单的生产进度，跟踪面辅料采购、样品确认、裁剪、缝制、质检、包装、出货等阶段。<br>
+                        红色虚线为今日标记，点击编辑可调整各阶段日期和进度。
+                    </p>
+                    <div class="gantt-wrapper" id="gantt-container"></div>
+                </section>
+            </div>
+
+            <!-- 装箱计算页面 -->
+            <div id="page-packing" class="page">
+                <div class="page-header">
+                    <h1>装箱计算器</h1>
+                </div>
+
+                <section class="form-section">
+                    <h3>单款装箱</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>纸箱长 (cm)</label>
+                            <input type="number" id="box-length" value="60" min="0" step="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label>纸箱宽 (cm)</label>
+                            <input type="number" id="box-width" value="40" min="0" step="0.5">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>纸箱高 (cm)</label>
+                            <input type="number" id="box-height" value="30" min="0" step="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label>每箱件数</label>
+                            <input type="number" id="box-qty-per" value="20" min="1">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>毛重/箱 (kg)</label>
+                            <input type="number" id="box-gross-weight" value="12" min="0" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>总件数</label>
+                            <input type="number" id="total-pieces" value="5000" min="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>集装箱类型</label>
+                            <select id="container-type"></select>
+                        </div>
+                    </div>
+                    <div id="box-presets" style="margin-bottom:16px">
+                        <span style="font-size:13px;color:var(--text-secondary)">常用规格：</span>
+                        <button class="btn btn-sm" data-preset='{"l":60,"w":40,"h":30,"qty":20}'>标准箱 60x40x30</button>
+                        <button class="btn btn-sm" data-preset='{"l":58,"w":38,"h":35,"qty":24}'>58x38x35</button>
+                        <button class="btn btn-sm" data-preset='{"l":50,"w":35,"h":25,"qty":15}'>小箱 50x35x25</button>
+                        <button class="btn btn-sm" data-preset='{"l":65,"w":45,"h":40,"qty":30}'>大箱 65x45x40</button>
+                    </div>
+
+                    <!-- 计算结果 -->
+                    <div class="pack-results-grid">
+                        <div class="pack-result-card">
+                            <div class="pack-result-label">单箱体积</div>
+                            <div class="pack-result-val" id="res-box-cbm">-</div>
+                        </div>
+                        <div class="pack-result-card">
+                            <div class="pack-result-label">需要箱数</div>
+                            <div class="pack-result-val" id="res-total-boxes">-</div>
+                        </div>
+                        <div class="pack-result-card">
+                            <div class="pack-result-label">总体积 (CBM)</div>
+                            <div class="pack-result-val" id="res-total-cbm">-</div>
+                        </div>
+                        <div class="pack-result-card">
+                            <div class="pack-result-label">总毛重</div>
+                            <div class="pack-result-val" id="res-total-weight">-</div>
+                        </div>
+                        <div class="pack-result-card">
+                            <div class="pack-result-label">每柜可装</div>
+                            <div class="pack-result-val" id="res-boxes-per-container">-</div>
+                        </div>
+                        <div class="pack-result-card">
+                            <div class="pack-result-label">每柜件数</div>
+                            <div class="pack-result-val" id="res-pieces-per-container">-</div>
+                        </div>
+                        <div class="pack-result-card">
+                            <div class="pack-result-label">需要柜数</div>
+                            <div class="pack-result-val" id="res-containers-needed">-</div>
+                        </div>
+                        <div class="pack-result-card">
+                            <div class="pack-result-label">装柜率</div>
+                            <div class="pack-result-val" id="res-fill-rate">-</div>
+                        </div>
+                    </div>
+
+                    <canvas id="container-visual" width="600" height="150" style="width:100%;max-width:600px;margin-top:16px;border:1px solid var(--border);border-radius:var(--radius)"></canvas>
+                </section>
+
+                <!-- 混装计算 -->
+                <section class="form-section">
+                    <h3>混装计算（多款装柜）</h3>
+                    <table class="cost-table" style="font-size:12px">
+                        <thead>
+                            <tr>
+                                <th>款号</th>
+                                <th>长cm</th>
+                                <th>宽cm</th>
+                                <th>高cm</th>
+                                <th>件/箱</th>
+                                <th>毛重kg</th>
+                                <th>总件数</th>
+                                <th>箱数</th>
+                                <th>CBM</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="mix-body"></tbody>
+                    </table>
+                    <div style="margin-top:12px;display:flex;gap:8px">
+                        <button class="btn btn-outline" id="btn-add-mix-item">+ 添加款式</button>
+                        <button class="btn btn-outline" id="btn-clear-mix">清空</button>
+                    </div>
+                    <div class="pack-results-grid" style="margin-top:16px">
+                        <div class="pack-result-card"><div class="pack-result-label">总箱数</div><div class="pack-result-val" id="mix-total-boxes">0</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">总体积</div><div class="pack-result-val" id="mix-total-cbm">0</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">总毛重</div><div class="pack-result-val" id="mix-total-weight">0</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">总件数</div><div class="pack-result-val" id="mix-total-pieces">0</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">建议柜型</div><div class="pack-result-val" id="mix-suggest">-</div></div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 尺码对照页面 -->
+            <div id="page-sizechart" class="page">
+                <div class="page-header">
+                    <h1>尺码对照表</h1>
+                </div>
+
+                <section class="form-section">
+                    <h3>国际尺码对照</h3>
+                    <div style="display:flex;gap:12px;margin-bottom:16px;align-items:center">
+                        <select id="size-category" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px"></select>
+                        <input type="text" id="size-search" placeholder="搜索尺码..." style="padding:8px 14px;border:1px solid var(--border);border-radius:6px;font-size:14px;width:200px">
+                    </div>
+                    <div id="size-table-container"></div>
+                </section>
+
+                <section class="form-section">
+                    <h3>自定义尺码规格表</h3>
+                    <p class="compare-hint">创建款式尺码规格表，可导出为CSV发给工厂。选择预设模板快速开始：</p>
+                    <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap">
+                        <button class="btn btn-sm spec-preset-btn" data-type="tshirt">T恤模板</button>
+                        <button class="btn btn-sm spec-preset-btn" data-type="pants">裤子模板</button>
+                        <button class="btn btn-sm spec-preset-btn" data-type="dress">连衣裙模板</button>
+                        <button class="btn btn-sm spec-preset-btn" data-type="jacket">夹克模板</button>
+                    </div>
+                    <div id="spec-table-container"></div>
+                    <div style="margin-top:12px;display:flex;gap:8px">
+                        <button class="btn btn-outline" id="btn-add-size-col">+ 添加尺码列</button>
+                        <button class="btn btn-outline" id="btn-add-measure-row">+ 添加测量部位</button>
+                        <button class="btn btn-primary" id="btn-save-spec">保存</button>
+                        <button class="btn btn-success" id="btn-export-spec">导出CSV</button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 面料用量计算页面 -->
+            <div id="page-fabric" class="page">
+                <div class="page-header">
+                    <h1>面料用量计算</h1>
+                </div>
+
+                <section class="form-section">
+                    <h3>款式参考用量</h3>
+                    <p class="compare-hint">选择款式类型快速填充参考用量（基于150cm幅宽），可手动调整。</p>
+                    <div id="garment-presets" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>单件用量 (米/件，基于150cm幅宽)</label>
+                            <input type="number" id="fab-usage-per" value="1.2" min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>损耗率 (%)</label>
+                            <input type="number" id="fab-loss-rate" value="8" min="0" max="50" step="0.5">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>实际面料幅宽</label>
+                            <div style="display:flex;gap:8px;align-items:center">
+                                <select id="fab-width" style="flex:1"></select>
+                                <input type="number" id="fab-width-custom" value="150" min="50" max="300" style="width:80px;display:none" placeholder="cm">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>面料单价 (¥/米)</label>
+                            <input type="number" id="fab-price" value="25" min="0" step="0.5">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>订单总数量 (件)</label>
+                            <input type="number" id="fab-total-qty" value="3000" min="0">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <h3>尺码配比 <span id="ratio-total" style="font-size:13px;margin-left:8px">100%</span></h3>
+                    <table class="cost-table">
+                        <thead>
+                            <tr><th>尺码</th><th>配比</th><th>数量(件)</th><th></th></tr>
+                        </thead>
+                        <tbody id="size-ratio-body"></tbody>
+                    </table>
+                    <button class="btn btn-outline" id="btn-add-fab-size" style="margin-top:8px">+ 添加尺码</button>
+                </section>
+
+                <section class="form-section">
+                    <h3>计算结果</h3>
+                    <div class="pack-results-grid">
+                        <div class="pack-result-card"><div class="pack-result-label">幅宽修正系数</div><div class="pack-result-val" id="res-width-factor">-</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">修正后用量</div><div class="pack-result-val" id="res-adjusted-usage">-</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">含损耗用量</div><div class="pack-result-val" id="res-usage-with-loss">-</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">面料总需求</div><div class="pack-result-val" id="res-total-usage" style="color:var(--primary);font-size:20px">-</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">总需求(码)</div><div class="pack-result-val" id="res-total-yards">-</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">面料总成本</div><div class="pack-result-val" id="res-total-fabric-cost" style="color:var(--danger)">-</div></div>
+                        <div class="pack-result-card"><div class="pack-result-label">面料成本/件</div><div class="pack-result-val" id="res-cost-per-piece">-</div></div>
+                    </div>
+                    <div id="size-breakdown" style="margin-top:16px"></div>
+                </section>
+            </div>
+
+            <!-- Excel 批量搜索页面 -->
+            <div id="page-xlssearch" class="page">
+                <div class="page-header">
+                    <h1>Excel 批量搜索</h1>
+                </div>
+
+                <!-- 文件上传区 -->
+                <section class="form-section">
+                    <h3>上传 Excel 文件</h3>
+                    <p class="compare-hint">
+                        支持批量上传多个 Excel 文件 (.xlsx / .xls)，在所有工作表的所有单元格中搜索指定内容。<br>
+                        可用于在多个订单表、报价表、物料清单中快速定位特定款号、客户、物料等信息。
+                    </p>
+                    <div class="xls-search-dropzone" id="xls-search-dropzone">
+                        <div class="dropzone-icon">&#128228;</div>
+                        <div class="dropzone-text">拖拽 Excel 文件到这里，或</div>
+                        <input type="file" id="xls-search-input" accept=".xlsx,.xls" multiple class="file-input">
+                        <label for="xls-search-input" class="btn btn-primary upload-btn">选择多个文件</label>
+                        <div class="dropzone-hint">支持 .xlsx / .xls 格式，可一次选择多个文件</div>
+                    </div>
+                    <div id="search-status" class="search-status" style="display:none"></div>
+                    <div id="search-file-summary" class="search-file-summary"></div>
+                    <div id="search-file-list" class="search-file-list-wrap"></div>
+                    <div style="margin-top:12px">
+                        <button class="btn btn-outline" id="btn-clear-search-files">清空文件</button>
+                    </div>
+                </section>
+
+                <!-- 搜索区 -->
+                <section class="form-section">
+                    <h3>搜索</h3>
+                    <div class="search-input-group">
+                        <input type="text" id="search-keyword" placeholder="输入要搜索的内容（款号/客户/物料/数字等）..." class="search-keyword-input">
+                        <button class="btn btn-primary" id="btn-do-search">&#128270; 搜索</button>
+                        <button class="btn btn-success" id="btn-export-search">导出 CSV</button>
+                    </div>
+                    <div class="search-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="search-case-sensitive"> 区分大小写
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="search-whole-word"> 全词匹配
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="search-use-regex"> 正则表达式
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="search-show-context" checked> 显示行上下文
+                        </label>
+                    </div>
+                </section>
+
+                <!-- 搜索结果 -->
+                <section class="form-section">
+                    <h3>搜索结果 <span id="search-result-count" style="font-size:13px;color:var(--text-secondary);margin-left:8px"></span></h3>
+                    <div id="search-results"></div>
+                </section>
+            </div>
+
+            <!-- 格式转换页面 -->
+            <div id="page-convert" class="page">
+                <div class="page-header">
+                    <h1>文件格式转换</h1>
+                </div>
+
+                <section class="form-section">
+                    <h3>上传文件</h3>
+                    <p class="compare-hint">
+                        支持以下格式互转：<br>
+                        <strong>PDF</strong> ↔ 图片（PNG/JPG）、文本、Excel &nbsp;|&nbsp;
+                        <strong>Excel</strong> → CSV / JSON / HTML / PDF / Word &nbsp;|&nbsp;
+                        <strong>图片</strong> ↔ PNG/JPG/WebP，多张合并为 PDF &nbsp;|&nbsp;
+                        <strong>文本</strong> → PDF &nbsp;|&nbsp;
+                        <strong>CSV</strong> → Excel / JSON &nbsp;|&nbsp;
+                        <strong>任意文件</strong> → ZIP 打包
+                    </p>
+                    <div class="xls-search-dropzone" id="convert-dropzone">
+                        <div class="dropzone-icon">&#128260;</div>
+                        <div class="dropzone-text">拖拽文件到这里，或</div>
+                        <input type="file" id="convert-file-input" multiple class="file-input">
+                        <label for="convert-file-input" class="btn btn-primary upload-btn">选择文件</label>
+                        <div class="dropzone-hint">支持 PDF / Excel / 图片 / 文本 / CSV / ZIP，可选多个</div>
+                    </div>
+                    <div id="convert-file-list" style="margin-top:12px"></div>
+                </section>
+
+                <section class="form-section">
+                    <h3>选择转换类型</h3>
+                    <div id="conversion-options" class="conversion-options-list"></div>
+                </section>
+
+                <section class="form-section">
+                    <div style="display:flex;gap:10px;align-items:center">
+                        <button class="btn btn-primary" id="btn-do-convert" disabled>开始转换</button>
+                        <button class="btn btn-outline" id="btn-clear-convert">清空</button>
+                    </div>
+                    <div class="progress-bar-wrap" id="convert-progress" style="display:none;margin-top:16px">
+                        <div class="progress-bar-label">处理中...</div>
+                        <div class="progress-bar-track"><div class="progress-bar-fill" id="convert-progress-fill"></div></div>
+                    </div>
+                    <div id="convert-result" class="convert-result-msg" style="display:none;margin-top:12px"></div>
+                </section>
+
+                <section class="form-section">
+                    <h3>关于格式限制</h3>
+                    <div class="convert-notes">
+                        <p><strong>纯浏览器环境下不支持的转换：</strong></p>
+                        <ul>
+                            <li><strong>.ai 文件（Adobe Illustrator）</strong>：.ai 是 Adobe 专有格式，无法在浏览器中直接生成。变通方法：输出 PDF，Illustrator 可以直接打开 PDF 并编辑。</li>
+                            <li><strong>PPT/PPTX → PDF（保持排版）</strong>：需要服务器端专业渲染引擎，本地浏览器无法完美还原幻灯片。建议用 PowerPoint 自带的"另存为 PDF"功能。</li>
+                            <li><strong>PDF → Word（可编辑，保留排版）</strong>：布局还原在浏览器中极难实现。本工具提供 PDF → 文本和 PDF → Excel（按行提取），适合提纯文本内容。</li>
+                        </ul>
+                        <p style="margin-top:10px"><strong>中文字符：</strong>所有转换（包括 Excel→PDF、文本→PDF）都通过 Canvas 绘制，完美支持中文。</p>
+                    </div>
+                </section>
+            </div>
+
             <!-- 客户管理页面 -->
             <div id="page-customers" class="page">
                 <div class="page-header">
@@ -1492,6 +2390,213 @@ body {
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- 物料表单弹窗 -->
+    <div class="modal" id="material-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3 id="mat-modal-title">新增物料</h3>
+                <button class="modal-close" id="material-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>关联订单号</label>
+                        <input type="text" id="mat-order-num" placeholder="PO260324001">
+                    </div>
+                    <div class="form-group">
+                        <label>物料类别</label>
+                        <select id="mat-category"></select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>物料名称 *</label>
+                        <input type="text" id="mat-name" placeholder="例：全棉府绸">
+                    </div>
+                    <div class="form-group">
+                        <label>颜色/色号</label>
+                        <input type="text" id="mat-color" placeholder="例：藏青色 #19202">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>供应商</label>
+                        <input type="text" id="mat-supplier" placeholder="供应商名称">
+                    </div>
+                    <div class="form-group">
+                        <label>状态</label>
+                        <select id="mat-mat-status">
+                            <option value="pending">待下单</option>
+                            <option value="ordered">已下单</option>
+                            <option value="in_transit">运输中</option>
+                            <option value="arrived">已到货</option>
+                            <option value="qc_pass">质检通过</option>
+                            <option value="qc_fail">质检不合格</option>
+                            <option value="in_use">已投产</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>数量</label>
+                        <input type="number" id="mat-mat-quantity" min="0" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label>单位</label>
+                        <input type="text" id="mat-unit" placeholder="米/条/颗/套">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>单价</label>
+                        <input type="number" id="mat-mat-price" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>下单日期</label>
+                        <input type="date" id="mat-order-date">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>预计到货日期</label>
+                        <input type="date" id="mat-expected-date">
+                    </div>
+                    <div class="form-group">
+                        <label>实际到货日期</label>
+                        <input type="date" id="mat-actual-date">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top:8px">
+                    <label>备注</label>
+                    <input type="text" id="mat-remark" placeholder="其他备注" style="width:100%">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="btn-cancel-material">取消</button>
+                <button class="btn btn-primary" id="btn-save-material">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 计划编辑弹窗 -->
+    <div class="modal" id="plan-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3 id="plan-modal-title">编辑计划</h3>
+                <button class="modal-close" id="plan-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="overflow-x:auto">
+                    <table class="data-table" style="font-size:13px">
+                        <thead>
+                            <tr>
+                                <th>阶段</th>
+                                <th>开始日期</th>
+                                <th>结束日期</th>
+                                <th>进度</th>
+                                <th>备注</th>
+                            </tr>
+                        </thead>
+                        <tbody id="plan-phases-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="btn-cancel-plan">取消</button>
+                <button class="btn btn-primary" id="btn-save-plan">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 订单表单弹窗 -->
+    <div class="modal" id="order-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3 id="order-modal-title">新建订单</h3>
+                <button class="modal-close" id="order-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>订单号</label>
+                        <input type="text" id="ord-number" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>下单日期</label>
+                        <input type="date" id="ord-date">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>客户名称</label>
+                        <input type="text" id="ord-customer" placeholder="客户/买家名称">
+                    </div>
+                    <div class="form-group">
+                        <label>款式名称</label>
+                        <input type="text" id="ord-style" placeholder="款号/款式">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>数量 (件)</label>
+                        <input type="number" id="ord-quantity" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>单价 (USD)</label>
+                        <input type="number" id="ord-unit-price" min="0" step="0.01">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>交货日期</label>
+                        <input type="date" id="ord-deadline">
+                    </div>
+                    <div class="form-group">
+                        <label>当前状态</label>
+                        <select id="ord-status">
+                            <option value="confirmed">已确认</option>
+                            <option value="cutting">裁剪中</option>
+                            <option value="sewing">缝制中</option>
+                            <option value="qc">质检中</option>
+                            <option value="packing">包装中</option>
+                            <option value="shipped">已出货</option>
+                            <option value="delivered">已签收</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>买家/品牌</label>
+                        <input type="text" id="ord-buyer" placeholder="最终买家名称">
+                    </div>
+                    <div class="form-group">
+                        <label>目的地</label>
+                        <input type="text" id="ord-destination" placeholder="出口目的国/港口">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>付款条件</label>
+                        <input type="text" id="ord-payment" placeholder="例: T/T 30% deposit, 70% before shipment">
+                    </div>
+                    <div class="form-group">
+                        <label>备注</label>
+                        <input type="text" id="ord-remark" placeholder="其他备注">
+                    </div>
+                </div>
+                <!-- 状态时间线 -->
+                <div class="order-timeline-section">
+                    <h4 style="font-size:14px;margin-bottom:12px;color:var(--text-secondary)">生产进度时间线</h4>
+                    <div class="order-timeline" id="order-timeline"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="btn-cancel-order">取消</button>
+                <button class="btn btn-primary" id="btn-save-order">保存</button>
+            </div>
+        </div>
     </div>
 
     <!-- 客户表单弹窗 -->
@@ -1549,5 +2654,13 @@ body {
 
     <script src="app.js"></script>
     <script src="compare.js"></script>
+    <script src="orders.js"></script>
+    <script src="materials.js"></script>
+    <script src="timeline.js"></script>
+    <script src="packing.js"></script>
+    <script src="sizechart.js"></script>
+    <script src="fabric.js"></script>
+    <script src="xlssearch.js"></script>
+    <script src="convert.js"></script>
 </body>
 </html>
