@@ -38,7 +38,7 @@
             { key: 'pdf-to-png', label: 'PDF → PNG 图片（每页一张）', out: 'png' },
             { key: 'pdf-to-jpg', label: 'PDF → JPG 图片（每页一张）', out: 'jpg' },
             { key: 'pdf-to-txt', label: 'PDF → 文本 (.txt)', out: 'txt' },
-            { key: 'pdf-to-excel', label: 'PDF → Excel（按行提取文本）', out: 'xlsx' },
+            { key: 'pdf-to-excel', label: 'PDF → Excel（智能列对齐）', out: 'xlsx' },
         ],
         excel: [
             { key: 'excel-to-csv', label: 'Excel → CSV', out: 'csv' },
@@ -363,24 +363,138 @@
         for (let i = 1; i <= pdf.numPages; i++) {
             setProgress(Math.round((i / pdf.numPages) * 90));
             const page = await pdf.getPage(i);
+            const viewport = page.getViewport({ scale: 1 });
             const tc = await page.getTextContent();
-            // 按 Y 坐标分组，同一行内按 X 排序作为列
-            const items = tc.items.map(it => ({ str: it.str, x: it.transform[4], y: Math.round(it.transform[5]) }));
-            items.sort((a, b) => b.y - a.y || a.x - b.x);
-            const rows = [];
-            let curY = null, curRow = [];
+
+            // 过滤空白文本，保留位置信息
+            const items = tc.items
+                .filter(it => it.str && it.str.trim())
+                .map(it => ({
+                    str: it.str.trim(),
+                    x: it.transform[4],
+                    y: it.transform[5],
+                    width: it.width || 0,
+                    // 字体大小：transform[3] 是 y 方向缩放，通常等于字号
+                    height: Math.abs(it.transform[3]) || it.height || 10,
+                }));
+
+            if (items.length === 0) {
+                const emptySheet = XLSX.utils.aoa_to_sheet([['(本页无文本)']]);
+                XLSX.utils.book_append_sheet(wb, emptySheet, `第${i}页`.substring(0, 31));
+                continue;
+            }
+
+            // 估算字号和字符宽度
+            const avgHeight = items.reduce((s, it) => s + it.height, 0) / items.length;
+            const charWidthSamples = items
+                .filter(it => it.str.length > 1 && it.width > 0)
+                .map(it => it.width / it.str.length);
+            const avgCharWidth = charWidthSamples.length > 0
+                ? charWidthSamples.reduce((a, b) => a + b, 0) / charWidthSamples.length
+                : avgHeight * 0.5;
+
+            // 行容差：约半个字高。列容差：取字符宽度和页宽的综合
+            const yTol = Math.max(avgHeight * 0.6, 3);
+            const xTol = Math.max(avgCharWidth * 2.5, viewport.width * 0.012, 6);
+
+            // ---- 按 Y 坐标分组成行（PDF 坐标系 Y 从下往上增大）----
+            items.sort((a, b) => b.y - a.y);
+            const rowGroups = [];
+            let currentRow = null;
             items.forEach(it => {
-                if (curY == null || Math.abs(it.y - curY) > 5) {
-                    if (curRow.length) rows.push(curRow);
-                    curRow = [it.str];
-                    curY = it.y;
+                if (!currentRow || Math.abs(it.y - currentRow.baseY) > yTol) {
+                    currentRow = { baseY: it.y, items: [it] };
+                    rowGroups.push(currentRow);
                 } else {
-                    curRow.push(it.str);
+                    currentRow.items.push(it);
                 }
             });
-            if (curRow.length) rows.push(curRow);
-            if (rows.length === 0) rows.push(['(本页无文本)']);
-            const sheet = XLSX.utils.aoa_to_sheet(rows);
+
+            // 每行按 X 升序
+            rowGroups.forEach(row => row.items.sort((a, b) => a.x - b.x));
+
+            // ---- 检测列位置：对所有 X 坐标聚类 ----
+            // 锚定在簇首，避免连锁漂移
+            const allX = [];
+            rowGroups.forEach(row => row.items.forEach(it => allX.push(it.x)));
+            allX.sort((a, b) => a - b);
+
+            const columns = [];
+            let clusterAnchor = null;
+            allX.forEach(x => {
+                if (clusterAnchor === null || x - clusterAnchor > xTol) {
+                    columns.push(x);
+                    clusterAnchor = x;
+                }
+            });
+
+            // ---- 优化：用每个簇内所有点的中位数作为列代表 X（更稳健）----
+            const colRepX = columns.map((startX, ci) => {
+                const nextStartX = columns[ci + 1] != null ? columns[ci + 1] : Infinity;
+                const xsInCol = allX.filter(x => x >= startX && x < nextStartX);
+                if (xsInCol.length === 0) return startX;
+                xsInCol.sort((a, b) => a - b);
+                return xsInCol[Math.floor(xsInCol.length / 2)];
+            });
+
+            // ---- 查找 X 最接近的列 ----
+            function findColumn(x) {
+                let bestIdx = 0;
+                let bestDist = Math.abs(x - colRepX[0]);
+                for (let c = 1; c < colRepX.length; c++) {
+                    const d = Math.abs(x - colRepX[c]);
+                    if (d < bestDist) { bestDist = d; bestIdx = c; }
+                }
+                return bestIdx;
+            }
+
+            // ---- 构建网格 ----
+            const grid = rowGroups.map(row => {
+                const rowData = new Array(colRepX.length).fill('');
+                row.items.forEach(it => {
+                    const colIdx = findColumn(it.x);
+                    // 同列多个文本段：用空格拼接
+                    if (rowData[colIdx]) {
+                        rowData[colIdx] += ' ' + it.str;
+                    } else {
+                        rowData[colIdx] = it.str;
+                    }
+                });
+                return rowData;
+            });
+
+            // ---- 删除完全空的尾列（噪声）----
+            while (grid.length > 0 && grid[0].length > 0) {
+                const lastCol = grid[0].length - 1;
+                const allEmpty = grid.every(row => !row[lastCol]);
+                if (allEmpty) {
+                    grid.forEach(row => row.pop());
+                    colRepX.pop();
+                } else break;
+            }
+
+            if (grid.length === 0 || grid[0].length === 0) {
+                const emptySheet = XLSX.utils.aoa_to_sheet([['(本页无有效文本)']]);
+                XLSX.utils.book_append_sheet(wb, emptySheet, `第${i}页`.substring(0, 31));
+                continue;
+            }
+
+            const sheet = XLSX.utils.aoa_to_sheet(grid);
+
+            // ---- 根据内容自动设置列宽 ----
+            const colWidths = colRepX.map((_, ci) => {
+                let maxLen = 6;
+                grid.forEach(row => {
+                    const v = row[ci] || '';
+                    // 中文字符按 2 计算宽度
+                    let w = 0;
+                    for (const ch of v) w += /[\u4e00-\u9fa5\uff00-\uffef]/.test(ch) ? 2 : 1;
+                    if (w > maxLen) maxLen = w;
+                });
+                return { wch: Math.min(maxLen + 2, 50) };
+            });
+            sheet['!cols'] = colWidths;
+
             XLSX.utils.book_append_sheet(wb, sheet, `第${i}页`.substring(0, 31));
         }
         const out = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
