@@ -76,26 +76,42 @@
     }
 
     // ---- 页面导航 ----
+    function gotoPage(page) {
+        const navItem = document.querySelector(`.nav-item[data-page="${page}"]`);
+        $$('.nav-item').forEach(n => n.classList.remove('active'));
+        if (navItem) navItem.classList.add('active');
+        $$('.page').forEach(p => p.classList.remove('active'));
+        const pageEl = $(`#page-${page}`);
+        if (pageEl) pageEl.classList.add('active');
+
+        if (page === 'history') renderHistory();
+        if (page === 'customers') renderCustomers();
+        if (page === 'orders' && window.initOrdersPage) window.initOrdersPage();
+        if (page === 'materials' && window.initMaterialsPage) window.initMaterialsPage();
+        if (page === 'timeline' && window.initTimelinePage) window.initTimelinePage();
+        if (page === 'packing' && window.initPackingPage) window.initPackingPage();
+        if (page === 'sizechart' && window.initSizeChartPage) window.initSizeChartPage();
+        if (page === 'fabric' && window.initFabricPage) window.initFabricPage();
+        if (page === 'xlssearch' && window.initXlsSearchPage) window.initXlsSearchPage();
+        if (page === 'convert' && window.initConverterPage) window.initConverterPage();
+        window.scrollTo(0, 0);
+    }
+    window.gotoPage = gotoPage;
+
     function initNav() {
         $$('.nav-item').forEach(item => {
             item.addEventListener('click', () => {
-                $$('.nav-item').forEach(n => n.classList.remove('active'));
-                item.classList.add('active');
                 const page = item.dataset.page;
-                $$('.page').forEach(p => p.classList.remove('active'));
-                $(`#page-${page}`).classList.add('active');
-
-                if (page === 'history') renderHistory();
-                if (page === 'customers') renderCustomers();
-                if (page === 'orders' && window.initOrdersPage) window.initOrdersPage();
-                if (page === 'materials' && window.initMaterialsPage) window.initMaterialsPage();
-                if (page === 'timeline' && window.initTimelinePage) window.initTimelinePage();
-                if (page === 'packing' && window.initPackingPage) window.initPackingPage();
-                if (page === 'sizechart' && window.initSizeChartPage) window.initSizeChartPage();
-                if (page === 'fabric' && window.initFabricPage) window.initFabricPage();
-                if (page === 'xlssearch' && window.initXlsSearchPage) window.initXlsSearchPage();
-                if (page === 'convert' && window.initConverterPage) window.initConverterPage();
+                if (page) gotoPage(page);
             });
+        });
+
+        // 首页卡片 / CTA 按钮跳转
+        document.addEventListener('click', (e) => {
+            const trigger = e.target.closest('[data-goto-page]');
+            if (!trigger) return;
+            e.preventDefault();
+            gotoPage(trigger.dataset.gotoPage);
         });
     }
 
