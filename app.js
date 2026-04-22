@@ -83,6 +83,7 @@
         $$('.page').forEach(p => p.classList.remove('active'));
         const pageEl = $(`#page-${page}`);
         if (pageEl) pageEl.classList.add('active');
+        document.body.classList.toggle('on-home', page === 'home');
 
         if (page === 'history') renderHistory();
         if (page === 'customers') renderCustomers();
@@ -699,5 +700,9 @@
     // ---- 初始化 ----
     initNav();
     initQuotation();
+    // 默认首页激活：同步 body 类
+    if (document.querySelector('#page-home.active')) {
+        document.body.classList.add('on-home');
+    }
 
 })();
