@@ -10,11 +10,11 @@
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    // 网格分辨率
-    const COLS = 14;
-    const ROWS = 30;
+    // 网格分辨率 (高密度，肉眼看不出网格)
+    const COLS = 26;
+    const ROWS = 56;
     // 约束迭代次数（越多越"硬"）
-    const ITER = 4;
+    const ITER = 3;
     // 画卷相对布料容器的比例
     const WIDTH_RATIO = 0.72;   // 宽度占容器的 72%
     const HANG_TOP = 34;        // 顶部离容器顶
@@ -183,6 +183,12 @@
         ctx.restore();
 
         // 绘制面料网格 - 每个四边形独立着色 (模拟光照)
+        // 先 fill 再 stroke 同色，用 lineWidth 消除四边形之间的接缝
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = 1.2;
+        const restArea = cellW * cellH;
+        const baseR = 168, baseG = 22, baseB = 38;
+
         for (let r = 0; r < ROWS - 1; r++) {
             for (let c = 0; c < COLS - 1; c++) {
                 const p1 = points[r * COLS + c];
@@ -196,31 +202,27 @@
                 ) / 2 + Math.abs(
                     (p3.x - p1.x) * (p4.y - p1.y) - (p4.x - p1.x) * (p3.y - p1.y)
                 ) / 2;
-                const restArea = cellW * cellH;
                 const stretch = area / restArea;
 
                 // 法向估算 (模拟打褶时面向光源的角度)
                 const nx = (p3.x - p1.x);
-                const ny = (p3.y - p1.y);
-                const nLen = Math.hypot(nx, ny) || 1;
-                const tilt = Math.abs(nx / nLen); // 0=竖直 1=水平
+                const nLen = Math.hypot(nx, (p3.y - p1.y)) || 1;
+                const tilt = Math.abs(nx / nLen);
 
-                // 基础血红色 -> 褶皱处变深
                 // 光源假设在左上方
                 const lightX = (p1.x - startX) / clothW;
                 const lightFactor = 0.55 + (1 - lightX) * 0.25;
 
                 const bright = Math.max(0.35, Math.min(1.15, stretch)) * lightFactor;
-                const tiltShade = 1 - tilt * 0.2;
-                const finalBright = bright * tiltShade;
+                const finalBright = bright * (1 - tilt * 0.2);
 
-                // 深酒红 -> 血红
-                const baseR = 168, baseG = 22, baseB = 38;
                 const rr = Math.min(255, Math.floor(baseR * finalBright + 10));
                 const gg = Math.max(0, Math.floor(baseG * finalBright));
                 const bb = Math.max(0, Math.floor(baseB * finalBright));
 
-                ctx.fillStyle = `rgb(${rr},${gg},${bb})`;
+                const col = `rgb(${rr},${gg},${bb})`;
+                ctx.fillStyle = col;
+                ctx.strokeStyle = col;
                 ctx.beginPath();
                 ctx.moveTo(p1.x, p1.y);
                 ctx.lineTo(p2.x, p2.y);
@@ -228,6 +230,7 @@
                 ctx.lineTo(p4.x, p4.y);
                 ctx.closePath();
                 ctx.fill();
+                ctx.stroke();
             }
         }
 
@@ -253,12 +256,13 @@
         ctx.stroke();
         ctx.restore();
 
-        // 中轴暗色直纹 (丝绸织纹)
+        // 中轴暗色直纹 (丝绸织纹) - 密度适配高分辨率
         ctx.save();
-        ctx.globalAlpha = 0.14;
+        ctx.globalAlpha = 0.11;
         ctx.strokeStyle = '#000';
         ctx.lineWidth = 1;
-        for (let c = 2; c < COLS - 1; c += 2) {
+        const stripeStep = 4;
+        for (let c = stripeStep; c < COLS - 1; c += stripeStep) {
             ctx.beginPath();
             for (let r = 0; r < ROWS; r++) {
                 const p = points[r * COLS + c];
@@ -269,56 +273,25 @@
         }
         ctx.restore();
 
-        // 流苏
+        // 流苏 - 每隔两列画一根，避免太密
         ctx.save();
-        for (let c = 0; c < COLS; c++) {
+        const tStep = 2;
+        for (let c = 0; c < COLS; c += tStep) {
             const p = points[(ROWS - 1) * COLS + c];
             const prev = c > 0 ? points[(ROWS - 1) * COLS + c - 1] : p;
             const angle = Math.atan2(p.y - prev.y, p.x - prev.x);
-            // 每根流苏的长度略随机 (基于列)
-            const len = 14 + ((c * 7) % 6);
+            const len = 16 + ((c * 7) % 7);
             ctx.strokeStyle = '#c8102e';
             ctx.lineWidth = 1;
             ctx.globalAlpha = 0.85;
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
-            // 流苏受重力往下，略微受上方摆动影响
             const swing = (p.x - p.px) * 4;
             ctx.lineTo(p.x + swing * 0.3 - Math.sin(angle) * 2, p.y + len);
             ctx.stroke();
         }
         ctx.restore();
 
-        // 红色印章 - 底部中央
-        drawSeal();
-    }
-
-    function drawSeal() {
-        // 计算印章位置：底部 1/6 处的中列
-        const sealRow = Math.floor(ROWS * 0.78);
-        const sealCol = Math.floor(COLS / 2);
-        const p = points[sealRow * COLS + sealCol];
-        const size = cellW * 1.8;
-
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        // 跟随布料倾斜
-        const leftP = points[sealRow * COLS + sealCol - 1] || p;
-        const rightP = points[sealRow * COLS + sealCol + 1] || p;
-        const ang = Math.atan2(rightP.y - leftP.y, rightP.x - leftP.x);
-        ctx.rotate(ang);
-
-        ctx.fillStyle = 'rgba(225, 30, 43, 0.88)';
-        ctx.strokeStyle = 'rgba(245,243,238,0.85)';
-        ctx.lineWidth = 1;
-        ctx.fillRect(-size / 2, -size / 2, size, size);
-        ctx.strokeRect(-size / 2 + 2, -size / 2 + 2, size - 4, size - 4);
-        ctx.fillStyle = '#f5f3ee';
-        ctx.font = `${Math.floor(size * 0.4)}px "Songti SC", "SimSun", serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('朔', 0, 0);
-        ctx.restore();
     }
 
     function draw() {
