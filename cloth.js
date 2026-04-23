@@ -1,6 +1,7 @@
 // ============================================================
-// 悬挂面料画卷 · Verlet 物理布料
-// A hanging silk scroll with mouse-draggable verlet cloth physics.
+// 悬挂面料画卷 · Verlet 物理布料 (性能优化版)
+// Rendering: vertical strips (~22 draw calls per frame, no filter blur)
+// Physics:   verlet + 2 iterations, grid 22×46
 // ============================================================
 
 (function () {
@@ -8,311 +9,308 @@
 
     const canvas = document.getElementById('cloth-canvas');
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
 
-    // 网格分辨率 (高密度，肉眼看不出网格)
-    const COLS = 26;
-    const ROWS = 56;
-    // 约束迭代次数（越多越"硬"）
-    const ITER = 3;
-    // 画卷相对布料容器的比例
-    const WIDTH_RATIO = 0.72;   // 宽度占容器的 72%
-    const HANG_TOP = 34;        // 顶部离容器顶
-    const BOTTOM_PAD = 60;      // 底部留白给流苏
+    // 网格
+    const COLS = 22;
+    const ROWS = 46;
+    const ITER = 2;
+
+    const WIDTH_RATIO = 0.72;
+    const HANG_TOP = 30;
+    const BOTTOM_PAD = 48;
     const GRAVITY = 0.42;
     const DAMPING = 0.985;
     const MOUSE_RADIUS = 70;
-    const MOUSE_STRENGTH = 0.9;
 
-    const points = [];
-    const sticks = [];
+    // 预计算的 32 级调色板 (深酒红 → 血红高光)
+    const PAL_SIZE = 32;
+    const PALETTE = new Array(PAL_SIZE);
+    (function buildPalette() {
+        const baseR = 168, baseG = 22, baseB = 38;
+        for (let i = 0; i < PAL_SIZE; i++) {
+            const t = i / (PAL_SIZE - 1);
+            // 0.4 (深褶) → 1.2 (高光)
+            const bright = 0.4 + t * 0.8;
+            const rr = Math.min(255, (baseR * bright + 8) | 0);
+            const gg = Math.max(0, (baseG * bright) | 0);
+            const bb = Math.max(0, (baseB * bright) | 0);
+            PALETTE[i] = `rgb(${rr},${gg},${bb})`;
+        }
+    })();
+
+    // 质点结构: 扁平 TypedArray 比对象数组快
+    let px, py, ppx, ppy, pinned;
+    let NUM = 0;
+    // 约束：用 Int32Array + Float32Array 替代 {a,b,len}
+    let stickA, stickB, stickLen;
+    let NUM_STICKS = 0;
 
     let W = 0, H = 0, DPR = 1;
     let clothW = 0, clothH = 0;
     let startX = 0, cellW = 0, cellH = 0;
     let rodY = 0;
 
-    const mouse = { x: -9999, y: -9999, px: -9999, py: -9999, down: false, grabbed: null, over: false };
-    let idleTime = 0;
+    const mouse = { x: -9999, y: -9999, px: -9999, py: -9999, down: false, grabbed: -1, over: false };
 
     function resize() {
         const rect = canvas.getBoundingClientRect();
         if (rect.width < 10 || rect.height < 10) return;
-        DPR = Math.min(window.devicePixelRatio || 1, 2);
+        // DPR 只取 1，性能优先
+        DPR = 1;
         canvas.width = Math.round(rect.width * DPR);
         canvas.height = Math.round(rect.height * DPR);
         ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
         W = rect.width;
         H = rect.height;
 
-        clothW = Math.min(W * WIDTH_RATIO, 320);
+        clothW = Math.min(W * WIDTH_RATIO, 300);
         clothH = H - HANG_TOP - BOTTOM_PAD;
         cellW = clothW / (COLS - 1);
         cellH = clothH / (ROWS - 1);
-        startX = W - clothW - 28;
+        startX = W - clothW - 24;
         rodY = HANG_TOP;
 
         rebuild();
     }
 
     function rebuild() {
-        points.length = 0;
-        sticks.length = 0;
-        for (let r = 0; r < ROWS; r++) {
-            for (let c = 0; c < COLS; c++) {
-                const x = startX + c * cellW;
-                const y = rodY + r * cellH;
-                points.push({
-                    x, y,
-                    px: x, py: y,
-                    pinned: r === 0,
-                });
-            }
-        }
-        // 约束
+        NUM = COLS * ROWS;
+        px = new Float32Array(NUM);
+        py = new Float32Array(NUM);
+        ppx = new Float32Array(NUM);
+        ppy = new Float32Array(NUM);
+        pinned = new Uint8Array(NUM);
         for (let r = 0; r < ROWS; r++) {
             for (let c = 0; c < COLS; c++) {
                 const i = r * COLS + c;
-                if (c < COLS - 1) sticks.push({ a: i, b: i + 1, len: cellW });
-                if (r < ROWS - 1) sticks.push({ a: i, b: i + COLS, len: cellH });
+                const x = startX + c * cellW;
+                const y = rodY + r * cellH;
+                px[i] = x; py[i] = y;
+                ppx[i] = x; ppy[i] = y;
+                pinned[i] = r === 0 ? 1 : 0;
+            }
+        }
+        const sHoriz = (COLS - 1) * ROWS;
+        const sVert  = COLS * (ROWS - 1);
+        NUM_STICKS = sHoriz + sVert;
+        stickA = new Int32Array(NUM_STICKS);
+        stickB = new Int32Array(NUM_STICKS);
+        stickLen = new Float32Array(NUM_STICKS);
+        let k = 0;
+        for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+                const i = r * COLS + c;
+                if (c < COLS - 1) { stickA[k] = i; stickB[k] = i + 1; stickLen[k++] = cellW; }
+                if (r < ROWS - 1) { stickA[k] = i; stickB[k] = i + COLS; stickLen[k++] = cellH; }
             }
         }
     }
 
     function physics() {
-        // verlet 积分
-        for (let i = 0; i < points.length; i++) {
-            const p = points[i];
-            if (p.pinned) continue;
-            const vx = (p.x - p.px) * DAMPING;
-            const vy = (p.y - p.py) * DAMPING;
-            p.px = p.x;
-            p.py = p.y;
-            p.x += vx;
-            p.y += vy + GRAVITY;
+        // Verlet
+        for (let i = 0; i < NUM; i++) {
+            if (pinned[i]) continue;
+            const ox = px[i], oy = py[i];
+            const vx = (ox - ppx[i]) * DAMPING;
+            const vy = (oy - ppy[i]) * DAMPING;
+            ppx[i] = ox; ppy[i] = oy;
+            px[i] = ox + vx;
+            py[i] = oy + vy + GRAVITY;
         }
 
-        // 鼠标吸引/抓取
+        // 鼠标
         if (mouse.over) {
-            if (mouse.down && mouse.grabbed) {
+            if (mouse.down && mouse.grabbed >= 0) {
                 const g = mouse.grabbed;
-                g.x = mouse.x;
-                g.y = mouse.y;
-                g.px = mouse.x - (mouse.x - mouse.px) * 0.6;
-                g.py = mouse.y - (mouse.y - mouse.py) * 0.6;
+                px[g] = mouse.x;
+                py[g] = mouse.y;
+                ppx[g] = mouse.x - (mouse.x - mouse.px) * 0.6;
+                ppy[g] = mouse.y - (mouse.y - mouse.py) * 0.6;
             } else {
-                // 轻微拂动：鼠标附近施力
-                const force = (mouse.x - mouse.px) * 0.6;
-                const liftY = (mouse.y - mouse.py) * 0.3;
-                for (let i = 0; i < points.length; i++) {
-                    const p = points[i];
-                    if (p.pinned) continue;
-                    const dx = p.x - mouse.x;
-                    const dy = p.y - mouse.y;
-                    const d = Math.hypot(dx, dy);
-                    if (d < MOUSE_RADIUS) {
-                        const f = (1 - d / MOUSE_RADIUS) * 0.4;
-                        p.x += force * f;
-                        p.y += liftY * f;
+                const mx = mouse.x, my = mouse.y;
+                const fx = (mx - mouse.px) * 0.55;
+                const fy = (my - mouse.py) * 0.28;
+                const r2 = MOUSE_RADIUS * MOUSE_RADIUS;
+                for (let i = 0; i < NUM; i++) {
+                    if (pinned[i]) continue;
+                    const dx = px[i] - mx;
+                    const dy = py[i] - my;
+                    const d2 = dx * dx + dy * dy;
+                    if (d2 < r2) {
+                        const f = (1 - Math.sqrt(d2) / MOUSE_RADIUS) * 0.4;
+                        px[i] += fx * f;
+                        py[i] += fy * f;
                     }
                 }
             }
         }
 
-        // 约束迭代
-        for (let iter = 0; iter < ITER; iter++) {
-            for (let i = 0; i < sticks.length; i++) {
-                const s = sticks[i];
-                const a = points[s.a];
-                const b = points[s.b];
-                const dx = b.x - a.x;
-                const dy = b.y - a.y;
+        // 约束
+        for (let it = 0; it < ITER; it++) {
+            for (let k = 0; k < NUM_STICKS; k++) {
+                const a = stickA[k], b = stickB[k];
+                const dx = px[b] - px[a];
+                const dy = py[b] - py[a];
                 const d = Math.sqrt(dx * dx + dy * dy) || 0.0001;
-                const diff = (s.len - d) / d * 0.5;
-                const ox = dx * diff;
-                const oy = dy * diff;
-                if (!a.pinned) { a.x -= ox; a.y -= oy; }
-                if (!b.pinned) { b.x += ox; b.y += oy; }
+                const diff = (stickLen[k] - d) / d * 0.5;
+                const ox = dx * diff, oy = dy * diff;
+                if (!pinned[a]) { px[a] -= ox; py[a] -= oy; }
+                if (!pinned[b]) { px[b] += ox; py[b] += oy; }
             }
         }
 
-        // 记录上一帧鼠标
         mouse.px = mouse.x;
         mouse.py = mouse.y;
     }
 
     function drawRod() {
-        const pL = points[0];
-        const pR = points[COLS - 1];
-        // 木杆阴影
-        ctx.save();
-        ctx.fillStyle = '#1a1412';
-        ctx.fillRect(pL.x - 14, pL.y - 5, (pR.x - pL.x) + 28, 4);
-        // 杆身 (深棕黑)
-        const grad = ctx.createLinearGradient(0, pL.y - 8, 0, pL.y + 4);
+        const iL = 0, iR = COLS - 1;
+        const lx = px[iL], ly = py[iL];
+        const rx = px[iR], ry = py[iR];
+
+        // 木杆
+        const grad = ctx.createLinearGradient(0, ly - 8, 0, ly + 4);
         grad.addColorStop(0, '#3a2a24');
         grad.addColorStop(0.5, '#141010');
         grad.addColorStop(1, '#0a0606');
         ctx.fillStyle = grad;
-        ctx.fillRect(pL.x - 16, pL.y - 8, (pR.x - pL.x) + 32, 5);
-        // 两端球头
+        ctx.fillRect(lx - 16, ly - 8, (rx - lx) + 32, 5);
+        // 两端红球头
         ctx.fillStyle = '#c8102e';
         ctx.beginPath();
-        ctx.arc(pL.x - 16, pL.y - 5.5, 4, 0, Math.PI * 2);
-        ctx.arc(pR.x + 16, pR.y - 5.5, 4, 0, Math.PI * 2);
+        ctx.arc(lx - 16, ly - 5.5, 4, 0, Math.PI * 2);
+        ctx.arc(rx + 16, ly - 5.5, 4, 0, Math.PI * 2);
         ctx.fill();
-        ctx.restore();
     }
 
     function drawCloth() {
-        // 先画整体阴影投射
-        ctx.save();
-        ctx.globalAlpha = 0.35;
-        ctx.fillStyle = '#000';
-        ctx.beginPath();
-        const firstRow = points[(ROWS - 1) * COLS];
-        ctx.moveTo(points[0].x + 8, points[0].y + 8);
-        for (let c = 1; c < COLS; c++) ctx.lineTo(points[c].x + 8, points[c].y + 8);
-        for (let r = 1; r < ROWS; r++) ctx.lineTo(points[r * COLS + COLS - 1].x + 8, points[r * COLS + COLS - 1].y + 8);
-        for (let c = COLS - 2; c >= 0; c--) ctx.lineTo(points[(ROWS - 1) * COLS + c].x + 8, points[(ROWS - 1) * COLS + c].y + 8);
-        for (let r = ROWS - 2; r > 0; r--) ctx.lineTo(points[r * COLS].x + 8, points[r * COLS].y + 8);
-        ctx.closePath();
-        ctx.filter = 'blur(6px)';
-        ctx.fill();
-        ctx.filter = 'none';
-        ctx.restore();
-
-        // 绘制面料网格 - 每个四边形独立着色 (模拟光照)
-        // 先 fill 再 stroke 同色，用 lineWidth 消除四边形之间的接缝
-        ctx.lineJoin = 'round';
-        ctx.lineWidth = 1.2;
-        const restArea = cellW * cellH;
-        const baseR = 168, baseG = 22, baseB = 38;
-
-        for (let r = 0; r < ROWS - 1; r++) {
-            for (let c = 0; c < COLS - 1; c++) {
-                const p1 = points[r * COLS + c];
-                const p2 = points[r * COLS + c + 1];
-                const p3 = points[(r + 1) * COLS + c + 1];
-                const p4 = points[(r + 1) * COLS + c];
-
-                // 面积 -> 拉伸/压缩 -> 明暗
-                const area = Math.abs(
-                    (p2.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p2.y - p1.y)
-                ) / 2 + Math.abs(
-                    (p3.x - p1.x) * (p4.y - p1.y) - (p4.x - p1.x) * (p3.y - p1.y)
-                ) / 2;
-                const stretch = area / restArea;
-
-                // 法向估算 (模拟打褶时面向光源的角度)
-                const nx = (p3.x - p1.x);
-                const nLen = Math.hypot(nx, (p3.y - p1.y)) || 1;
-                const tilt = Math.abs(nx / nLen);
-
-                // 光源假设在左上方
-                const lightX = (p1.x - startX) / clothW;
-                const lightFactor = 0.55 + (1 - lightX) * 0.25;
-
-                const bright = Math.max(0.35, Math.min(1.15, stretch)) * lightFactor;
-                const finalBright = bright * (1 - tilt * 0.2);
-
-                const rr = Math.min(255, Math.floor(baseR * finalBright + 10));
-                const gg = Math.max(0, Math.floor(baseG * finalBright));
-                const bb = Math.max(0, Math.floor(baseB * finalBright));
-
-                const col = `rgb(${rr},${gg},${bb})`;
-                ctx.fillStyle = col;
-                ctx.strokeStyle = col;
-                ctx.beginPath();
-                ctx.moveTo(p1.x, p1.y);
-                ctx.lineTo(p2.x, p2.y);
-                ctx.lineTo(p3.x, p3.y);
-                ctx.lineTo(p4.x, p4.y);
-                ctx.closePath();
-                ctx.fill();
-                ctx.stroke();
+        // 一次性绘制 COLS-1 个垂直条带
+        // 每条带的明暗来自：局部水平宽度（折叠=暗，拉伸=亮）+ 左上光源
+        for (let c = 0; c < COLS - 1; c++) {
+            // 采样中间几行估算宽度（避免循环全部行）
+            let sumW = 0;
+            const sampleN = 5;
+            for (let s = 0; s < sampleN; s++) {
+                const r = ((ROWS - 1) * (s + 1) / (sampleN + 1)) | 0;
+                const i1 = r * COLS + c;
+                const i2 = i1 + 1;
+                const dx = px[i2] - px[i1];
+                const dy = py[i2] - py[i1];
+                sumW += Math.sqrt(dx * dx + dy * dy);
             }
-        }
+            const avgW = sumW / sampleN;
+            const ratio = avgW / cellW;
+            // 左上光源: 左边 (c 小) 亮，右边暗
+            const lightT = 1 - (c / (COLS - 2));
+            const light = 0.6 + lightT * 0.35;
+            let bright = Math.max(0.3, Math.min(1.3, ratio)) * light;
+            // 映射到 palette 索引
+            let idx = ((bright - 0.4) / 0.8 * (PAL_SIZE - 1)) | 0;
+            if (idx < 0) idx = 0;
+            else if (idx >= PAL_SIZE) idx = PAL_SIZE - 1;
 
-        // 顶部/底部暗边 (画卷天地边)
-        ctx.save();
-        ctx.strokeStyle = 'rgba(0,0,0,0.45)';
-        ctx.lineWidth = 2;
-        // 顶部窄边
-        ctx.beginPath();
-        for (let c = 0; c < COLS; c++) {
-            const p = points[c];
-            if (c === 0) ctx.moveTo(p.x, p.y + 2);
-            else ctx.lineTo(p.x, p.y + 2);
+            ctx.fillStyle = PALETTE[idx];
+            ctx.beginPath();
+            // 左列 top → bottom
+            let i = c;
+            ctx.moveTo(px[i], py[i]);
+            for (let r = 1; r < ROWS; r++) {
+                i += COLS;
+                ctx.lineTo(px[i], py[i]);
+            }
+            // 右列 bottom → top
+            i = (ROWS - 1) * COLS + c + 1;
+            ctx.lineTo(px[i], py[i]);
+            for (let r = ROWS - 2; r >= 0; r--) {
+                i -= COLS;
+                ctx.lineTo(px[i], py[i]);
+            }
+            ctx.closePath();
+            ctx.fill();
         }
-        ctx.stroke();
-        // 底部窄边
-        ctx.beginPath();
-        for (let c = 0; c < COLS; c++) {
-            const p = points[(ROWS - 1) * COLS + c];
-            if (c === 0) ctx.moveTo(p.x, p.y);
-            else ctx.lineTo(p.x, p.y);
-        }
-        ctx.stroke();
-        ctx.restore();
+    }
 
-        // 中轴暗色直纹 (丝绸织纹) - 密度适配高分辨率
-        ctx.save();
-        ctx.globalAlpha = 0.11;
+    function drawTexture() {
+        // 丝绸织纹：稀疏竖直暗线，合并为一条 path
+        ctx.globalAlpha = 0.13;
         ctx.strokeStyle = '#000';
         ctx.lineWidth = 1;
-        const stripeStep = 4;
-        for (let c = stripeStep; c < COLS - 1; c += stripeStep) {
-            ctx.beginPath();
-            for (let r = 0; r < ROWS; r++) {
-                const p = points[r * COLS + c];
-                if (r === 0) ctx.moveTo(p.x, p.y);
-                else ctx.lineTo(p.x, p.y);
+        ctx.beginPath();
+        const step = 3;
+        for (let c = step; c < COLS - 1; c += step) {
+            let i = c;
+            ctx.moveTo(px[i], py[i]);
+            for (let r = 1; r < ROWS; r++) {
+                i += COLS;
+                ctx.lineTo(px[i], py[i]);
             }
-            ctx.stroke();
         }
-        ctx.restore();
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+    }
 
-        // 流苏 - 每隔两列画一根，避免太密
-        ctx.save();
-        const tStep = 2;
-        for (let c = 0; c < COLS; c += tStep) {
-            const p = points[(ROWS - 1) * COLS + c];
-            const prev = c > 0 ? points[(ROWS - 1) * COLS + c - 1] : p;
-            const angle = Math.atan2(p.y - prev.y, p.x - prev.x);
-            const len = 16 + ((c * 7) % 7);
-            ctx.strokeStyle = '#c8102e';
-            ctx.lineWidth = 1;
-            ctx.globalAlpha = 0.85;
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            const swing = (p.x - p.px) * 4;
-            ctx.lineTo(p.x + swing * 0.3 - Math.sin(angle) * 2, p.y + len);
-            ctx.stroke();
+    function drawEdges() {
+        // 顶部/底部窄暗边
+        ctx.strokeStyle = 'rgba(0,0,0,0.45)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        // 顶
+        ctx.moveTo(px[0], py[0] + 2);
+        for (let c = 1; c < COLS; c++) ctx.lineTo(px[c], py[c] + 2);
+        // 底
+        const base = (ROWS - 1) * COLS;
+        ctx.moveTo(px[base], py[base]);
+        for (let c = 1; c < COLS; c++) ctx.lineTo(px[base + c], py[base + c]);
+        ctx.stroke();
+    }
+
+    function drawTassels() {
+        // 一条 path 画所有流苏
+        ctx.strokeStyle = '#c8102e';
+        ctx.lineWidth = 1;
+        ctx.globalAlpha = 0.85;
+        ctx.beginPath();
+        const base = (ROWS - 1) * COLS;
+        for (let c = 0; c < COLS; c++) {
+            const i = base + c;
+            const xi = px[i], yi = py[i];
+            const swing = (xi - ppx[i]) * 3;
+            const len = 14 + ((c * 7) % 7);
+            ctx.moveTo(xi, yi);
+            ctx.lineTo(xi + swing * 0.25, yi + len);
         }
-        ctx.restore();
-
+        ctx.stroke();
+        ctx.globalAlpha = 1;
     }
 
     function draw() {
         ctx.clearRect(0, 0, W, H);
         drawCloth();
+        drawTexture();
+        drawEdges();
+        drawTassels();
         drawRod();
     }
 
-    function loop() {
+    // 主循环：30fps 节流 (requestAnimationFrame 跳帧)
+    let lastT = 0;
+    const FRAME_MS = 1000 / 45;  // 45fps，绸缎运动对人眼够平滑
+    function loop(t) {
+        requestAnimationFrame(loop);
+        if (t - lastT < FRAME_MS) return;
+        lastT = t;
         physics();
         draw();
-        requestAnimationFrame(loop);
     }
 
-    // 鼠标事件
+    // ------------------ 交互 ------------------
     function getLocal(e) {
         const rect = canvas.getBoundingClientRect();
         const isTouch = e.touches && e.touches[0];
-        const clientX = isTouch ? e.touches[0].clientX : e.clientX;
-        const clientY = isTouch ? e.touches[0].clientY : e.clientY;
-        return { x: clientX - rect.left, y: clientY - rect.top };
+        const cx = isTouch ? e.touches[0].clientX : e.clientX;
+        const cy = isTouch ? e.touches[0].clientY : e.clientY;
+        return { x: cx - rect.left, y: cy - rect.top };
     }
 
     canvas.addEventListener('mouseenter', () => { mouse.over = true; });
@@ -321,39 +319,30 @@
         mouse.x = mouse.px = -9999;
         mouse.y = mouse.py = -9999;
     });
-
     canvas.addEventListener('mousemove', (e) => {
         const p = getLocal(e);
         if (mouse.x === -9999) { mouse.px = p.x; mouse.py = p.y; }
         mouse.x = p.x;
         mouse.y = p.y;
     });
-
     function startGrab(e) {
         const p = getLocal(e);
         mouse.x = p.x; mouse.y = p.y;
         mouse.px = p.x; mouse.py = p.y;
         mouse.down = true;
-        // 找最近的非固定点
-        let best = null, bestDist = 50;
-        for (let i = 0; i < points.length; i++) {
-            const pt = points[i];
-            if (pt.pinned) continue;
-            const d = Math.hypot(pt.x - p.x, pt.y - p.y);
-            if (d < bestDist) { best = pt; bestDist = d; }
+        let bestIdx = -1, bestD = 55 * 55;
+        for (let i = 0; i < NUM; i++) {
+            if (pinned[i]) continue;
+            const dx = px[i] - p.x, dy = py[i] - p.y;
+            const d2 = dx * dx + dy * dy;
+            if (d2 < bestD) { bestD = d2; bestIdx = i; }
         }
-        mouse.grabbed = best;
+        mouse.grabbed = bestIdx;
         e.preventDefault();
     }
-
-    function endGrab() {
-        mouse.down = false;
-        mouse.grabbed = null;
-    }
-
+    function endGrab() { mouse.down = false; mouse.grabbed = -1; }
     canvas.addEventListener('mousedown', startGrab);
     window.addEventListener('mouseup', endGrab);
-
     canvas.addEventListener('touchstart', (e) => { mouse.over = true; startGrab(e); }, { passive: false });
     canvas.addEventListener('touchmove', (e) => {
         const p = getLocal(e);
@@ -363,21 +352,21 @@
     }, { passive: false });
     window.addEventListener('touchend', endGrab);
 
+    let resizeTimer;
     window.addEventListener('resize', () => {
-        // 节流
-        clearTimeout(window.__clothResize);
-        window.__clothResize = setTimeout(resize, 120);
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resize, 150);
     });
 
-    // 启动：稍等容器布局稳定
+    // 启动：等布局稳定
     setTimeout(() => {
         resize();
-        loop();
-        // 开场轻推一下，让画卷有个落下/摆动
+        requestAnimationFrame(loop);
+        // 开场轻推
         setTimeout(() => {
-            for (let i = 0; i < points.length; i++) {
-                if (!points[i].pinned) points[i].x += (Math.random() - 0.5) * 2;
+            for (let i = 0; i < NUM; i++) {
+                if (!pinned[i]) px[i] += (Math.random() - 0.5) * 1.8;
             }
-        }, 200);
+        }, 250);
     }, 50);
 })();

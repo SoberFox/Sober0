@@ -1745,10 +1745,11 @@ body.on-home .sidebar { background: #0b0909; border-right: 1px solid rgba(255,25
     animation-delay: 0.55s;
 }
 .hero-line-rot {
-    height: 0.9em;
+    height: 1.1em;
     overflow: hidden;
     position: relative;
     color: var(--blood);
+    padding-bottom: 0.05em;
 }
 .hero-rot-wrap {
     display: inline-block;
@@ -1756,16 +1757,16 @@ body.on-home .sidebar { background: #0b0909; border-right: 1px solid rgba(255,25
 }
 .hero-rot-wrap span {
     display: block;
-    height: 0.9em;
-    line-height: 0.9em;
+    height: 1.1em;
+    line-height: 1.1em;
 }
 @keyframes heroRot {
     0%,  18% { transform: translateY(0); }
-    20%, 38% { transform: translateY(-0.9em); }
-    40%, 58% { transform: translateY(-1.8em); }
-    60%, 78% { transform: translateY(-2.7em); }
-    80%, 98% { transform: translateY(-3.6em); }
-    100%     { transform: translateY(-4.5em); }
+    20%, 38% { transform: translateY(-1.1em); }
+    40%, 58% { transform: translateY(-2.2em); }
+    60%, 78% { transform: translateY(-3.3em); }
+    80%, 98% { transform: translateY(-4.4em); }
+    100%     { transform: translateY(-5.5em); }
 }
 @keyframes fadeUp {
     from { opacity: 0; transform: translateY(30px); }
@@ -1877,6 +1878,7 @@ body.on-home .sidebar { background: #0b0909; border-right: 1px solid rgba(255,25
     width: 100%;
     min-height: 560px;
     z-index: 2;
+    filter: drop-shadow(10px 18px 30px rgba(0,0,0,0.55));
 }
 #cloth-canvas {
     position: absolute;
