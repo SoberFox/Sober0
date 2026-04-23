@@ -84,6 +84,7 @@
         const pageEl = $(`#page-${page}`);
         if (pageEl) pageEl.classList.add('active');
         document.body.classList.toggle('on-home', page === 'home');
+        document.body.classList.toggle('on-about', page === 'about');
 
         if (page === 'history') renderHistory();
         if (page === 'customers') renderCustomers();

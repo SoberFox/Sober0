@@ -13,21 +13,26 @@
 }
 
 :root {
-    --primary: #4a6cf7;
-    --primary-dark: #3a56d4;
+    --primary: #c8102e;
+    --primary-dark: #9c0a21;
+    --primary-soft: rgba(200,16,46,0.14);
     --success: #10b981;
     --danger: #ef4444;
     --warning: #f59e0b;
-    --bg: #f0f2f5;
-    --sidebar-bg: #1e293b;
-    --sidebar-text: #94a3b8;
-    --sidebar-active: #ffffff;
-    --card-bg: #ffffff;
-    --text: #1e293b;
-    --text-secondary: #64748b;
-    --border: #e2e8f0;
-    --shadow: 0 1px 3px rgba(0,0,0,0.08);
-    --radius: 8px;
+    --bg: #0b0909;
+    --bg-soft: #141111;
+    --bg-hover: #1a1616;
+    --sidebar-bg: #0a0808;
+    --sidebar-text: rgba(245,243,238,0.55);
+    --sidebar-active: #f5f3ee;
+    --card-bg: #141111;
+    --text: #f5f3ee;
+    --text-secondary: rgba(245,243,238,0.62);
+    --text-faint: rgba(245,243,238,0.32);
+    --border: rgba(245,243,238,0.08);
+    --border-strong: rgba(245,243,238,0.16);
+    --shadow: 0 1px 3px rgba(0,0,0,0.5);
+    --radius: 4px;
 }
 
 body {
@@ -85,8 +90,8 @@ body {
 }
 
 .nav-item.active {
-    background: rgba(74, 108, 247, 0.2);
-    color: #fff;
+    background: var(--primary-soft);
+    color: var(--sidebar-active);
     border-right: 3px solid var(--primary);
 }
 
@@ -193,7 +198,7 @@ body {
 }
 
 .form-group input[readonly] {
-    background: #f8fafc;
+    background: var(--bg-soft);
     color: var(--text-secondary);
 }
 
@@ -205,7 +210,7 @@ body {
 }
 
 .cost-table th {
-    background: #f8fafc;
+    background: var(--bg-soft);
     padding: 10px 8px;
     text-align: left;
     font-weight: 600;
@@ -254,7 +259,7 @@ body {
 }
 
 .cost-table .btn-remove:hover {
-    background: #fef2f2;
+    background: rgba(239,68,68,0.1);
 }
 
 .add-cost-row {
@@ -285,7 +290,7 @@ body {
     flex-direction: column;
     gap: 4px;
     padding: 12px 16px;
-    background: #f8fafc;
+    background: var(--bg-soft);
     border-radius: 6px;
 }
 
@@ -351,12 +356,12 @@ body {
     padding: 4px 12px;
     font-size: 12px;
     border-radius: 4px;
-    background: #e2e8f0;
+    background: var(--bg-hover);
     color: var(--text);
 }
 
 .btn-sm:hover {
-    background: #cbd5e1;
+    background: var(--border-strong);
 }
 
 .btn-primary {
@@ -387,13 +392,13 @@ body {
 }
 
 .btn-outline {
-    background: #fff;
+    background: var(--card-bg);
     color: var(--text);
     border: 1px solid var(--border);
 }
 
 .btn-outline:hover {
-    background: #f8fafc;
+    background: var(--bg-soft);
 }
 
 /* Data Table */
@@ -408,7 +413,7 @@ body {
 }
 
 .data-table th {
-    background: #f8fafc;
+    background: var(--bg-soft);
     padding: 12px 16px;
     text-align: left;
     font-weight: 600;
@@ -423,7 +428,7 @@ body {
 }
 
 .data-table tr:hover {
-    background: #f8fafc;
+    background: var(--bg-soft);
 }
 
 .data-table .actions {
@@ -442,11 +447,11 @@ body {
 }
 
 .data-table .btn-icon:hover {
-    background: #e2e8f0;
+    background: var(--bg-hover);
 }
 
 .data-table .btn-icon.danger:hover {
-    background: #fef2f2;
+    background: rgba(239,68,68,0.1);
     color: var(--danger);
 }
 
@@ -477,7 +482,7 @@ body {
 }
 
 .modal-content {
-    background: #fff;
+    background: var(--card-bg);
     border-radius: var(--radius);
     width: 480px;
     max-height: 90vh;
@@ -594,7 +599,7 @@ body {
 }
 
 .quote-sheet .sheet-table th {
-    background: #f3f4f6;
+    background: var(--bg-soft);
     font-weight: 600;
 }
 
@@ -649,7 +654,7 @@ body {
         margin-left: 0;
     }
     body {
-        background: #fff;
+        background: var(--card-bg);
     }
 }
 
@@ -728,9 +733,9 @@ body {
 }
 
 .file-type-excel { background: #d1fae5; color: #065f46; }
-.file-type-pdf { background: #fee2e2; color: #b91c1c; }
+.file-type-pdf { background: rgba(239,68,68,0.18); color: #b91c1c; }
 .file-type-image { background: #dbeafe; color: #1d4ed8; }
-.file-type-unknown { background: #e2e8f0; color: #475569; }
+.file-type-unknown { background: var(--bg-hover); color: var(--text-secondary); }
 
 .upload-thumb {
     max-width: 120px;
@@ -754,7 +759,7 @@ body {
 .progress-bar-track {
     width: 100%;
     height: 6px;
-    background: #e2e8f0;
+    background: var(--bg-hover);
     border-radius: 3px;
     overflow: hidden;
 }
@@ -815,7 +820,7 @@ body {
 }
 
 .stats-card {
-    background: #f8fafc;
+    background: var(--bg-soft);
     border-radius: var(--radius);
     padding: 20px;
     border: 1px solid var(--border);
@@ -890,8 +895,8 @@ body {
 }
 
 .legend-added { background: #dbeafe; color: #1d4ed8; }
-.legend-removed { background: #fee2e2; color: #b91c1c; }
-.legend-changed { background: #fef3c7; color: #92400e; }
+.legend-removed { background: rgba(239,68,68,0.18); color: #b91c1c; }
+.legend-changed { background: rgba(245,158,11,0.18); color: #92400e; }
 .legend-same { background: #d1fae5; color: #065f46; }
 
 /* Visual mode tabs */
@@ -912,7 +917,7 @@ body {
 }
 
 .compare-table th {
-    background: #f1f5f9;
+    background: var(--bg-hover);
     padding: 8px 10px;
     font-size: 11px;
     font-weight: 600;
@@ -936,15 +941,15 @@ body {
     text-align: center;
     color: var(--text-secondary);
     font-size: 11px;
-    background: #f8fafc;
+    background: var(--bg-soft);
 }
 
-.row-same { background: #fff; }
-.row-changed { background: #fffbeb; }
+.row-same { background: var(--card-bg); }
+.row-changed { background: rgba(245,158,11,0.08); }
 
 .compare-cell { min-width: 80px; }
 .cell-same .cell-val { color: var(--text); }
-.cell-changed { background: #fef3c7; }
+.cell-changed { background: rgba(245,158,11,0.18); }
 
 .cell-old {
     color: #b91c1c;
@@ -967,7 +972,7 @@ body {
 
 .cell-added { background: #dbeafe; }
 .cell-added-text { color: #1d4ed8; }
-.cell-removed { background: #fee2e2; }
+.cell-removed { background: rgba(239,68,68,0.18); }
 .cell-removed-text { color: #b91c1c; text-decoration: line-through; }
 
 .no-diff-msg {
@@ -996,7 +1001,7 @@ body {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 12px;
-    background: #f8fafc;
+    background: var(--bg-soft);
     overflow: auto;
     max-height: 80vh;
 }
@@ -1266,7 +1271,7 @@ body {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #cbd5e1;
+    background: var(--border-strong);
     margin-bottom: 6px;
     transition: all 0.3s;
 }
@@ -1288,7 +1293,7 @@ body {
 .timeline-line {
     flex: 1;
     height: 2px;
-    background: #e2e8f0;
+    background: var(--bg-hover);
     margin-top: 10px;
     min-width: 20px;
 }
@@ -1332,7 +1337,7 @@ body {
 }
 .cur-result-display {
     padding: 12px 14px;
-    background: #f0f9ff;
+    background: var(--primary-soft);
     border: 2px solid var(--primary);
     border-radius: 6px;
 }
@@ -1356,7 +1361,7 @@ body {
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
-    background: #f8fafc;
+    background: var(--bg-soft);
     border-radius: 6px;
     border: 1px solid var(--border);
 }
@@ -1390,7 +1395,7 @@ body {
     align-items: center;
     gap: 8px;
     padding: 6px 14px;
-    background: #f8fafc;
+    background: var(--bg-soft);
     border-radius: 6px;
     font-size: 13px;
     color: var(--text-secondary);
@@ -1406,7 +1411,7 @@ body {
     gap: 12px;
 }
 .pack-result-card {
-    background: #f8fafc;
+    background: var(--bg-soft);
     border-radius: 6px;
     padding: 14px 16px;
     border: 1px solid var(--border);
@@ -1439,7 +1444,7 @@ body {
 }
 .spec-edit-table input:focus {
     border-color: var(--primary);
-    background: #fff;
+    background: var(--card-bg);
 }
 .spec-edit-table .btn-remove-col,
 .spec-edit-table .btn-remove-row {
@@ -1476,7 +1481,7 @@ body {
 .mat-dash-label { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
 .mat-cat-tag {
     display: inline-block; padding: 2px 8px; border-radius: 10px;
-    font-size: 11px; background: #e2e8f0; color: var(--text); white-space: nowrap;
+    font-size: 11px; background: var(--bg-hover); color: var(--text); white-space: nowrap;
 }
 .mat-order-progress-grid {
     display: grid;
@@ -1484,18 +1489,18 @@ body {
     gap: 12px;
 }
 .mat-order-card {
-    background: #f8fafc; border-radius: 6px; padding: 14px 16px; border: 1px solid var(--border);
+    background: var(--bg-soft); border-radius: 6px; padding: 14px 16px; border: 1px solid var(--border);
 }
 .mat-order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; }
 .mat-order-pct { font-weight: 700; font-size: 15px; }
 .mat-order-pct.has-fail { color: var(--danger) !important; }
-.mat-progress-bar { height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+.mat-progress-bar { height: 6px; background: var(--bg-hover); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
 .mat-progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
 .mat-order-items { display: flex; gap: 4px; flex-wrap: wrap; }
 .mat-mini-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; color: #fff; font-size: 10px; font-weight: 600; }
 .mat-alert { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 6px; }
-.alert-overdue { background: #fef2f2; color: #b91c1c; border-left: 3px solid #ef4444; }
-.alert-urgent { background: #fffbeb; color: #92400e; border-left: 3px solid #f59e0b; }
+.alert-overdue { background: rgba(239,68,68,0.1); color: #b91c1c; border-left: 3px solid #ef4444; }
+.alert-urgent { background: rgba(245,158,11,0.08); color: #92400e; border-left: 3px solid #f59e0b; }
 .alert-icon { font-size: 16px; flex-shrink: 0; }
 
 /* Gantt / Timeline */
@@ -1503,7 +1508,7 @@ body {
 .gantt-header, .gantt-order-title, .gantt-row { display: flex; align-items: stretch; min-height: 32px; }
 .gantt-label-col { width: 200px; min-width: 200px; flex-shrink: 0; padding: 6px 10px; font-size: 13px; display: flex; align-items: center; gap: 6px; }
 .gantt-timeline-col { flex: 1; position: relative; min-width: 500px; border-left: 1px solid var(--border); }
-.gantt-header { background: #f1f5f9; border-bottom: 2px solid var(--border); border-radius: var(--radius) var(--radius) 0 0; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+.gantt-header { background: var(--bg-hover); border-bottom: 2px solid var(--border); border-radius: var(--radius) var(--radius) 0 0; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
 .gantt-header .gantt-label-col { font-weight: 700; color: var(--text); }
 .gantt-months { display: flex; border-bottom: 1px solid var(--border); }
 .gantt-month { padding: 4px 8px; font-size: 11px; border-right: 1px solid var(--border); white-space: nowrap; overflow: hidden; }
@@ -1511,13 +1516,13 @@ body {
 .gantt-day-mark { position: absolute; font-size: 10px; color: var(--text-secondary); transform: translateX(-50%); top: 2px; }
 .gantt-body { position: relative; }
 .gantt-order-group { border-bottom: 2px solid var(--border); }
-.gantt-order-title { background: #f8fafc; border-bottom: 1px solid var(--border); }
+.gantt-order-title { background: var(--bg-soft); border-bottom: 1px solid var(--border); }
 .gantt-order-title .gantt-label-col { font-weight: 600; font-size: 13px; }
 .gantt-overall-pct { font-size: 12px; color: var(--primary); font-weight: 700; margin-left: 4px; }
 .gantt-order-actions { margin-left: auto; display: flex; gap: 4px; }
 .gantt-order-actions .btn-icon { font-size: 12px; padding: 2px 4px; }
-.gantt-row { border-bottom: 1px solid #f1f5f9; }
-.gantt-row:hover { background: #fafbfc; }
+.gantt-row { border-bottom: 1px solid var(--bg-hover); }
+.gantt-row:hover { background: var(--bg-soft); }
 .gantt-phase-label { font-size: 12px; color: var(--text-secondary); flex-wrap: wrap; }
 .gantt-phase-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
 .gantt-phase-dates { display: block; font-size: 10px; color: #94a3b8; width: 100%; }
@@ -1532,18 +1537,18 @@ body {
 .plan-pct-label { font-size: 12px; font-weight: 600; color: var(--primary); display: inline-block; width: 36px; text-align: right; }
 
 /* Excel Batch Search */
-.xls-search-dropzone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 40px 20px; text-align: center; transition: all 0.2s; background: #fafbfc; }
+.xls-search-dropzone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 40px 20px; text-align: center; transition: all 0.2s; background: var(--bg-soft); }
 .xls-search-dropzone.drop-hover { border-color: var(--primary); background: rgba(74, 108, 247, 0.05); }
 .dropzone-icon { font-size: 48px; margin-bottom: 8px; }
 .dropzone-text { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; }
 .dropzone-hint { font-size: 12px; color: var(--text-secondary); margin-top: 10px; }
-.search-status { margin-top: 12px; padding: 10px 14px; background: #eff6ff; border-left: 3px solid var(--primary); border-radius: 4px; font-size: 13px; color: var(--text); }
+.search-status { margin-top: 12px; padding: 10px 14px; background: var(--primary-soft); border-left: 3px solid var(--primary); border-radius: 4px; font-size: 13px; color: var(--text); }
 .search-file-summary { margin-top: 10px; font-size: 13px; color: var(--success); font-weight: 500; }
 .search-file-list-wrap { margin-top: 12px; }
-.search-file-stat { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; padding: 8px 12px; background: #f8fafc; border-radius: 6px; }
+.search-file-stat { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; padding: 8px 12px; background: var(--bg-soft); border-radius: 6px; }
 .search-file-stat strong { color: var(--text); }
 .search-file-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.search-file-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 16px; font-size: 12px; max-width: 280px; }
+.search-file-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: var(--primary-soft); border: 1px solid #bfdbfe; border-radius: 16px; font-size: 12px; max-width: 280px; }
 .chip-icon { font-size: 14px; flex-shrink: 0; }
 .chip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px; }
 .chip-meta { color: var(--text-secondary); font-size: 10px; flex-shrink: 0; }
@@ -1554,7 +1559,7 @@ body {
 .search-keyword-input:focus { border-color: var(--primary); }
 .search-options { display: flex; gap: 20px; flex-wrap: wrap; }
 .search-group { margin-bottom: 24px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-.search-group-header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #f1f5f9; font-size: 13px; border-bottom: 1px solid var(--border); }
+.search-group-header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--bg-hover); font-size: 13px; border-bottom: 1px solid var(--border); }
 .search-group-icon { font-size: 14px; }
 .search-group-sep { color: var(--text-secondary); margin: 0 2px; }
 .search-group-sheet { color: var(--primary); font-weight: 600; }
@@ -1572,17 +1577,17 @@ body {
 
 /* File Converter */
 .convert-file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
-.convert-file-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; }
+.convert-file-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; }
 .convert-file-tag { display: inline-block; padding: 3px 10px; border-radius: 10px; color: #fff; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
 .convert-file-info { flex: 1; min-width: 0; }
 .convert-file-name { font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
 .convert-file-size { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
 .conversion-options-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px; }
-.conversion-option { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: all 0.15s; }
-.conversion-option:hover { background: #eff6ff; border-color: var(--primary); }
+.conversion-option { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: all 0.15s; }
+.conversion-option:hover { background: var(--primary-soft); border-color: var(--primary); }
 .conversion-option input[type="radio"] { accent-color: var(--primary); margin: 0; }
 .conversion-option-label { flex: 1; font-size: 13px; color: var(--text); }
-.conversion-option-out { font-size: 11px; font-family: monospace; color: var(--text-secondary); background: #fff; padding: 2px 8px; border-radius: 4px; border: 1px solid var(--border); }
+.conversion-option-out { font-size: 11px; font-family: monospace; color: var(--text-secondary); background: var(--card-bg); padding: 2px 8px; border-radius: 4px; border: 1px solid var(--border); }
 .convert-result-msg { padding: 12px 16px; background: #d1fae5; border-left: 3px solid var(--success); border-radius: 4px; font-size: 13px; color: #065f46; font-weight: 500; }
 .convert-notes { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
 .convert-notes ul { margin: 8px 0 0 20px; }
@@ -1956,6 +1961,300 @@ body.on-home .sidebar { background: #0b0909; border-right: 1px solid rgba(255,25
     .hero-cloth { display: none; }
 }
 
+/* ============================================================
+   子页面 · 红黑主题全局修正
+   ============================================================ */
+input[type="text"], input[type="number"], input[type="date"],
+input[type="email"], input[type="tel"], input[type="search"],
+input[type="password"], select, textarea {
+    background: var(--bg-soft);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 9px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    transition: border-color 0.18s, background 0.18s;
+}
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--bg-hover);
+    box-shadow: 0 0 0 2px var(--primary-soft);
+}
+input::placeholder, textarea::placeholder { color: var(--text-faint); }
+input[readonly] { background: transparent; color: var(--text-faint); }
+select option { background: var(--bg-soft); color: var(--text); }
+
+.data-table, .cost-table, table.data-table { color: var(--text); background: transparent; }
+.data-table th, .cost-table th {
+    background: var(--bg-soft);
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 11px;
+    font-weight: 500;
+}
+.data-table tbody tr:hover, .cost-table tbody tr:hover { background: var(--bg-hover); }
+.data-table td, .cost-table td { color: var(--text); }
+
+.btn { font-family: inherit; border-radius: var(--radius); }
+.btn-sm { background: var(--bg-hover); color: var(--text-secondary); border: 1px solid var(--border); }
+.btn-sm:hover { background: var(--bg-soft); color: var(--text); border-color: var(--primary); }
+.btn-primary { background: var(--primary); color: #fff; border: 1px solid var(--primary); }
+.btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+.btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border-strong); }
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); background: transparent; }
+.btn-success { background: var(--success); color: #fff; }
+.btn-danger { background: transparent; color: var(--danger); border: 1px solid rgba(239,68,68,0.4); }
+.btn-danger:hover { background: var(--danger); color: #fff; }
+
+.btn-icon {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: all 0.18s;
+}
+.btn-icon:hover { color: var(--primary); border-color: var(--primary); }
+.btn-icon.danger:hover { color: var(--danger); border-color: var(--danger); background: transparent; }
+
+.form-section, .quote-sheet, .info-card, .stat-card,
+.order-stat-card, .summary-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    box-shadow: none;
+}
+
+.modal { background: rgba(0,0,0,0.7); }
+.modal-content { background: var(--card-bg); color: var(--text); border: 1px solid var(--border-strong); box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+.modal-header { border-bottom: 1px solid var(--border); }
+.modal-footer { border-top: 1px solid var(--border); background: transparent; }
+.modal-close { color: var(--text-secondary); }
+.modal-close:hover { color: var(--primary); }
+
+.empty-state {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius);
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.page-header h1 { color: var(--text); font-weight: 700; letter-spacing: -0.01em; }
+
+.content a { color: var(--primary); }
+.content a:hover { color: var(--primary-dark); }
+
+.data-table tbody tr { border-bottom: 1px solid var(--border); }
+
+#history-search, #order-search, .search-input {
+    background: var(--bg-soft);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 9px 14px;
+}
+
+.badge, .status-badge, .order-status-badge { color: #fff; }
+
+.summary-item.highlight { background: var(--primary); border-color: var(--primary); }
+.summary-item.highlight .summary-value,
+.summary-item.highlight .summary-label { color: #fff; }
+
+code, kbd { background: var(--bg-soft); color: var(--primary); border: 1px solid var(--border); padding: 2px 6px; border-radius: 3px; }
+
+.tabs, .sheet-tabs { border-bottom: 1px solid var(--border); }
+.tab, .sheet-tab { color: var(--text-secondary); }
+.tab.active, .sheet-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+.file-type-unknown { background: var(--bg-hover); color: var(--text-secondary); }
+
+@media print {
+    body, .content { background: #fff !important; color: #000 !important; }
+    .quote-sheet, .modal-content { background: #fff !important; color: #000 !important; }
+}
+
+/* ============================================================
+   关于页面 (About)
+   ============================================================ */
+.about-wrap {
+    position: relative;
+    min-height: calc(100vh - 48px);
+    padding: 20px 0 80px;
+    color: var(--text);
+}
+.about-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 24px 0 18px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+}
+.about-head-bar { width: 48px; height: 1px; background: var(--primary); margin-right: 16px; display: inline-block; vertical-align: middle; }
+
+.about-hero-title {
+    font-family: "Noto Serif SC", "Songti SC", "PingFang SC", serif;
+    font-weight: 600;
+    font-size: clamp(40px, 5.4vw, 84px);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    margin-bottom: 28px;
+    max-width: 900px;
+}
+.about-hero-title em { font-style: italic; color: var(--primary); font-weight: 700; }
+
+.about-lead-text {
+    max-width: 640px;
+    font-size: 16px;
+    line-height: 1.95;
+    color: var(--text-secondary);
+    margin-bottom: 72px;
+}
+
+.about-block { margin-bottom: 72px; }
+.about-block-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+.about-block-num {
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 12px;
+    color: var(--primary);
+    letter-spacing: 0.2em;
+}
+.about-block-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+}
+
+.about-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+}
+.about-card {
+    padding: 28px 24px;
+    background: var(--bg);
+    transition: background 0.25s;
+}
+.about-card:hover { background: var(--card-bg); }
+.about-card-k {
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 0.15em;
+    margin-bottom: 14px;
+}
+.about-card-t {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+}
+.about-card-d {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+}
+
+.about-quote {
+    font-family: "Noto Serif SC", "Songti SC", serif;
+    font-style: italic;
+    font-size: clamp(22px, 2.6vw, 34px);
+    line-height: 1.6;
+    color: var(--text);
+    max-width: 820px;
+    padding-left: 28px;
+    border-left: 2px solid var(--primary);
+    margin: 72px 0;
+}
+.about-quote-author {
+    display: block;
+    margin-top: 14px;
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--text-faint);
+    font-style: normal;
+}
+
+.about-log {
+    border-top: 1px solid var(--border);
+}
+.about-log-row {
+    display: grid;
+    grid-template-columns: 120px 120px 1fr;
+    gap: 28px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: baseline;
+}
+.about-log-ver {
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: 0.08em;
+}
+.about-log-date {
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 12px;
+    color: var(--text-faint);
+    letter-spacing: 0.1em;
+}
+.about-log-body { color: var(--text-secondary); font-size: 14px; line-height: 1.8; }
+.about-log-body b { color: var(--text); font-weight: 600; }
+
+.about-footmark {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding-top: 32px;
+    margin-top: 56px;
+    border-top: 1px solid var(--border);
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+}
+.about-footmark-line { flex: 1; height: 1px; background: var(--border); }
+
+/* 右下角版本号 · 半透明小字 */
+.about-version-tag {
+    position: fixed;
+    right: 18px;
+    bottom: 14px;
+    z-index: 50;
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: rgba(245,243,238,0.25);
+    pointer-events: none;
+    user-select: none;
+    display: none;
+}
+.about-version-tag b { color: rgba(245,243,238,0.4); font-weight: 500; }
+body.on-about .about-version-tag { display: block; }
+
+@media (max-width: 720px) {
+    .about-log-row { grid-template-columns: 1fr; gap: 4px; }
+    .about-hero-title { font-size: 36px; }
+}
+
     </style>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
@@ -2023,6 +2322,11 @@ body.on-home .sidebar { background: #0b0909; border-right: 1px solid rgba(255,25
                 <li class="nav-item" data-page="convert">
                     <span class="nav-icon">&#128260;</span>
                     <span>格式转换</span>
+                </li>
+                <li class="nav-section-label">关于</li>
+                <li class="nav-item" data-page="about">
+                    <span class="nav-icon">&#10070;</span>
+                    <span>关于</span>
                 </li>
             </ul>
         </nav>
@@ -2860,7 +3164,188 @@ body.on-home .sidebar { background: #0b0909; border-right: 1px solid rgba(255,25
                 </div>
             </div>
 
+            <!-- 关于页面 -->
+            <div id="page-about" class="page">
+                <div class="about-wrap">
+                    <div class="about-head">
+                        <div>
+                            <span class="about-head-bar"></span>
+                            ABOUT &middot; SOBER STUDIO
+                        </div>
+                        <div>§ 关于这个工作台</div>
+                    </div>
+
+                    <h1 class="about-hero-title">
+                        不是一款产品，<br>是一位外贸人<em>日常</em>的延伸。
+                    </h1>
+
+                    <p class="about-lead-text">
+                        服装外贸里真正耗人的，不是那张报价单，是报价之前的沟通、之后的改单、
+                        跟单时对不齐的 PDF、找不着的文件、催不动的工厂。
+                        这个平台想做的事情只有一件——让这些琐碎的事，尽量少占用你的脑子。
+                    </p>
+
+                    <!-- 01 · 文化 -->
+                    <section class="about-block">
+                        <div class="about-block-head">
+                            <span class="about-block-num">01 / CULTURE</span>
+                            <h2 class="about-block-title">我们相信什么</h2>
+                        </div>
+                        <div class="about-cards">
+                            <div class="about-card">
+                                <div class="about-card-k">C.01 &middot; FOCUS</div>
+                                <div class="about-card-t">业务先行，不为技术炫技</div>
+                                <div class="about-card-d">每一个字段、每一个流程，都来自真实订单。做不到让业务顺手的功能，一律删掉。</div>
+                            </div>
+                            <div class="about-card">
+                                <div class="about-card-k">C.02 &middot; LOCAL</div>
+                                <div class="about-card-t">本地优先，数据是你的</div>
+                                <div class="about-card-d">没有服务器、没有登录、没有数据上传。客户信息、报价记录全部留在浏览器里。</div>
+                            </div>
+                            <div class="about-card">
+                                <div class="about-card-k">C.03 &middot; LIGHT</div>
+                                <div class="about-card-t">轻，才能随身</div>
+                                <div class="about-card-d">打开即用，单文件可部署。不装任何东西，也能离线。</div>
+                            </div>
+                            <div class="about-card">
+                                <div class="about-card-k">C.04 &middot; HONEST</div>
+                                <div class="about-card-t">不做做不到的事</div>
+                                <div class="about-card-d">能做到的做干净，做不到的明说。不把"看上去能用"当成"真的能用"。</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 02 · 目标 -->
+                    <section class="about-block">
+                        <div class="about-block-head">
+                            <span class="about-block-num">02 / GOAL</span>
+                            <h2 class="about-block-title">要做到的几件事</h2>
+                        </div>
+                        <div class="about-cards">
+                            <div class="about-card">
+                                <div class="about-card-k">G.01</div>
+                                <div class="about-card-t">一个人能跑完的生产线</div>
+                                <div class="about-card-d">从询价到出货，每一步都有对应的抽屉，不再切换七八个软件。</div>
+                            </div>
+                            <div class="about-card">
+                                <div class="about-card-k">G.02</div>
+                                <div class="about-card-t">把经验沉淀下来</div>
+                                <div class="about-card-d">平台的每一次迭代，都是 Sober 的一次实操后思考，慢慢变成可以复用的工作流。</div>
+                            </div>
+                            <div class="about-card">
+                                <div class="about-card-k">G.03</div>
+                                <div class="about-card-t">把工具磨得趁手</div>
+                                <div class="about-card-d">宁可少一个花哨动画，也要多一次对齐、多一次校验、多一次批量处理。</div>
+                            </div>
+                            <div class="about-card">
+                                <div class="about-card-k">G.04</div>
+                                <div class="about-card-t">让朋友也能用</div>
+                                <div class="about-card-d">代码公开，功能独立，希望每一个做服装外贸的同行都能复制一份自己用。</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 引言 -->
+                    <blockquote class="about-quote">
+                        做一个自己真的想用的工具。
+                        <span class="about-quote-author">&mdash; Sober &times; Claude</span>
+                    </blockquote>
+
+                    <!-- 03 · 版本记录 -->
+                    <section class="about-block">
+                        <div class="about-block-head">
+                            <span class="about-block-num">03 / CHANGELOG</span>
+                            <h2 class="about-block-title">版本记录</h2>
+                        </div>
+                        <div class="about-log">
+                            <div class="about-log-row">
+                                <div class="about-log-ver">v0.5.0</div>
+                                <div class="about-log-date">2026.04.23</div>
+                                <div class="about-log-body">
+                                    <b>红黑主题 &amp; 关于页</b> ——
+                                    子页面全部换成红黑配色；新增关于页，记录文化、目标与版本迭代；右下角加版本号水印。
+                                </div>
+                            </div>
+                            <div class="about-log-row">
+                                <div class="about-log-ver">v0.4.2</div>
+                                <div class="about-log-date">2026.04.22</div>
+                                <div class="about-log-body">
+                                    <b>首页性能优化</b> ——
+                                    面料渲染改为垂直丝绸带，去除 blur 滤镜；调色板缓存；帧数从卡顿提升到稳定 45fps。修复大字动画被裁切的问题。
+                                </div>
+                            </div>
+                            <div class="about-log-row">
+                                <div class="about-log-ver">v0.4.1</div>
+                                <div class="about-log-date">2026.04.22</div>
+                                <div class="about-log-body">
+                                    <b>面料加密 &amp; 印章删除</b> ——
+                                    质点从 420 增到 1456，肉眼看不到方格；删除底部印章；恢复 JUST / ORDER 大字动画。
+                                </div>
+                            </div>
+                            <div class="about-log-row">
+                                <div class="about-log-ver">v0.4.0</div>
+                                <div class="about-log-date">2026.04.22</div>
+                                <div class="about-log-body">
+                                    <b>悬挂面料画卷</b> ——
+                                    首页右侧引入 Verlet 物理布料模拟，可拖拽、可拂动；整屏改为红黑编辑部风格；撤除 12 格工具列表，改为索引式超链接。
+                                </div>
+                            </div>
+                            <div class="about-log-row">
+                                <div class="about-log-ver">v0.3.0</div>
+                                <div class="about-log-date">2026.04.21</div>
+                                <div class="about-log-body">
+                                    <b>动感首页初版</b> ——
+                                    首页封面 + 关于页，彩色渐变 blob 动画、跑马灯、JUST RUN 大字。后续推翻重做。
+                                </div>
+                            </div>
+                            <div class="about-log-row">
+                                <div class="about-log-ver">v0.2.1</div>
+                                <div class="about-log-date">2026.04.20</div>
+                                <div class="about-log-body">
+                                    <b>PDF 转 Excel 智能列对齐</b> ——
+                                    基于 X 坐标聚类算法重写 pdfToExcel，表格不再错位。
+                                </div>
+                            </div>
+                            <div class="about-log-row">
+                                <div class="about-log-ver">v0.2.0</div>
+                                <div class="about-log-date">2026.04.19</div>
+                                <div class="about-log-body">
+                                    <b>格式转换 &amp; Excel 批量搜索</b> ——
+                                    18 种格式互转（PDF / Excel / 图片 / ZIP / 文本）；Excel 批量搜索支持正则、大小写、全词匹配。
+                                </div>
+                            </div>
+                            <div class="about-log-row">
+                                <div class="about-log-ver">v0.1.0</div>
+                                <div class="about-log-date">2026.04.15</div>
+                                <div class="about-log-body">
+                                    <b>生产工具包</b> ——
+                                    装箱计算、尺码对照、面料计算、手册对比、订单跟踪、面辅料跟进、甘特图时间计划上线。
+                                </div>
+                            </div>
+                            <div class="about-log-row">
+                                <div class="about-log-ver">v0.0.1</div>
+                                <div class="about-log-date">2026.04.10</div>
+                                <div class="about-log-body">
+                                    <b>起点</b> &mdash; 报价 &middot; 历史 &middot; 客户三件套。
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="about-footmark">
+                        <span>&sect; 002</span>
+                        <span class="about-footmark-line"></span>
+                        <span>SOBER STUDIO &mdash; CRAFTED WITH CLAUDE</span>
+                    </div>
+                </div>
+            </div>
+
         </main>
+
+        <!-- 右下角 · 版本号水印 -->
+        <div class="about-version-tag" aria-hidden="true">
+            v<b id="app-version">0.5.0</b> &middot; <span id="app-build">2026.04.23</span>
+        </div>
     </div>
 
     <!-- 物料表单弹窗 -->
