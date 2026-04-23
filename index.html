@@ -16,6 +16,11 @@
     --primary: #c8102e;
     --primary-dark: #9c0a21;
     --primary-soft: rgba(200,16,46,0.14);
+    --accent: #d97757;
+    --accent-dark: #b35c3e;
+    --accent-soft: rgba(217,119,87,0.14);
+    --amber: #c9a45a;
+    --amber-dark: #a88540;
     --success: #10b981;
     --danger: #ef4444;
     --warning: #f59e0b;
@@ -374,12 +379,12 @@ body {
 }
 
 .btn-success {
-    background: var(--success);
+    background: var(--accent);
     color: #fff;
 }
 
 .btn-success:hover {
-    background: #059669;
+    background: var(--accent-dark);
 }
 
 .btn-danger {
@@ -1588,7 +1593,7 @@ body {
 .conversion-option input[type="radio"] { accent-color: var(--primary); margin: 0; }
 .conversion-option-label { flex: 1; font-size: 13px; color: var(--text); }
 .conversion-option-out { font-size: 11px; font-family: monospace; color: var(--text-secondary); background: var(--card-bg); padding: 2px 8px; border-radius: 4px; border: 1px solid var(--border); }
-.convert-result-msg { padding: 12px 16px; background: #d1fae5; border-left: 3px solid var(--success); border-radius: 4px; font-size: 13px; color: #065f46; font-weight: 500; }
+.convert-result-msg { padding: 12px 16px; background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 4px; font-size: 13px; color: var(--accent); font-weight: 500; }
 .convert-notes { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
 .convert-notes ul { margin: 8px 0 0 20px; }
 .convert-notes li { margin-bottom: 6px; }
@@ -2005,7 +2010,14 @@ select option { background: var(--bg-soft); color: var(--text); }
 .btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
 .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border-strong); }
 .btn-outline:hover { border-color: var(--primary); color: var(--primary); background: transparent; }
-.btn-success { background: var(--success); color: #fff; }
+.btn-success { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
+.btn-success:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+.btn-accent { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
+.btn-accent:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+.btn-accent-outline { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+.btn-accent-outline:hover { background: var(--accent); color: #fff; }
+.btn-amber { background: transparent; color: var(--amber); border: 1px solid var(--amber); }
+.btn-amber:hover { background: var(--amber); color: #0b0909; border-color: var(--amber); }
 .btn-danger { background: transparent; color: var(--danger); border: 1px solid rgba(239,68,68,0.4); }
 .btn-danger:hover { background: var(--danger); color: #fff; }
 
