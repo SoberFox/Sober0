@@ -810,6 +810,12 @@
     }
     window.initAboutPage = initAboutPage;
 
+    // 侧边栏搜索按钮
+    const sbSearch = document.getElementById('sidebar-search-btn');
+    if (sbSearch) sbSearch.addEventListener('click', () => {
+        if (typeof window.openGlobalSearch === 'function') window.openGlobalSearch();
+    });
+
     // ---- 初始化 ----
     initNav();
     initQuotation();
