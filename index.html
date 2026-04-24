@@ -393,7 +393,7 @@ body {
 }
 
 .btn-danger:hover {
-    background: #dc2626;
+    background: var(--primary-dark);
 }
 
 .btn-outline {
@@ -737,9 +737,9 @@ body {
     text-transform: uppercase;
 }
 
-.file-type-excel { background: #d1fae5; color: #065f46; }
-.file-type-pdf { background: rgba(239,68,68,0.18); color: #b91c1c; }
-.file-type-image { background: #dbeafe; color: #1d4ed8; }
+.file-type-excel { background: rgba(16,185,129,0.18); color: #34d399; }
+.file-type-pdf { background: rgba(239,68,68,0.18); color: #f87171; }
+.file-type-image { background: rgba(59,130,246,0.18); color: #60a5fa; }
 .file-type-unknown { background: var(--bg-hover); color: var(--text-secondary); }
 
 .upload-thumb {
@@ -899,10 +899,10 @@ body {
     font-size: 12px;
 }
 
-.legend-added { background: #dbeafe; color: #1d4ed8; }
-.legend-removed { background: rgba(239,68,68,0.18); color: #b91c1c; }
-.legend-changed { background: rgba(245,158,11,0.18); color: #92400e; }
-.legend-same { background: #d1fae5; color: #065f46; }
+.legend-added { background: rgba(59,130,246,0.18); color: #60a5fa; }
+.legend-removed { background: rgba(239,68,68,0.18); color: #f87171; }
+.legend-changed { background: rgba(245,158,11,0.18); color: #fbbf24; }
+.legend-same { background: rgba(16,185,129,0.18); color: #34d399; }
 
 /* Visual mode tabs */
 .visual-mode-tabs {
@@ -957,7 +957,7 @@ body {
 .cell-changed { background: rgba(245,158,11,0.18); }
 
 .cell-old {
-    color: #b91c1c;
+    color: #f87171;
     text-decoration: line-through;
     font-size: 12px;
     opacity: 0.8;
@@ -966,19 +966,19 @@ body {
 .cell-arrow {
     text-align: center;
     font-size: 10px;
-    color: #92400e;
+    color: #fbbf24;
     line-height: 1;
 }
 
 .cell-new {
-    color: #065f46;
+    color: #34d399;
     font-weight: 600;
 }
 
-.cell-added { background: #dbeafe; }
-.cell-added-text { color: #1d4ed8; }
+.cell-added { background: rgba(59,130,246,0.18); }
+.cell-added-text { color: #60a5fa; }
 .cell-removed { background: rgba(239,68,68,0.18); }
-.cell-removed-text { color: #b91c1c; text-decoration: line-through; }
+.cell-removed-text { color: #f87171; text-decoration: line-through; }
 
 .no-diff-msg {
     text-align: center;
@@ -1504,8 +1504,8 @@ body {
 .mat-order-items { display: flex; gap: 4px; flex-wrap: wrap; }
 .mat-mini-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; color: #fff; font-size: 10px; font-weight: 600; }
 .mat-alert { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 6px; }
-.alert-overdue { background: rgba(239,68,68,0.1); color: #b91c1c; border-left: 3px solid #ef4444; }
-.alert-urgent { background: rgba(245,158,11,0.08); color: #92400e; border-left: 3px solid #f59e0b; }
+.alert-overdue { background: rgba(239,68,68,0.1); color: #f87171; border-left: 3px solid #ef4444; }
+.alert-urgent { background: rgba(245,158,11,0.08); color: #fbbf24; border-left: 3px solid #f59e0b; }
 .alert-icon { font-size: 16px; flex-shrink: 0; }
 
 /* Gantt / Timeline */
@@ -1530,7 +1530,7 @@ body {
 .gantt-row:hover { background: var(--bg-soft); }
 .gantt-phase-label { font-size: 12px; color: var(--text-secondary); flex-wrap: wrap; }
 .gantt-phase-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
-.gantt-phase-dates { display: block; font-size: 10px; color: #94a3b8; width: 100%; }
+.gantt-phase-dates { display: block; font-size: 10px; color: var(--text-faint); width: 100%; }
 .gantt-row-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
 .gantt-bar { position: absolute; top: 4px; height: calc(100% - 8px); border-radius: 4px; min-height: 20px; display: flex; align-items: center; overflow: hidden; cursor: default; opacity: 0.85; transition: opacity 0.2s; }
 .gantt-bar:hover { opacity: 1; }
@@ -1578,7 +1578,7 @@ body {
 .ctx-pair { display: inline-block; margin-right: 10px; white-space: nowrap; }
 .ctx-key { color: var(--text-secondary); font-weight: 600; }
 .ctx-val { color: var(--text); }
-.search-highlight { background: #fef08a; color: #854d0e; padding: 0 2px; border-radius: 2px; font-weight: 600; }
+.search-highlight { background: rgba(250,204,21,0.18); color: #fbbf24; padding: 0 2px; border-radius: 2px; font-weight: 600; }
 
 /* File Converter */
 .convert-file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
@@ -2261,6 +2261,14 @@ code, kbd { background: var(--bg-soft); color: var(--primary); border: 1px solid
 }
 .about-version-tag b { color: rgba(245,243,238,0.4); font-weight: 500; }
 body.on-about .about-version-tag { display: block; }
+
+.about-data-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.about-data-hint {
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 0.1em;
+}
 
 @media (max-width: 720px) {
     .about-log-row { grid-template-columns: 1fr; gap: 4px; }
@@ -3263,10 +3271,28 @@ body.on-about .about-version-tag { display: block; }
                         <span class="about-quote-author">&mdash; Sober &times; Claude</span>
                     </blockquote>
 
-                    <!-- 03 · 版本记录 -->
+                    <!-- 03 · 数据管理 -->
                     <section class="about-block">
                         <div class="about-block-head">
-                            <span class="about-block-num">03 / CHANGELOG</span>
+                            <span class="about-block-num">03 / DATA</span>
+                            <h2 class="about-block-title">数据管理</h2>
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.8; max-width: 680px; margin-bottom: 20px;">
+                            所有数据都只存在这台浏览器里。定期导出一份备份放到云盘/U 盘上，换电脑或清缓存也不会丢。
+                            备份文件是一段纯 JSON，可以用记事本打开看。
+                        </p>
+                        <div class="about-data-actions">
+                            <button class="btn btn-primary" id="btn-export-backup">&#8675; 导出备份</button>
+                            <button class="btn btn-accent-outline" id="btn-import-backup-trigger">&#8673; 恢复备份</button>
+                            <input type="file" accept="application/json" id="import-backup-file" style="display:none">
+                            <span class="about-data-hint">建议每周导出一次</span>
+                        </div>
+                    </section>
+
+                    <!-- 04 · 版本记录 -->
+                    <section class="about-block">
+                        <div class="about-block-head">
+                            <span class="about-block-num">04 / CHANGELOG</span>
                             <h2 class="about-block-title">版本记录</h2>
                         </div>
                         <div class="about-log">

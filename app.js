@@ -11,17 +11,107 @@
         quotes: 'clothing_quote_history',
     };
 
-    function loadData(key) {
-        try {
-            return JSON.parse(localStorage.getItem(key)) || [];
-        } catch {
-            return [];
+    // 带容错的 localStorage 封装 (#8)
+    const safeStorage = {
+        get(key, fallback) {
+            try {
+                const raw = localStorage.getItem(key);
+                if (raw == null) return fallback;
+                return JSON.parse(raw);
+            } catch (e) {
+                console.warn('[storage] read failed', key, e);
+                return fallback;
+            }
+        },
+        set(key, value) {
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+                return true;
+            } catch (e) {
+                if (e && (e.name === 'QuotaExceededError' || e.code === 22)) {
+                    alert('浏览器本地存储空间已满。\n\n建议：点侧边栏「关于」里的"导出备份"保存当前数据，再清理旧数据后重试。');
+                } else {
+                    alert('保存失败：' + (e && e.message ? e.message : '未知原因') + '\n\n浏览器可能禁用了本地存储（隐私模式？）。');
+                }
+                console.error('[storage] write failed', key, e);
+                return false;
+            }
+        },
+        remove(key) {
+            try { localStorage.removeItem(key); return true; } catch { return false; }
         }
+    };
+    window.safeStorage = safeStorage;
+
+    function loadData(key) {
+        return safeStorage.get(key, []);
     }
 
     function saveData(key, data) {
-        localStorage.setItem(key, JSON.stringify(data));
+        safeStorage.set(key, data);
     }
+
+    // 备份 / 恢复 (#1)
+    const BACKUP_PREFIXES = ['clothing_', 'custom_size_'];
+    function isBackupKey(k) {
+        return BACKUP_PREFIXES.some(p => k && k.indexOf(p) === 0);
+    }
+
+    function exportBackup() {
+        const payload = {
+            app: 'sober-workbench',
+            version: (document.getElementById('app-version') || {}).textContent || 'dev',
+            exportedAt: new Date().toISOString(),
+            data: {},
+        };
+        for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (!isBackupKey(k)) continue;
+            const raw = localStorage.getItem(k);
+            try { payload.data[k] = JSON.parse(raw); }
+            catch { payload.data[k] = raw; }
+        }
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const stamp = new Date().toISOString().slice(0, 10);
+        a.href = url;
+        a.download = `sober-backup-${stamp}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function importBackup(file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            let j;
+            try { j = JSON.parse(reader.result); }
+            catch { alert('这不是一个合法的 JSON 文件。'); return; }
+            if (!j || !j.data || typeof j.data !== 'object') {
+                alert('文件格式不对：缺少 data 字段。');
+                return;
+            }
+            const keys = Object.keys(j.data);
+            if (keys.length === 0) { alert('备份里没有数据。'); return; }
+            const stamp = j.exportedAt ? j.exportedAt.slice(0, 10) : '未知日期';
+            const msg = `即将用备份 (${stamp}) 覆盖当前数据，共 ${keys.length} 项：\n\n${keys.join('\n')}\n\n确认？`;
+            if (!confirm(msg)) return;
+            let ok = 0, fail = 0;
+            keys.forEach(k => {
+                const v = j.data[k];
+                if (safeStorage.set(k, v)) ok++; else fail++;
+            });
+            alert(`已恢复 ${ok} 项${fail ? `，失败 ${fail} 项` : ''}。页面将刷新。`);
+            setTimeout(() => location.reload(), 200);
+        };
+        reader.onerror = () => alert('读取文件失败。');
+        reader.readAsText(file);
+    }
+
+    window.exportBackup = exportBackup;
+    window.importBackup = importBackup;
 
     // ---- 成本项模板 ----
     const COST_TEMPLATES = {
@@ -96,6 +186,7 @@
         if (page === 'fabric' && window.initFabricPage) window.initFabricPage();
         if (page === 'xlssearch' && window.initXlsSearchPage) window.initXlsSearchPage();
         if (page === 'convert' && window.initConverterPage) window.initConverterPage();
+        if (page === 'about' && window.initAboutPage) window.initAboutPage();
         window.scrollTo(0, 0);
     }
     window.gotoPage = gotoPage;
@@ -698,9 +789,31 @@
         });
     });
 
+    // ---- 数据管理按钮 ----
+    function initAboutPage() {
+        const btnExport = document.getElementById('btn-export-backup');
+        const btnImportTrigger = document.getElementById('btn-import-backup-trigger');
+        const fileInput = document.getElementById('import-backup-file');
+        if (btnExport && !btnExport.__bound) {
+            btnExport.__bound = true;
+            btnExport.addEventListener('click', exportBackup);
+        }
+        if (btnImportTrigger && fileInput && !btnImportTrigger.__bound) {
+            btnImportTrigger.__bound = true;
+            btnImportTrigger.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => {
+                const f = e.target.files && e.target.files[0];
+                if (f) importBackup(f);
+                e.target.value = '';
+            });
+        }
+    }
+    window.initAboutPage = initAboutPage;
+
     // ---- 初始化 ----
     initNav();
     initQuotation();
+    initAboutPage();
     // 默认首页激活：同步 body 类
     if (document.querySelector('#page-home.active')) {
         document.body.classList.add('on-home');

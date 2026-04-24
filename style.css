@@ -385,7 +385,7 @@ body {
 }
 
 .btn-danger:hover {
-    background: #dc2626;
+    background: var(--primary-dark);
 }
 
 .btn-outline {
@@ -732,9 +732,9 @@ body {
     text-transform: uppercase;
 }
 
-.file-type-excel { background: #d1fae5; color: #065f46; }
-.file-type-pdf { background: rgba(239,68,68,0.18); color: #b91c1c; }
-.file-type-image { background: #dbeafe; color: #1d4ed8; }
+.file-type-excel { background: rgba(16,185,129,0.18); color: #34d399; }
+.file-type-pdf { background: rgba(239,68,68,0.18); color: #f87171; }
+.file-type-image { background: rgba(59,130,246,0.18); color: #60a5fa; }
 .file-type-unknown { background: var(--bg-hover); color: var(--text-secondary); }
 
 .upload-thumb {
@@ -894,10 +894,10 @@ body {
     font-size: 12px;
 }
 
-.legend-added { background: #dbeafe; color: #1d4ed8; }
-.legend-removed { background: rgba(239,68,68,0.18); color: #b91c1c; }
-.legend-changed { background: rgba(245,158,11,0.18); color: #92400e; }
-.legend-same { background: #d1fae5; color: #065f46; }
+.legend-added { background: rgba(59,130,246,0.18); color: #60a5fa; }
+.legend-removed { background: rgba(239,68,68,0.18); color: #f87171; }
+.legend-changed { background: rgba(245,158,11,0.18); color: #fbbf24; }
+.legend-same { background: rgba(16,185,129,0.18); color: #34d399; }
 
 /* Visual mode tabs */
 .visual-mode-tabs {
@@ -952,7 +952,7 @@ body {
 .cell-changed { background: rgba(245,158,11,0.18); }
 
 .cell-old {
-    color: #b91c1c;
+    color: #f87171;
     text-decoration: line-through;
     font-size: 12px;
     opacity: 0.8;
@@ -961,19 +961,19 @@ body {
 .cell-arrow {
     text-align: center;
     font-size: 10px;
-    color: #92400e;
+    color: #fbbf24;
     line-height: 1;
 }
 
 .cell-new {
-    color: #065f46;
+    color: #34d399;
     font-weight: 600;
 }
 
-.cell-added { background: #dbeafe; }
-.cell-added-text { color: #1d4ed8; }
+.cell-added { background: rgba(59,130,246,0.18); }
+.cell-added-text { color: #60a5fa; }
 .cell-removed { background: rgba(239,68,68,0.18); }
-.cell-removed-text { color: #b91c1c; text-decoration: line-through; }
+.cell-removed-text { color: #f87171; text-decoration: line-through; }
 
 .no-diff-msg {
     text-align: center;
@@ -1666,13 +1666,13 @@ body {
 
 .alert-overdue {
     background: rgba(239,68,68,0.1);
-    color: #b91c1c;
+    color: #f87171;
     border-left: 3px solid #ef4444;
 }
 
 .alert-urgent {
     background: rgba(245,158,11,0.08);
-    color: #92400e;
+    color: #fbbf24;
     border-left: 3px solid #f59e0b;
 }
 
@@ -1817,7 +1817,7 @@ body {
 .gantt-phase-dates {
     display: block;
     font-size: 10px;
-    color: #94a3b8;
+    color: var(--text-faint);
     width: 100%;
 }
 
@@ -2142,8 +2142,8 @@ body {
 }
 
 .search-highlight {
-    background: #fef08a;
-    color: #854d0e;
+    background: rgba(250,204,21,0.18);
+    color: #fbbf24;
     padding: 0 2px;
     border-radius: 2px;
     font-weight: 600;
@@ -2961,6 +2961,14 @@ code, kbd { background: var(--bg-soft); color: var(--primary); border: 1px solid
 }
 .about-version-tag b { color: rgba(245,243,238,0.4); font-weight: 500; }
 body.on-about .about-version-tag { display: block; }
+
+.about-data-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.about-data-hint {
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 0.1em;
+}
 
 @media (max-width: 720px) {
     .about-log-row { grid-template-columns: 1fr; gap: 4px; }
