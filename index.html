@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>服装工具平台</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#c8102e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" type="image/svg+xml" href="icon-192.svg">
+    <link rel="apple-touch-icon" href="icon-192.svg">
     <link rel="stylesheet" href="style.css">
     <style>
 * {
@@ -2493,6 +2499,7 @@ body.on-about .about-version-tag { display: block; }
     <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
     <div class="app">
@@ -3514,11 +3521,11 @@ body.on-about .about-version-tag { display: block; }
                         </div>
                         <div class="about-log">
                             <div class="about-log-row">
-                                <div class="about-log-ver">v0.5.1</div>
-                                <div class="about-log-date">2026.04.23</div>
+                                <div class="about-log-ver">v0.6.0</div>
+                                <div class="about-log-date">2026.04.24</div>
                                 <div class="about-log-body">
-                                    <b>按钮配色调整</b> ——
-                                    绿色交互按钮统一换成 Claude 橘色 <code>#d97757</code>；新增三档以上按钮配色方案（红 · 橘 · 琥珀 · 描边），保证黑底下多操作行的视觉节奏。
+                                    <b>基建大升级</b> ——
+                                    一键备份/恢复；全局搜索 <code>⌘K</code> 跨模块定位；订单支持粘贴/拖入/上传样品附图（前端压缩后存本地）；报价单可以直接下载真 PDF；整站升级为 PWA，可"安装到桌面"并离线使用；模块脚本按需加载，首屏更轻；localStorage 写入异常有友好提示。
                                 </div>
                             </div>
                         </div>
@@ -3536,7 +3543,7 @@ body.on-about .about-version-tag { display: block; }
 
         <!-- 右下角 · 版本号水印 -->
         <div class="about-version-tag" aria-hidden="true">
-            v<b id="app-version">0.5.1</b> &middot; <span id="app-build">2026.04.23</span>
+            v<b id="app-version">0.6.0</b> &middot; <span id="app-build">2026.04.24</span>
         </div>
     </div>
 
@@ -3810,22 +3817,16 @@ body.on-about .about-version-tag { display: block; }
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline" id="btn-cancel-export">关闭</button>
-                <button class="btn btn-primary" id="btn-print-quote">打印 / 导出PDF</button>
+                <button class="btn btn-accent-outline" id="btn-print-quote">打印</button>
+                <button class="btn btn-primary" id="btn-download-pdf">&#8675; 下载 PDF</button>
             </div>
         </div>
     </div>
 
     <script src="app.js"></script>
-    <script src="compare.js"></script>
-    <script src="orders.js"></script>
-    <script src="materials.js"></script>
-    <script src="timeline.js"></script>
-    <script src="packing.js"></script>
-    <script src="sizechart.js"></script>
-    <script src="fabric.js"></script>
-    <script src="xlssearch.js"></script>
-    <script src="convert.js"></script>
     <script src="cloth.js"></script>
     <script src="search.js"></script>
+    <!-- 模块脚本按需加载 (app.js gotoPage) -->
+
 </body>
 </html>

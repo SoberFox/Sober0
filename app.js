@@ -165,8 +165,50 @@
         return div.innerHTML;
     }
 
+    // ---- 按需加载模块脚本 (#9) ----
+    // 每个 page → 需要加载的脚本文件
+    const PAGE_SCRIPTS = {
+        orders:    ['orders.js'],
+        materials: ['materials.js'],
+        timeline:  ['timeline.js'],
+        packing:   ['packing.js'],
+        sizechart: ['sizechart.js'],
+        fabric:    ['fabric.js'],
+        compare:   ['compare.js'],
+        xlssearch: ['xlssearch.js'],
+        convert:   ['convert.js'],
+    };
+    const PAGE_INIT = {
+        orders:    'initOrdersPage',
+        materials: 'initMaterialsPage',
+        timeline:  'initTimelinePage',
+        packing:   'initPackingPage',
+        sizechart: 'initSizeChartPage',
+        fabric:    'initFabricPage',
+        xlssearch: 'initXlsSearchPage',
+        convert:   'initConverterPage',
+    };
+    const loadedScripts = {};
+    function loadScript(src) {
+        if (loadedScripts[src]) return loadedScripts[src];
+        loadedScripts[src] = new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = src;
+            s.async = false;
+            s.onload = () => resolve();
+            s.onerror = () => reject(new Error('load failed: ' + src));
+            document.head.appendChild(s);
+        });
+        return loadedScripts[src];
+    }
+    async function ensurePageScripts(page) {
+        const scripts = PAGE_SCRIPTS[page];
+        if (!scripts) return;
+        await Promise.all(scripts.map(loadScript));
+    }
+
     // ---- 页面导航 ----
-    function gotoPage(page) {
+    async function gotoPage(page) {
         const navItem = document.querySelector(`.nav-item[data-page="${page}"]`);
         $$('.nav-item').forEach(n => n.classList.remove('active'));
         if (navItem) navItem.classList.add('active');
@@ -175,19 +217,17 @@
         if (pageEl) pageEl.classList.add('active');
         document.body.classList.toggle('on-home', page === 'home');
         document.body.classList.toggle('on-about', page === 'about');
+        window.scrollTo(0, 0);
+
+        try { await ensurePageScripts(page); }
+        catch (e) { console.error(e); alert('模块加载失败：' + e.message); return; }
 
         if (page === 'history') renderHistory();
         if (page === 'customers') renderCustomers();
-        if (page === 'orders' && window.initOrdersPage) window.initOrdersPage();
-        if (page === 'materials' && window.initMaterialsPage) window.initMaterialsPage();
-        if (page === 'timeline' && window.initTimelinePage) window.initTimelinePage();
-        if (page === 'packing' && window.initPackingPage) window.initPackingPage();
-        if (page === 'sizechart' && window.initSizeChartPage) window.initSizeChartPage();
-        if (page === 'fabric' && window.initFabricPage) window.initFabricPage();
-        if (page === 'xlssearch' && window.initXlsSearchPage) window.initXlsSearchPage();
-        if (page === 'convert' && window.initConverterPage) window.initConverterPage();
         if (page === 'about' && window.initAboutPage) window.initAboutPage();
-        window.scrollTo(0, 0);
+
+        const initName = PAGE_INIT[page];
+        if (initName && typeof window[initName] === 'function') window[initName]();
     }
     window.gotoPage = gotoPage;
 
@@ -484,6 +524,75 @@
     $('#btn-print-quote').addEventListener('click', () => {
         window.print();
     });
+
+    // ---- 下载 PDF (#7) ----
+    async function downloadQuotePDF() {
+        const node = document.getElementById('quote-preview');
+        if (!node) return;
+        if (!window.html2canvas) { alert('PDF 库未加载，请检查网络。'); return; }
+        if (!window.jspdf || !window.jspdf.jsPDF) { alert('PDF 库未加载，请检查网络。'); return; }
+
+        const btn = document.getElementById('btn-download-pdf');
+        const origText = btn ? btn.textContent : '';
+        if (btn) { btn.disabled = true; btn.textContent = '生成中…'; }
+
+        try {
+            // 临时给预览元素一个白底（原样式可能透明或深色）
+            const prevBg = node.style.background;
+            node.style.background = '#ffffff';
+
+            const canvas = await html2canvas(node, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                logging: false,
+            });
+
+            node.style.background = prevBg;
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+            const pageW = pdf.internal.pageSize.getWidth();
+            const pageH = pdf.internal.pageSize.getHeight();
+            const margin = 10;
+            const imgW = pageW - margin * 2;
+            const imgH = canvas.height * imgW / canvas.width;
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.92);
+
+            if (imgH <= pageH - margin * 2) {
+                pdf.addImage(imgData, 'JPEG', margin, margin, imgW, imgH);
+            } else {
+                // 多页分割：按比例切 canvas
+                const pageImgH = pageH - margin * 2;
+                const pageSrcH = canvas.width * pageImgH / imgW; // 对应原 canvas 像素高
+                const totalPages = Math.ceil(canvas.height / pageSrcH);
+                const tmp = document.createElement('canvas');
+                tmp.width = canvas.width;
+                tmp.height = pageSrcH;
+                const tctx = tmp.getContext('2d');
+                for (let p = 0; p < totalPages; p++) {
+                    tctx.fillStyle = '#ffffff';
+                    tctx.fillRect(0, 0, tmp.width, tmp.height);
+                    tctx.drawImage(canvas, 0, -p * pageSrcH);
+                    const slice = tmp.toDataURL('image/jpeg', 0.92);
+                    if (p > 0) pdf.addPage();
+                    pdf.addImage(slice, 'JPEG', margin, margin, imgW, pageImgH);
+                }
+            }
+
+            const num = ($('#quote-number') && $('#quote-number').value) || 'quote';
+            pdf.save(`${num}.pdf`);
+        } catch (e) {
+            console.error('[pdf] ', e);
+            alert('导出 PDF 失败：' + (e && e.message ? e.message : '未知'));
+        } finally {
+            if (btn) { btn.disabled = false; btn.textContent = origText; }
+        }
+    }
+
+    const btnPdf = document.getElementById('btn-download-pdf');
+    if (btnPdf) btnPdf.addEventListener('click', downloadQuotePDF);
 
     // ============================================================
     // 报价记录模块
@@ -815,6 +924,15 @@
     if (sbSearch) sbSearch.addEventListener('click', () => {
         if (typeof window.openGlobalSearch === 'function') window.openGlobalSearch();
     });
+
+    // 注册 Service Worker (PWA)
+    if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').catch(err =>
+                console.warn('[sw] register failed', err)
+            );
+        });
+    }
 
     // ---- 初始化 ----
     initNav();
