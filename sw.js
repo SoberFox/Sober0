@@ -3,7 +3,7 @@
 // Offline-first: cache-on-install for app shell, stale-while-revalidate for everything else.
 // ============================================================
 
-const VERSION = 'sober-v0.6.0';
+const VERSION = 'sober-v0.6.1';
 const APP_SHELL = [
     './',
     './index.html',
@@ -41,18 +41,29 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
+// 允许缓存的 CDN 白名单 (用于 PDF/Excel 等离线模块)
+const CDN_HOSTS = [
+    'cdn.jsdelivr.net',
+    'cdnjs.cloudflare.com',
+    'unpkg.com',
+];
+
 self.addEventListener('fetch', (event) => {
     const req = event.request;
     if (req.method !== 'GET') return;
-    const url = new URL(req.url);
-    // 只拦截同源
-    if (url.origin !== self.location.origin) return;
+    let url;
+    try { url = new URL(req.url); } catch { return; }
+
+    const sameOrigin = url.origin === self.location.origin;
+    const isCdn = CDN_HOSTS.includes(url.hostname);
+    if (!sameOrigin && !isCdn) return;
 
     event.respondWith((async () => {
         const cache = await caches.open(VERSION);
         const cached = await cache.match(req);
         const fetchPromise = fetch(req).then(resp => {
-            if (resp && resp.status === 200 && resp.type === 'basic') {
+            // 'basic' = 同源；'cors' = 跨域支持 CORS；'opaque' 不能 put
+            if (resp && resp.status === 200 && (resp.type === 'basic' || resp.type === 'cors')) {
                 cache.put(req, resp.clone()).catch(() => {});
             }
             return resp;

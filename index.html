@@ -2093,6 +2093,31 @@ code, kbd { background: var(--bg-soft); color: var(--primary); border: 1px solid
     .quote-sheet, .modal-content { background: #fff !important; color: #000 !important; }
 }
 
+/* PDF 导出模式: html2canvas 捕获前临时开启 */
+body.pdf-export-mode #quote-preview,
+body.pdf-export-mode #quote-preview * {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border-color: #d1d5db !important;
+    box-shadow: none !important;
+}
+body.pdf-export-mode #quote-preview .quote-sheet,
+body.pdf-export-mode #quote-preview .sheet-table th {
+    background: #ffffff !important;
+}
+body.pdf-export-mode #quote-preview .sheet-header {
+    border-bottom: 2px solid #333 !important;
+}
+body.pdf-export-mode #quote-preview .sheet-table th,
+body.pdf-export-mode #quote-preview .sheet-table td {
+    border: 1px solid #d1d5db !important;
+}
+body.pdf-export-mode #quote-preview .total-row td,
+body.pdf-export-mode #quote-preview .subtotal {
+    color: #c8102e !important;
+    font-weight: 700 !important;
+}
+
 /* ============================================================
    关于页面 (About)
    ============================================================ */
@@ -2495,11 +2520,11 @@ body.on-about .about-version-tag { display: block; }
 }
 
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+    <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
     <div class="app">

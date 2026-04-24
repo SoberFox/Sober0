@@ -93,10 +93,19 @@
                 alert('文件格式不对：缺少 data 字段。');
                 return;
             }
-            const keys = Object.keys(j.data);
-            if (keys.length === 0) { alert('备份里没有数据。'); return; }
+            // 只接受白名单前缀的 key；过滤危险的原型 key
+            const PROTO_KEYS = ['__proto__', 'constructor', 'prototype'];
+            const allKeys = Object.keys(j.data);
+            const keys = allKeys.filter(k => isBackupKey(k) && !PROTO_KEYS.includes(k));
+            const skipped = allKeys.filter(k => !keys.includes(k));
+            if (keys.length === 0) {
+                alert(skipped.length ? `这个备份里没有可识别的数据键。\n忽略的键：${skipped.join(', ')}` : '备份里没有数据。');
+                return;
+            }
             const stamp = j.exportedAt ? j.exportedAt.slice(0, 10) : '未知日期';
-            const msg = `即将用备份 (${stamp}) 覆盖当前数据，共 ${keys.length} 项：\n\n${keys.join('\n')}\n\n确认？`;
+            let msg = `即将用备份 (${stamp}) 覆盖当前数据，共 ${keys.length} 项：\n\n${keys.join('\n')}`;
+            if (skipped.length) msg += `\n\n忽略 ${skipped.length} 个不识别的键：\n${skipped.join('\n')}`;
+            msg += '\n\n确认？';
             if (!confirm(msg)) return;
             let ok = 0, fail = 0;
             keys.forEach(k => {
@@ -536,19 +545,17 @@
         const origText = btn ? btn.textContent : '';
         if (btn) { btn.disabled = true; btn.textContent = '生成中…'; }
 
-        try {
-            // 临时给预览元素一个白底（原样式可能透明或深色）
-            const prevBg = node.style.background;
-            node.style.background = '#ffffff';
+        // 在 body 上临时加 pdf-export-mode，强制所有后代使用白底黑字
+        // （避免 html2canvas 捕获深色主题）
+        document.body.classList.add('pdf-export-mode');
 
+        try {
             const canvas = await html2canvas(node, {
                 scale: 2,
                 useCORS: true,
                 backgroundColor: '#ffffff',
                 logging: false,
             });
-
-            node.style.background = prevBg;
 
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
@@ -587,6 +594,7 @@
             console.error('[pdf] ', e);
             alert('导出 PDF 失败：' + (e && e.message ? e.message : '未知'));
         } finally {
+            document.body.classList.remove('pdf-export-mode');
             if (btn) { btn.disabled = false; btn.textContent = origText; }
         }
     }

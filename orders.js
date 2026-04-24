@@ -25,7 +25,9 @@
     }
 
     function saveOrders(orders) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+        if (window.safeStorage) return window.safeStorage.set(STORAGE_KEY, orders);
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(orders)); return true; }
+        catch (e) { alert('保存失败：' + (e.message || e)); return false; }
     }
 
     function generateId() {
@@ -349,7 +351,15 @@
             orders.unshift(data);
         }
 
-        saveOrders(orders);
+        const ok = saveOrders(orders);
+        if (!ok) {
+            // 保存失败（通常是空间不足）。不关弹窗，让用户删掉附图再试。
+            const hasAttach = data.attachments && data.attachments.length > 0;
+            if (hasAttach) {
+                alert('订单未保存。可能是附图太大导致空间不足——可以先删掉几张图再保存。');
+            }
+            return;
+        }
         closeModal('order-modal');
         renderOrders();
     }
