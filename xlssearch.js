@@ -1,5 +1,5 @@
 // ============================================================
-// Excel 批量搜索模块 - 在多个 Excel 中查找信息
+// 文件筛查工具 - 在多个 Excel / PDF 中查找信息
 // ============================================================
 
 (function () {
@@ -9,7 +9,8 @@
     function $$(sel) { return document.querySelectorAll(sel); }
     function escHtml(s) { const d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
 
-    // 已解析的文件缓存 [{ name, sheets: [{ name, rows: [[cells...]] }] }]
+    // 已解析的文件缓存 [{ name, kind, sheets: [{ name, rows: [[cells...]] }] }]
+    // kind: 'xlsx' | 'pdf'
     let parsedFiles = [];
     let searchResults = [];
 
@@ -26,7 +27,7 @@
                         const rows = sheetToRows(sheet);
                         return { name, rows };
                     });
-                    resolve({ name: file.name, size: file.size, sheets });
+                    resolve({ name: file.name, size: file.size, kind: 'xlsx', sheets });
                 } catch (err) {
                     reject(new Error('解析 ' + file.name + ' 失败: ' + err.message));
                 }
@@ -34,6 +35,53 @@
             reader.onerror = () => reject(new Error('读取文件失败'));
             reader.readAsArrayBuffer(file);
         });
+    }
+
+    // ---- 解析单个 PDF ----
+    async function parsePdf(file) {
+        if (typeof pdfjsLib === 'undefined') {
+            throw new Error('PDF 库未加载，请刷新页面');
+        }
+        // 设置 worker (若尚未设置)
+        if (pdfjsLib.GlobalWorkerOptions && !pdfjsLib.GlobalWorkerOptions.workerSrc) {
+            pdfjsLib.GlobalWorkerOptions.workerSrc =
+                'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+        }
+        const ab = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(ab) }).promise;
+        const sheets = [];
+        const Y_TOL = 3;  // px tolerance for grouping into a line
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const tc = await page.getTextContent();
+            const items = tc.items
+                .filter(it => it && it.str && it.str.trim())
+                .map(it => ({ str: it.str, x: it.transform[4], y: it.transform[5] }));
+            // 按 Y 降序、X 升序
+            items.sort((a, b) => b.y - a.y || a.x - b.x);
+            const lines = [];
+            let curY = null;
+            let cur = [];
+            items.forEach(it => {
+                if (curY === null || Math.abs(it.y - curY) > Y_TOL) {
+                    if (cur.length) lines.push(cur.join(' ').trim());
+                    cur = [it.str];
+                    curY = it.y;
+                } else {
+                    cur.push(it.str);
+                }
+            });
+            if (cur.length) lines.push(cur.join(' ').trim());
+            const rows = lines.filter(Boolean).map(line => [line]);
+            sheets.push({ name: '第 ' + i + ' 页', rows });
+        }
+        return { name: file.name, size: file.size, kind: 'pdf', sheets };
+    }
+
+    function getFileKind(name) {
+        if (/\.pdf$/i.test(name)) return 'pdf';
+        if (/\.xlsx?$/i.test(name)) return 'xlsx';
+        return null;
     }
 
     function sheetToRows(sheet) {
@@ -56,9 +104,9 @@
 
     // ---- 文件上传处理 ----
     async function handleFiles(files) {
-        const fileList = Array.from(files).filter(f => /\.xlsx?$/i.test(f.name));
+        const fileList = Array.from(files).filter(f => getFileKind(f.name));
         if (fileList.length === 0) {
-            alert('请选择 Excel 文件 (.xlsx / .xls)');
+            alert('请选择 Excel (.xlsx / .xls) 或 PDF 文件');
             return;
         }
 
@@ -67,13 +115,14 @@
         let successCount = 0, errorCount = 0;
         for (let i = 0; i < fileList.length; i++) {
             const file = fileList[i];
+            const kind = getFileKind(file.name);
             updateStatus(`正在解析 ${i + 1}/${fileList.length}: ${file.name}`);
             try {
                 // 避免重复添加
                 const existing = parsedFiles.findIndex(f => f.name === file.name && f.size === file.size);
                 if (existing >= 0) parsedFiles.splice(existing, 1);
 
-                const parsed = await parseExcel(file);
+                const parsed = kind === 'pdf' ? await parsePdf(file) : await parseExcel(file);
                 parsedFiles.push(parsed);
                 successCount++;
             } catch (err) {
@@ -101,27 +150,32 @@
             return;
         }
 
-        let totalSheets = 0, totalCells = 0;
+        let xlsxCount = 0, pdfCount = 0;
+        let totalUnits = 0, totalCells = 0;
         parsedFiles.forEach(f => {
-            totalSheets += f.sheets.length;
+            if (f.kind === 'pdf') pdfCount++; else xlsxCount++;
+            totalUnits += f.sheets.length;
             f.sheets.forEach(s => {
                 s.rows.forEach(r => totalCells += r.length);
             });
         });
 
         let html = `<div class="search-file-stat">
-            已加载 <strong>${parsedFiles.length}</strong> 个文件 |
-            共 <strong>${totalSheets}</strong> 个工作表 |
-            约 <strong>${totalCells.toLocaleString()}</strong> 个单元格
+            已加载 <strong>${parsedFiles.length}</strong> 个文件 (${xlsxCount} Excel + ${pdfCount} PDF) |
+            共 <strong>${totalUnits}</strong> 个工作表/页 |
+            约 <strong>${totalCells.toLocaleString()}</strong> 个单元/行
         </div>`;
 
         html += '<div class="search-file-chips">';
         parsedFiles.forEach((f, i) => {
             const cellCount = f.sheets.reduce((s, sh) => s + sh.rows.reduce((a, r) => a + r.length, 0), 0);
-            html += `<span class="search-file-chip" title="${escHtml(f.name)}\n${f.sheets.length} 工作表 / ${cellCount} 单元格">
-                <span class="chip-icon">&#128196;</span>
+            const isPdf = f.kind === 'pdf';
+            const icon = isPdf ? '&#128196;' : '&#128202;';
+            const unit = isPdf ? '页' : 'sh';
+            html += `<span class="search-file-chip ${isPdf ? 'chip-pdf' : 'chip-xlsx'}" title="${escHtml(f.name)}\n${f.sheets.length} ${isPdf ? '页' : '工作表'} / ${cellCount} ${isPdf ? '行' : '单元格'}">
+                <span class="chip-icon">${icon}</span>
                 <span class="chip-name">${escHtml(f.name)}</span>
-                <span class="chip-meta">${f.sheets.length}sh</span>
+                <span class="chip-meta">${f.sheets.length}${unit}</span>
                 <button class="chip-remove" data-idx="${i}" title="移除">&times;</button>
             </span>`;
         });
@@ -177,6 +231,7 @@
 
         searchResults = [];
         parsedFiles.forEach(file => {
+            const isPdf = file.kind === 'pdf';
             file.sheets.forEach(sheet => {
                 sheet.rows.forEach((row, rowIdx) => {
                     row.forEach((cellVal, colIdx) => {
@@ -186,13 +241,14 @@
                         if (matcher.test(str)) {
                             searchResults.push({
                                 fileName: file.name,
+                                kind: file.kind,
                                 sheetName: sheet.name,
                                 rowIdx: rowIdx,
                                 colIdx: colIdx,
-                                cellRef: XLSX.utils.encode_cell({ r: rowIdx, c: colIdx }),
+                                cellRef: isPdf ? ('行 ' + (rowIdx + 1)) : XLSX.utils.encode_cell({ r: rowIdx, c: colIdx }),
                                 value: str,
-                                contextRow: opts.showContext ? row : null,
-                                headerRow: opts.showContext && rowIdx > 0 ? sheet.rows[0] : null,
+                                contextRow: opts.showContext && !isPdf ? row : null,
+                                headerRow: opts.showContext && !isPdf && rowIdx > 0 ? sheet.rows[0] : null,
                             });
                         }
                     });
@@ -225,33 +281,36 @@
         const grouped = {};
         searchResults.forEach(r => {
             const key = r.fileName + ' | ' + r.sheetName;
-            if (!grouped[key]) grouped[key] = { fileName: r.fileName, sheetName: r.sheetName, items: [] };
+            if (!grouped[key]) grouped[key] = { fileName: r.fileName, sheetName: r.sheetName, kind: r.kind, items: [] };
             grouped[key].items.push(r);
         });
 
         let html = '';
         Object.keys(grouped).forEach(key => {
             const g = grouped[key];
-            html += `<div class="search-group">
+            const isPdf = g.kind === 'pdf';
+            const groupIcon = isPdf ? '&#128196;' : '&#128202;';
+            html += `<div class="search-group ${isPdf ? 'group-pdf' : ''}">
                 <div class="search-group-header">
-                    <span class="search-group-icon">&#128196;</span>
+                    <span class="search-group-icon">${groupIcon}</span>
                     <strong>${escHtml(g.fileName)}</strong>
                     <span class="search-group-sep">&rsaquo;</span>
                     <span class="search-group-sheet">${escHtml(g.sheetName)}</span>
                     <span class="search-group-count">${g.items.length} 条</span>
                 </div>`;
 
-            html += '<table class="data-table search-result-table"><thead><tr><th>单元格</th><th>内容</th>';
-            if ($('#search-show-context').checked) html += '<th>所在行上下文</th>';
+            const refHeader = isPdf ? '位置' : '单元格';
+            html += '<table class="data-table search-result-table"><thead><tr><th>' + refHeader + '</th><th>内容</th>';
+            if (!isPdf && $('#search-show-context').checked) html += '<th>所在行上下文</th>';
             html += '</tr></thead><tbody>';
 
             g.items.forEach(item => {
                 const highlighted = highlightMatches(item.value, matcher);
                 html += `<tr>
-                    <td class="search-cell-ref"><strong>${item.cellRef}</strong><br><small>行${item.rowIdx + 1}</small></td>
+                    <td class="search-cell-ref"><strong>${item.cellRef}</strong></td>
                     <td class="search-cell-val">${highlighted}</td>`;
 
-                if ($('#search-show-context').checked && item.contextRow) {
+                if (!isPdf && $('#search-show-context').checked && item.contextRow) {
                     const headerRow = item.headerRow;
                     const contextCells = item.contextRow.map((cv, ci) => {
                         if (ci === item.colIdx) return '';
@@ -302,10 +361,10 @@
         }
 
         const keyword = $('#search-keyword').value.trim();
-        const header = ['文件名', '工作表', '单元格', '行号', '内容'];
+        const header = ['文件名', '类型', '工作表/页', '位置', '行号', '内容'];
         const rows = [header];
         searchResults.forEach(r => {
-            rows.push([r.fileName, r.sheetName, r.cellRef, r.rowIdx + 1, r.value]);
+            rows.push([r.fileName, r.kind === 'pdf' ? 'PDF' : 'Excel', r.sheetName, r.cellRef, r.rowIdx + 1, r.value]);
         });
 
         // CSV 格式

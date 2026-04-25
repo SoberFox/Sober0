@@ -1438,6 +1438,33 @@ body {
     font-weight: 700;
     color: var(--text);
 }
+.pack-result-val-sm { font-size: 13px; font-weight: 500; }
+.pack-result-card-wide { grid-column: span 2; text-align: left; }
+.pack-help {
+    display: inline-block;
+    width: 14px; height: 14px;
+    line-height: 13px;
+    text-align: center;
+    border-radius: 50%;
+    border: 1px solid var(--text-faint);
+    color: var(--text-faint);
+    font-size: 9px;
+    font-weight: 600;
+    margin-left: 6px;
+    cursor: help;
+    vertical-align: middle;
+}
+.pack-foot-note {
+    margin-top: 14px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--text-faint);
+    padding: 12px 14px;
+    border-left: 2px solid var(--accent);
+    background: rgba(217,119,87,0.05);
+    border-radius: 0 4px 4px 0;
+}
+.pack-foot-note strong { color: var(--accent); }
 .fill-good { color: #10b981 !important; }
 .fill-ok { color: #f59e0b !important; }
 .fill-low { color: #ef4444 !important; }
@@ -1559,7 +1586,10 @@ body {
 .search-file-stat { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; padding: 8px 12px; background: var(--bg-soft); border-radius: 6px; }
 .search-file-stat strong { color: var(--text); }
 .search-file-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.search-file-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: var(--primary-soft); border: 1px solid #bfdbfe; border-radius: 16px; font-size: 12px; max-width: 280px; }
+.search-file-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: var(--primary-soft); border: 1px solid var(--primary); border-radius: 16px; font-size: 12px; max-width: 280px; color: var(--text); }
+.search-file-chip.chip-pdf { background: var(--accent-soft); border-color: var(--accent); }
+.search-file-chip.chip-pdf .chip-icon, .search-file-chip.chip-pdf .chip-meta { color: var(--accent); }
+.search-group.group-pdf .search-group-icon { color: var(--accent); }
 .chip-icon { font-size: 14px; flex-shrink: 0; }
 .chip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px; }
 .chip-meta { color: var(--text-secondary); font-size: 10px; flex-shrink: 0; }
@@ -2586,7 +2616,7 @@ body.on-about .about-version-tag { display: block; }
                 </li>
                 <li class="nav-item" data-page="xlssearch">
                     <span class="nav-icon">&#128270;</span>
-                    <span>Excel 搜索</span>
+                    <span>文件筛查</span>
                 </li>
                 <li class="nav-item" data-page="convert">
                     <span class="nav-icon">&#128260;</span>
@@ -3143,13 +3173,25 @@ body.on-about .about-version-tag { display: block; }
                             <div class="pack-result-label">需要柜数</div>
                             <div class="pack-result-val" id="res-containers-needed">-</div>
                         </div>
-                        <div class="pack-result-card">
-                            <div class="pack-result-label">装柜率</div>
+                        <div class="pack-result-card pack-result-card-wide">
+                            <div class="pack-result-label">装载率<span class="pack-help" title="实际装载率 = 实装 CBM / 业内可装 CBM。括号里是按集装箱名义内容积算的理论上限，扣除门框/波纹/角部钢梁后实际打不满 100%。">?</span></div>
                             <div class="pack-result-val" id="res-fill-rate">-</div>
+                        </div>
+                        <div class="pack-result-card pack-result-card-wide">
+                            <div class="pack-result-label">最佳摆向</div>
+                            <div class="pack-result-val pack-result-val-sm" id="res-orientation">-</div>
+                        </div>
+                        <div class="pack-result-card pack-result-card-wide">
+                            <div class="pack-result-label">摆放方案</div>
+                            <div class="pack-result-val pack-result-val-sm" id="res-arrangement">-</div>
                         </div>
                     </div>
 
-                    <canvas id="container-visual" width="600" height="150" style="width:100%;max-width:600px;margin-top:16px;border:1px solid var(--border);border-radius:var(--radius)"></canvas>
+                    <canvas id="container-visual" width="640" height="280" style="width:100%;max-width:640px;margin-top:16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-soft)"></canvas>
+                    <p class="pack-foot-note">
+                        <strong>说明</strong>：集装箱内实际可堆放空间小于名义内尺寸 —— 门框钢梁约 8–10cm、侧壁波纹约 2cm、底部抬高、角部加固钢柱、堆码顶部留白等。
+                        计算已自动套用业内"实装 CBM"参考值（20GP=28 / 40GP=58 / 40HQ=68 / 45HQ=78 m³），并在 6 种摆向中选最优。
+                    </p>
                 </section>
 
                 <!-- 混装计算 -->
@@ -3291,22 +3333,22 @@ body.on-about .about-version-tag { display: block; }
             <!-- Excel 批量搜索页面 -->
             <div id="page-xlssearch" class="page">
                 <div class="page-header">
-                    <h1>Excel 批量搜索</h1>
+                    <h1>文件筛查工具</h1>
                 </div>
 
                 <!-- 文件上传区 -->
                 <section class="form-section">
-                    <h3>上传 Excel 文件</h3>
+                    <h3>上传文件</h3>
                     <p class="compare-hint">
-                        支持批量上传多个 Excel 文件 (.xlsx / .xls)，在所有工作表的所有单元格中搜索指定内容。<br>
-                        可用于在多个订单表、报价表、物料清单中快速定位特定款号、客户、物料等信息。
+                        批量上传 Excel (<code>.xlsx / .xls</code>) 或 PDF 文件，在所有工作表 / 全部页面中搜索指定内容。<br>
+                        可用于在订单手册、报价表、物料清单、PDF 合同里一次性定位款号、客户、规格、金额等信息。
                     </p>
                     <div class="xls-search-dropzone" id="xls-search-dropzone">
                         <div class="dropzone-icon">&#128228;</div>
-                        <div class="dropzone-text">拖拽 Excel 文件到这里，或</div>
-                        <input type="file" id="xls-search-input" accept=".xlsx,.xls" multiple class="file-input">
+                        <div class="dropzone-text">拖拽 Excel / PDF 到这里，或</div>
+                        <input type="file" id="xls-search-input" accept=".xlsx,.xls,.pdf" multiple class="file-input">
                         <label for="xls-search-input" class="btn btn-primary upload-btn">选择多个文件</label>
-                        <div class="dropzone-hint">支持 .xlsx / .xls 格式，可一次选择多个文件</div>
+                        <div class="dropzone-hint">支持 .xlsx / .xls / .pdf，可一次选择多个</div>
                     </div>
                     <div id="search-status" class="search-status" style="display:none"></div>
                     <div id="search-file-summary" class="search-file-summary"></div>
@@ -3546,11 +3588,12 @@ body.on-about .about-version-tag { display: block; }
                         </div>
                         <div class="about-log">
                             <div class="about-log-row">
-                                <div class="about-log-ver">v0.6.0</div>
-                                <div class="about-log-date">2026.04.24</div>
+                                <div class="about-log-ver">v0.7.0</div>
+                                <div class="about-log-date">2026.04.25</div>
                                 <div class="about-log-body">
-                                    <b>基建大升级</b> ——
-                                    一键备份/恢复；全局搜索 <code>⌘K</code> 跨模块定位；订单支持粘贴/拖入/上传样品附图（前端压缩后存本地）；报价单可以直接下载真 PDF；整站升级为 PWA，可"安装到桌面"并离线使用；模块脚本按需加载，首屏更轻；localStorage 写入异常有友好提示。
+                                    <b>文件筛查 + 真实装柜率</b> ——
+                                    "Excel 搜索"升级为<strong>文件筛查工具</strong>，新增 PDF 全文搜索（按页提取、带行号定位）；
+                                    装箱计算重写：用业内"实装 CBM"参考值 (20GP=28 / 40GP=58 / 40HQ=68 / 45HQ=78)，并在 6 种摆向中找最优 nL × nW × nH 排列，扣除门框钢梁、波纹板侧壁、角部加固，结果更贴近货代实装数；输出最佳摆向 + 排列方案 + 顶视图。
                                 </div>
                             </div>
                         </div>
@@ -3568,7 +3611,7 @@ body.on-about .about-version-tag { display: block; }
 
         <!-- 右下角 · 版本号水印 -->
         <div class="about-version-tag" aria-hidden="true">
-            v<b id="app-version">0.6.0</b> &middot; <span id="app-build">2026.04.24</span>
+            v<b id="app-version">0.7.0</b> &middot; <span id="app-build">2026.04.25</span>
         </div>
     </div>
 

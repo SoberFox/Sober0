@@ -1497,6 +1497,33 @@ body {
     font-weight: 700;
     color: var(--text);
 }
+.pack-result-val-sm { font-size: 13px; font-weight: 500; }
+.pack-result-card-wide { grid-column: span 2; text-align: left; }
+.pack-help {
+    display: inline-block;
+    width: 14px; height: 14px;
+    line-height: 13px;
+    text-align: center;
+    border-radius: 50%;
+    border: 1px solid var(--text-faint);
+    color: var(--text-faint);
+    font-size: 9px;
+    font-weight: 600;
+    margin-left: 6px;
+    cursor: help;
+    vertical-align: middle;
+}
+.pack-foot-note {
+    margin-top: 14px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--text-faint);
+    padding: 12px 14px;
+    border-left: 2px solid var(--accent);
+    background: rgba(217,119,87,0.05);
+    border-radius: 0 4px 4px 0;
+}
+.pack-foot-note strong { color: var(--accent); }
 
 .fill-good { color: #10b981 !important; }
 .fill-ok { color: #f59e0b !important; }
@@ -1981,11 +2008,15 @@ body {
     gap: 6px;
     padding: 6px 10px;
     background: var(--primary-soft);
-    border: 1px solid #bfdbfe;
+    border: 1px solid var(--primary);
     border-radius: 16px;
     font-size: 12px;
     max-width: 280px;
+    color: var(--text);
 }
+.search-file-chip.chip-pdf { background: var(--accent-soft); border-color: var(--accent); }
+.search-file-chip.chip-pdf .chip-icon, .search-file-chip.chip-pdf .chip-meta { color: var(--accent); }
+.search-group.group-pdf .search-group-icon { color: var(--accent); }
 
 .chip-icon {
     font-size: 14px;
