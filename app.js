@@ -180,7 +180,11 @@
         orders:    ['orders.js'],
         materials: ['materials.js'],
         timeline:  ['timeline.js'],
-        packing:   ['packing.js'],
+        packing: [
+            'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js',
+            'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js',
+            'packing.js',
+        ],
         sizechart: ['sizechart.js'],
         fabric:    ['fabric.js'],
         compare:   ['compare.js'],

@@ -174,116 +174,318 @@
         if (el) el.textContent = text;
     }
 
-    // 顶视图：按 fit.nL × fit.nW 网格摆首层，右侧标注 nH 层
-    function renderContainerVisual(fit, container) {
-        const canvas = $('#container-visual');
-        if (!canvas || !container) return;
-        const ctx = canvas.getContext('2d');
-        const W = canvas.width;
-        const H = canvas.height;
-        ctx.clearRect(0, 0, W, H);
+    // ============================================================
+    // 3D 货柜预览 (Three.js + OrbitControls)
+    // ============================================================
+    let scene3d = null, camera3d = null, renderer3d = null, controls3d = null;
+    let containerGroup = null, cargoGroup = null;
+    let animFrameId = null;
+    let resizeHandler3d = null;
 
-        const pad = 24;
-        const labelWidth = 80;
-        const cW = W - pad * 2 - labelWidth;
-        const cH = H - pad * 2 - 24;
-        const x0 = pad, y0 = pad;
+    function ensureThree() { return typeof THREE !== 'undefined'; }
 
-        // 集装箱外框 (顶视图) - 等比缩放 usableL × usableW
-        const aspect = container.usableW / container.usableL;
-        let drawW = cW, drawH = cW * aspect;
-        if (drawH > cH) { drawH = cH; drawW = cH / aspect; }
-        const cx = x0 + drawW;
-        const cy = y0 + drawH;
+    function init3D() {
+        if (!ensureThree()) return false;
+        const host = document.getElementById('container-3d');
+        if (!host) return false;
+        if (renderer3d) return true; // 已初始化
 
-        // 集装箱地板
-        ctx.fillStyle = 'rgba(245,243,238,0.04)';
-        ctx.fillRect(x0, y0, drawW, drawH);
-        ctx.strokeStyle = 'rgba(245,243,238,0.3)';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(x0, y0, drawW, drawH);
+        const w = host.clientWidth || 600;
+        const h = host.clientHeight || 360;
 
-        // 标注门的方向 (右侧)
-        ctx.strokeStyle = 'rgba(245,243,238,0.18)';
-        ctx.setLineDash([4, 3]);
-        ctx.beginPath();
-        ctx.moveTo(cx, y0 + 4);
-        ctx.lineTo(cx, cy - 4);
-        ctx.stroke();
-        ctx.setLineDash([]);
+        scene3d = new THREE.Scene();
+        scene3d.background = null; // 透明，露出 CSS 渐变背景
 
-        if (!fit || fit.count === 0) {
-            ctx.fillStyle = 'rgba(245,243,238,0.4)';
-            ctx.font = '12px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('请输入纸箱尺寸', x0 + drawW / 2, y0 + drawH / 2);
-            return;
+        camera3d = new THREE.PerspectiveCamera(40, w / h, 1, 8000);
+        camera3d.position.set(1500, 1100, 1700);
+        camera3d.lookAt(0, 0, 0);
+
+        renderer3d = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer3d.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer3d.setSize(w, h);
+        renderer3d.setClearColor(0x000000, 0);
+        host.appendChild(renderer3d.domElement);
+
+        // 灯光
+        const amb = new THREE.AmbientLight(0xffffff, 0.55);
+        scene3d.add(amb);
+        const key = new THREE.DirectionalLight(0xffffff, 0.85);
+        key.position.set(800, 1200, 600);
+        scene3d.add(key);
+        const fill = new THREE.DirectionalLight(0xc8102e, 0.18);
+        fill.position.set(-1000, 500, -800);
+        scene3d.add(fill);
+
+        // 地面
+        const floor = new THREE.Mesh(
+            new THREE.PlaneGeometry(4000, 4000),
+            new THREE.MeshBasicMaterial({ color: 0x0a0808, transparent: true, opacity: 0.7 })
+        );
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.y = -1;
+        scene3d.add(floor);
+        // 地面网格
+        const grid = new THREE.GridHelper(4000, 40, 0x2a1f1f, 0x1a1212);
+        grid.position.y = 0;
+        scene3d.add(grid);
+
+        // OrbitControls
+        if (typeof THREE.OrbitControls === 'function') {
+            controls3d = new THREE.OrbitControls(camera3d, renderer3d.domElement);
+            controls3d.enableDamping = true;
+            controls3d.dampingFactor = 0.08;
+            controls3d.maxPolarAngle = Math.PI / 2 - 0.05; // 不让相机翻到地面下
+            controls3d.minDistance = 400;
+            controls3d.maxDistance = 5000;
+            controls3d.target.set(0, 0, 0);
         }
 
-        // 一层箱子: nL 排 (沿长度) × nW 列 (沿宽度)
-        const nL = fit.nL, nW = fit.nW, nH = fit.nH;
-        const cellW = drawW / nL;
-        const cellH = drawH / nW;
+        containerGroup = new THREE.Group();
+        cargoGroup = new THREE.Group();
+        scene3d.add(containerGroup);
+        scene3d.add(cargoGroup);
 
-        // 填色基于装载率 (>=90 绿, >=70 橙, 低于 70 红)
-        const fillPct = (fit.count * (fit.dims[0] * fit.dims[1] * fit.dims[2] / 1000000)) / container.cbmPractical * 100;
-        const baseColor = fillPct >= 90 ? '#d97757' : fillPct >= 70 ? '#c9a45a' : '#c8102e';
-        ctx.fillStyle = baseColor;
-        ctx.globalAlpha = 0.18;
-        for (let r = 0; r < nW; r++) {
-            for (let c = 0; c < nL; c++) {
-                ctx.fillRect(x0 + c * cellW, y0 + r * cellH, cellW, cellH);
+        // 自适应大小
+        resizeHandler3d = () => {
+            const rect = host.getBoundingClientRect();
+            if (rect.width < 10) return;
+            renderer3d.setSize(rect.width, rect.height);
+            camera3d.aspect = rect.width / rect.height;
+            camera3d.updateProjectionMatrix();
+        };
+        window.addEventListener('resize', resizeHandler3d);
+
+        animate3D();
+
+        // 视角切换
+        const toggle = document.querySelector('.pack-3d-toggle');
+        if (toggle && !toggle.__bound) {
+            toggle.__bound = true;
+            toggle.addEventListener('click', (e) => {
+                const btn = e.target.closest('.pack-3d-btn');
+                if (!btn) return;
+                toggle.querySelectorAll('.pack-3d-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                setView(btn.dataset.view);
+            });
+        }
+        return true;
+    }
+
+    function animate3D() {
+        animFrameId = requestAnimationFrame(animate3D);
+        if (controls3d) controls3d.update();
+        if (renderer3d && scene3d && camera3d) renderer3d.render(scene3d, camera3d);
+    }
+
+    function clearGroup(g) {
+        if (!g) return;
+        while (g.children.length) {
+            const c = g.children[0];
+            g.remove(c);
+            if (c.geometry) c.geometry.dispose();
+            if (c.material) {
+                if (Array.isArray(c.material)) c.material.forEach(m => m.dispose());
+                else c.material.dispose();
             }
         }
-        ctx.globalAlpha = 1;
+    }
 
-        ctx.strokeStyle = baseColor;
-        ctx.lineWidth = 1;
-        ctx.globalAlpha = 0.55;
-        for (let r = 0; r < nW; r++) {
-            for (let c = 0; c < nL; c++) {
-                ctx.strokeRect(x0 + c * cellW, y0 + r * cellH, cellW, cellH);
-            }
-        }
-        ctx.globalAlpha = 1;
+    function buildContainerWire(container) {
+        const L = container.usableL;
+        const H = container.usableH;
+        const W = container.usableW;
+        const grp = new THREE.Group();
 
-        // 角落标识 (集装箱角部柱)
-        ctx.fillStyle = 'rgba(245,243,238,0.4)';
-        const corner = 4;
-        [[x0, y0], [cx - corner, y0], [x0, cy - corner], [cx - corner, cy - corner]].forEach(([px, py]) => {
-            ctx.fillRect(px, py, corner, corner);
+        // 集装箱内壁线框
+        const boxGeo = new THREE.BoxGeometry(L, H, W);
+        const edges = new THREE.EdgesGeometry(boxGeo);
+        const wire = new THREE.LineSegments(
+            edges,
+            new THREE.LineBasicMaterial({ color: 0xf5f3ee, transparent: true, opacity: 0.35 })
+        );
+        wire.position.y = H / 2;
+        grp.add(wire);
+        boxGeo.dispose();
+
+        // 角部加固柱 (4 根细立柱)
+        const postMat = new THREE.MeshLambertMaterial({ color: 0x2a1f1f });
+        const postSize = 8;
+        const postGeo = new THREE.BoxGeometry(postSize, H, postSize);
+        const corners = [
+            [-L / 2 + postSize / 2, -W / 2 + postSize / 2],
+            [L / 2 - postSize / 2, -W / 2 + postSize / 2],
+            [-L / 2 + postSize / 2, W / 2 - postSize / 2],
+            [L / 2 - postSize / 2, W / 2 - postSize / 2],
+        ];
+        corners.forEach(([cx, cz]) => {
+            const post = new THREE.Mesh(postGeo, postMat);
+            post.position.set(cx, H / 2, cz);
+            grp.add(post);
         });
 
-        // 文字: 排列方式 + 层数
-        ctx.fillStyle = '#f5f3ee';
-        ctx.font = 'bold 13px "SF Mono", monospace';
-        ctx.textAlign = 'left';
-        ctx.fillText(`${nL} × ${nW}`, cx + 16, y0 + 14);
-        ctx.font = '11px sans-serif';
-        ctx.fillStyle = 'rgba(245,243,238,0.6)';
-        ctx.fillText('地面排列', cx + 16, y0 + 28);
+        // 门 (右端用红线高亮)
+        const doorMat = new THREE.LineBasicMaterial({ color: 0xc8102e, transparent: true, opacity: 0.85 });
+        const doorPts = [
+            new THREE.Vector3(L / 2, 0, -W / 2),
+            new THREE.Vector3(L / 2, H, -W / 2),
+            new THREE.Vector3(L / 2, H, W / 2),
+            new THREE.Vector3(L / 2, 0, W / 2),
+            new THREE.Vector3(L / 2, 0, -W / 2),
+        ];
+        const doorGeo = new THREE.BufferGeometry().setFromPoints(doorPts);
+        grp.add(new THREE.Line(doorGeo, doorMat));
 
-        ctx.fillStyle = baseColor;
-        ctx.font = 'bold 13px "SF Mono", monospace';
-        ctx.fillText(`× ${nH} 层`, cx + 16, y0 + 54);
-        ctx.fillStyle = 'rgba(245,243,238,0.6)';
-        ctx.font = '11px sans-serif';
-        ctx.fillText('堆码层数', cx + 16, y0 + 68);
+        // 地板纹理 (集装箱内的地板)
+        const floorGeo = new THREE.PlaneGeometry(L, W);
+        const floorMat = new THREE.MeshLambertMaterial({
+            color: 0x1a1414, transparent: true, opacity: 0.95
+        });
+        const floor = new THREE.Mesh(floorGeo, floorMat);
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.y = 0.5;
+        grp.add(floor);
 
-        ctx.fillStyle = '#f5f3ee';
-        ctx.font = 'bold 16px "SF Mono", monospace';
-        ctx.fillText(`= ${fit.count}`, cx + 16, y0 + 96);
-        ctx.fillStyle = 'rgba(245,243,238,0.6)';
-        ctx.font = '11px sans-serif';
-        ctx.fillText('总箱数', cx + 16, y0 + 110);
+        // 门口标签 (用 CanvasTexture)
+        const labelTex = makeTextSprite('门 / DOOR', '#c8102e');
+        if (labelTex) {
+            labelTex.position.set(L / 2 + 12, H / 2, 0);
+            labelTex.scale.set(120, 60, 1);
+            grp.add(labelTex);
+        }
+        return grp;
+    }
 
-        // 底部小标
-        ctx.fillStyle = 'rgba(245,243,238,0.5)';
-        ctx.font = '10px "SF Mono", monospace';
-        ctx.textAlign = 'left';
-        ctx.fillText(`${container.name} 顶视图 · 可装 ${container.usableL}×${container.usableW}×${container.usableH} cm`, x0, H - 8);
-        ctx.textAlign = 'right';
-        ctx.fillText('门 →', cx, H - 8);
+    function makeTextSprite(text, color) {
+        const c = document.createElement('canvas');
+        c.width = 256; c.height = 128;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = 'rgba(11,9,9,0.7)';
+        ctx.fillRect(0, 0, c.width, c.height);
+        ctx.font = 'bold 36px sans-serif';
+        ctx.fillStyle = color;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, c.width / 2, c.height / 2);
+        const tex = new THREE.CanvasTexture(c);
+        tex.minFilter = THREE.LinearFilter;
+        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
+        return sprite;
+    }
+
+    function buildCargo(fit, container) {
+        const grp = new THREE.Group();
+        if (!fit || fit.count === 0) return grp;
+
+        const [a, b, c] = fit.dims; // 实际摆放尺寸 (cm)
+        const nL = fit.nL, nW = fit.nW, nH = fit.nH;
+        const usableL = container.usableL, usableW = container.usableW;
+
+        // 用 InstancedMesh 一次画完所有纸箱
+        const geo = new THREE.BoxGeometry(a, c, b); // X=a 长, Y=c 高, Z=b 宽
+        const mat = new THREE.MeshLambertMaterial({ color: 0xc8102e });
+        const inst = new THREE.InstancedMesh(geo, mat, fit.count);
+        inst.frustumCulled = false;
+        const dummy = new THREE.Object3D();
+        const colorAttr = new Float32Array(fit.count * 3);
+        const tmpColor = new THREE.Color();
+        let idx = 0;
+        const baseR = 200 / 255, baseG = 16 / 255, baseB = 46 / 255;
+        for (let k = 0; k < nH; k++) {       // 层
+            for (let j = 0; j < nW; j++) {   // 列 (沿宽度)
+                for (let i = 0; i < nL; i++) { // 排 (沿长度)
+                    const x = -usableL / 2 + i * a + a / 2;
+                    const y = k * c + c / 2;
+                    const z = -usableW / 2 + j * b + b / 2;
+                    dummy.position.set(x, y, z);
+                    dummy.updateMatrix();
+                    inst.setMatrixAt(idx, dummy.matrix);
+                    // 给每箱微妙的色差，看起来不死板
+                    const v = 1 - ((i + j + k) % 3) * 0.06;
+                    tmpColor.setRGB(baseR * v, baseG * v, baseB * v);
+                    inst.setColorAt(idx, tmpColor);
+                    idx++;
+                }
+            }
+        }
+        if (inst.instanceColor) inst.instanceColor.needsUpdate = true;
+        inst.instanceMatrix.needsUpdate = true;
+        grp.add(inst);
+
+        // 箱子边线（一次性 wireframe overlay，半透明黑色，让箱与箱区分明显）
+        const wireGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(a, c, b));
+        const wireMat = new THREE.LineBasicMaterial({
+            color: 0x000000, transparent: true, opacity: 0.35
+        });
+        for (let k = 0; k < nH; k++) {
+            for (let j = 0; j < nW; j++) {
+                for (let i = 0; i < nL; i++) {
+                    const wire = new THREE.LineSegments(wireGeo, wireMat);
+                    wire.position.set(
+                        -usableL / 2 + i * a + a / 2,
+                        k * c + c / 2,
+                        -usableW / 2 + j * b + b / 2
+                    );
+                    grp.add(wire);
+                }
+            }
+        }
+        return grp;
+    }
+
+    function setView(name) {
+        if (!camera3d || !controls3d) return;
+        const tgt = controls3d.target;
+        const dist = camera3d.position.distanceTo(tgt) || 2000;
+        let pos;
+        switch (name) {
+            case 'top':   pos = [tgt.x, tgt.y + dist, tgt.z + 0.001]; break;
+            case 'side':  pos = [tgt.x, tgt.y + 200, tgt.z + dist]; break;
+            case 'front': pos = [tgt.x + dist, tgt.y + 200, tgt.z]; break;
+            case 'iso':
+            default:      pos = [tgt.x + dist * 0.6, tgt.y + dist * 0.55, tgt.z + dist * 0.7]; break;
+        }
+        camera3d.position.set(pos[0], pos[1], pos[2]);
+        camera3d.lookAt(tgt);
+        controls3d.update();
+    }
+
+    function fitCameraTo(container) {
+        if (!camera3d || !controls3d) return;
+        const L = container.usableL, H = container.usableH, W = container.usableW;
+        const center = new THREE.Vector3(0, H / 2, 0);
+        controls3d.target.copy(center);
+        const radius = Math.sqrt(L * L + H * H + W * W) * 0.7;
+        const dir = new THREE.Vector3(0.6, 0.55, 0.7).normalize();
+        camera3d.position.copy(center).add(dir.multiplyScalar(radius * 1.6));
+        camera3d.near = 1;
+        camera3d.far = radius * 12;
+        camera3d.updateProjectionMatrix();
+        controls3d.update();
+    }
+
+    function renderContainer3D(fit, container) {
+        if (!ensureThree()) return; // three.js 没加载就跳过
+        if (!init3D()) return;
+        clearGroup(containerGroup);
+        clearGroup(cargoGroup);
+        if (!container) return;
+
+        containerGroup.add(buildContainerWire(container));
+        if (fit && fit.count > 0) cargoGroup.add(buildCargo(fit, container));
+
+        // 第一次或集装箱换型时重置相机
+        if (!renderContainer3D.lastKey || renderContainer3D.lastKey !== container.name) {
+            fitCameraTo(container);
+            renderContainer3D.lastKey = container.name;
+        } else if (resizeHandler3d) {
+            resizeHandler3d();
+        }
+    }
+
+    // 旧函数名保留为别名
+    function renderContainerVisual(fit, container) {
+        renderContainer3D(fit, container);
     }
 
     // ============================================================

@@ -3,7 +3,7 @@
 // Offline-first: cache-on-install for app shell, stale-while-revalidate for everything else.
 // ============================================================
 
-const VERSION = 'sober-v0.7.0';
+const VERSION = 'sober-v0.7.1';
 const APP_SHELL = [
     './',
     './index.html',
