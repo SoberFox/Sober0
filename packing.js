@@ -66,7 +66,7 @@
     // ---- 纸箱CBM计算 ----
     function initPacking() {
         const fields = ['#box-length', '#box-width', '#box-height', '#box-qty-per',
-            '#box-gross-weight', '#total-pieces', '#container-type'];
+            '#box-gross-weight', '#total-pieces', '#total-boxes-direct', '#container-type'];
 
         fields.forEach(sel => {
             const el = $(sel);
@@ -111,11 +111,15 @@
         const qtyPerBox = Number($('#box-qty-per').value) || 1;
         const grossWeight = Number($('#box-gross-weight').value) || 0; // kg
         const totalPieces = Number($('#total-pieces').value) || 0;
+        const directBoxes = Number($('#total-boxes-direct').value) || 0;
         const containerKey = $('#container-type').value;
         const container = CONTAINERS[containerKey];
 
         const boxCbm = (l * w * h) / 1000000;
-        const totalBoxes = totalPieces > 0 ? Math.ceil(totalPieces / qtyPerBox) : 0;
+        // 直接填总箱数优先；否则用件数估算
+        const totalBoxes = directBoxes > 0
+            ? directBoxes
+            : (totalPieces > 0 ? Math.ceil(totalPieces / qtyPerBox) : 0);
         const totalCbm = boxCbm * totalBoxes;
         const totalGross = grossWeight * totalBoxes;
 

@@ -1465,6 +1465,95 @@ body {
     border-radius: 0 4px 4px 0;
 }
 .pack-foot-note strong { color: var(--accent); }
+.form-hint {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-left: 6px;
+    text-transform: uppercase;
+}
+
+/* 对比工具 子 Tab */
+.cmp-subtabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+.cmp-subtab {
+    background: var(--card-bg);
+    border: none;
+    color: var(--text-secondary);
+    padding: 18px 20px;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    transition: background 0.18s, color 0.18s;
+    display: grid;
+    grid-template-rows: auto auto;
+    gap: 4px;
+    position: relative;
+    border-bottom: 2px solid transparent;
+}
+.cmp-subtab:hover { background: var(--bg-hover); color: var(--text); }
+.cmp-subtab.active { background: var(--bg-hover); border-bottom-color: var(--primary); color: var(--text); }
+.cmp-subtab-num {
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 10px;
+    color: var(--text-faint);
+    letter-spacing: 0.15em;
+}
+.cmp-subtab.active .cmp-subtab-num { color: var(--primary); }
+.cmp-subtab-name { font-size: 16px; font-weight: 600; color: var(--text); }
+.cmp-subtab-desc { font-size: 11px; color: var(--text-faint); font-weight: 400; }
+
+/* 标对比 - 逐行 diff 表 */
+.label-diff-table {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 12px;
+}
+.label-diff-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+}
+.label-diff-row:last-child { border-bottom: none; }
+.label-diff-row > div { padding: 8px 12px; line-height: 1.6; word-break: break-word; }
+.label-diff-row .ld-tag {
+    background: var(--bg-soft);
+    color: var(--text-faint);
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.label-diff-row .ld-old { border-right: 1px solid var(--border); color: var(--text); white-space: pre-wrap; }
+.label-diff-row .ld-new { color: var(--text); white-space: pre-wrap; }
+.label-diff-row.ld-added .ld-tag { background: rgba(217,119,87,0.18); color: var(--accent); }
+.label-diff-row.ld-added .ld-new { background: rgba(217,119,87,0.06); color: var(--accent); }
+.label-diff-row.ld-added .ld-old { color: var(--text-faint); font-style: italic; }
+.label-diff-row.ld-removed .ld-tag { background: rgba(200,16,46,0.18); color: var(--primary); }
+.label-diff-row.ld-removed .ld-old { background: rgba(200,16,46,0.06); color: var(--primary); text-decoration: line-through; }
+.label-diff-row.ld-removed .ld-new { color: var(--text-faint); font-style: italic; }
+.label-diff-row.ld-changed .ld-tag { background: rgba(245,158,11,0.18); color: var(--warning); }
+.label-diff-row.ld-changed .ld-old { background: rgba(245,158,11,0.04); }
+.label-diff-row.ld-changed .ld-new { background: rgba(245,158,11,0.08); color: var(--warning); }
+.label-diff-row.ld-same .ld-tag { color: var(--text-faint); }
+.label-diff-row.ld-same .ld-old, .label-diff-row.ld-same .ld-new { color: var(--text-secondary); }
+/* 内联 token 高亮 */
+.label-diff-row del { background: rgba(200,16,46,0.25); color: var(--primary); text-decoration: line-through; padding: 0 2px; border-radius: 2px; }
+.label-diff-row ins { background: rgba(217,119,87,0.28); color: var(--accent); text-decoration: none; padding: 0 2px; border-radius: 2px; }
 
 /* 3D 货柜预览 */
 .pack-3d-wrap {
@@ -2949,8 +3038,25 @@ body.on-about .about-version-tag { display: block; }
             <!-- 操作手册对比页面 -->
             <div id="page-compare" class="page">
                 <div class="page-header">
-                    <h1>操作手册对比</h1>
+                    <h1>对比工具</h1>
                 </div>
+
+                <!-- 子功能 Tab -->
+                <div class="cmp-subtabs">
+                    <button class="cmp-subtab active" data-cmp-tab="manual">
+                        <span class="cmp-subtab-num">01</span>
+                        <span class="cmp-subtab-name">手册对比</span>
+                        <span class="cmp-subtab-desc">订单手册 / 工艺单 / Excel · PDF · 图片</span>
+                    </button>
+                    <button class="cmp-subtab" data-cmp-tab="label">
+                        <span class="cmp-subtab-num">02</span>
+                        <span class="cmp-subtab-name">标对比</span>
+                        <span class="cmp-subtab-desc">洗水唛 / 吊牌 / 主唛 PDF 文字差异</span>
+                    </button>
+                </div>
+
+                <!-- 子页：手册对比 (原有功能) -->
+                <div class="cmp-pane" data-cmp-pane="manual">
 
                 <!-- 上传区域 -->
                 <section class="form-section">
@@ -3041,6 +3147,75 @@ body.on-about .about-version-tag { display: block; }
                     </h3>
                     <div id="visual-compare-container"></div>
                 </div>
+
+                </div><!-- /pane manual -->
+
+                <!-- 子页：标对比 (洗水唛 / 吊牌 PDF 文字差异) -->
+                <div class="cmp-pane" data-cmp-pane="label" style="display:none">
+                    <section class="form-section">
+                        <h3>上传两份洗水唛 / 吊牌 PDF</h3>
+                        <p class="compare-hint">
+                            提取两个 PDF 全部文字逐行对比，专门针对洗水唛、主唛、吊牌、合规标这类多语言重复信息的小文档。<br>
+                            会按行做最长公共子序列 (LCS) 对齐，标出新增 / 删除 / 修改，重复的语言面板只列一次。
+                        </p>
+                        <div class="compare-upload-area">
+                            <div class="upload-box" id="upload-label-old">
+                                <div class="upload-icon">&#127991;</div>
+                                <div class="upload-label">原版本 (OLD)</div>
+                                <input type="file" id="file-label-old" accept=".pdf" class="file-input">
+                                <label for="file-label-old" class="btn btn-outline upload-btn">选择 PDF</label>
+                                <span class="file-name" id="file-label-old-name">未选择文件</span>
+                            </div>
+                            <div class="upload-box" id="upload-label-new">
+                                <div class="upload-icon">&#127991;</div>
+                                <div class="upload-label">新版本 (NEW)</div>
+                                <input type="file" id="file-label-new" accept=".pdf" class="file-input">
+                                <label for="file-label-new" class="btn btn-outline upload-btn">选择 PDF</label>
+                                <span class="file-name" id="file-label-new-name">未选择文件</span>
+                            </div>
+                        </div>
+                        <div class="compare-options">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="lbl-opt-trim" checked> 忽略空格差异
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="lbl-opt-case"> 忽略大小写
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="lbl-opt-dedup" checked> 合并重复行（多语言面板去重）
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="lbl-opt-only-diff" checked> 只显示差异
+                            </label>
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-primary" id="btn-label-compare">开始对比</button>
+                            <button class="btn btn-outline" id="btn-label-clear">清空</button>
+                        </div>
+                        <div class="progress-bar-wrap" id="label-progress" style="display:none">
+                            <div class="progress-bar-label" id="label-progress-label">解析 PDF…</div>
+                            <div class="progress-bar-track"><div class="progress-bar-fill" id="label-progress-fill"></div></div>
+                        </div>
+                    </section>
+
+                    <section class="form-section" id="label-stats" style="display:none">
+                        <h3>对比统计</h3>
+                        <div class="stats-grid" id="label-stats-grid"></div>
+                    </section>
+
+                    <section class="form-section" id="label-result" style="display:none">
+                        <h3>
+                            <span>逐行对比</span>
+                            <div class="compare-legend">
+                                <span class="legend-item legend-added">新增</span>
+                                <span class="legend-item legend-removed">删除</span>
+                                <span class="legend-item legend-changed">修改</span>
+                                <span class="legend-item legend-same">相同</span>
+                            </div>
+                        </h3>
+                        <div class="label-diff-table" id="label-diff-table"></div>
+                    </section>
+                </div><!-- /pane label -->
             </div>
 
             <!-- 订单跟踪页面 -->
@@ -3195,7 +3370,11 @@ body.on-about .about-version-tag { display: block; }
                         </div>
                         <div class="form-group">
                             <label>总件数</label>
-                            <input type="number" id="total-pieces" value="5000" min="0">
+                            <input type="number" id="total-pieces" value="5000" min="0" placeholder="按件数估算">
+                        </div>
+                        <div class="form-group">
+                            <label>或直接填总箱数 <span class="form-hint">填了优先用这个</span></label>
+                            <input type="number" id="total-boxes-direct" value="" min="0" placeholder="知道总箱数就填这里">
                         </div>
                     </div>
                     <div class="form-row">
@@ -3672,11 +3851,14 @@ body.on-about .about-version-tag { display: block; }
                         </div>
                         <div class="about-log">
                             <div class="about-log-row">
-                                <div class="about-log-ver">v0.7.1</div>
-                                <div class="about-log-date">2026.04.25</div>
+                                <div class="about-log-ver">v0.8.0</div>
+                                <div class="about-log-date">2026.04.26</div>
                                 <div class="about-log-body">
-                                    <b>3D 货柜预览</b> ——
-                                    装箱计算的顶视图升级为可交互 3D 视图：拖拽旋转、滚轮缩放、右键平移；用 InstancedMesh 一次性画出全部纸箱，画线框、角部加固柱、门口红线高亮；预设四个相机视角（立体 / 顶视 / 侧视 / 门口）一键切换。Three.js 仅在打开装箱页时按需加载。
+                                    <b>标对比 + 装箱直接填箱数</b> ——
+                                    "操作手册对比"页面新增子 Tab：
+                                    <strong>标对比</strong>专门对比洗水唛 / 主唛 / 吊牌 PDF，按 LCS 行级对齐 + 词级 inline diff 高亮，
+                                    支持忽略空格 / 大小写、多语言面板去重、只看差异；
+                                    装箱计算可以直接填总箱数，跳过件数估算这步。
                                 </div>
                             </div>
                         </div>
@@ -3694,7 +3876,7 @@ body.on-about .about-version-tag { display: block; }
 
         <!-- 右下角 · 版本号水印 -->
         <div class="about-version-tag" aria-hidden="true">
-            v<b id="app-version">0.7.1</b> &middot; <span id="app-build">2026.04.25</span>
+            v<b id="app-version">0.8.0</b> &middot; <span id="app-build">2026.04.26</span>
         </div>
     </div>
 

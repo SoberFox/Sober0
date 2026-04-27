@@ -187,7 +187,7 @@
         ],
         sizechart: ['sizechart.js'],
         fabric:    ['fabric.js'],
-        compare:   ['compare.js'],
+        compare:   ['compare.js', 'labeldiff.js'],
         xlssearch: ['xlssearch.js'],
         convert:   ['convert.js'],
     };
@@ -238,6 +238,7 @@
         if (page === 'history') renderHistory();
         if (page === 'customers') renderCustomers();
         if (page === 'about' && window.initAboutPage) window.initAboutPage();
+        if (page === 'compare' && window.initLabelDiff) window.initLabelDiff();
 
         const initName = PAGE_INIT[page];
         if (initName && typeof window[initName] === 'function') window[initName]();
