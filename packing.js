@@ -68,10 +68,16 @@
         const fields = ['#box-length', '#box-width', '#box-height', '#box-qty-per',
             '#box-gross-weight', '#total-pieces', '#total-boxes-direct', '#container-type'];
 
+        // 防抖：用户快速点击数字微调按钮时避免每帧重建场景
+        let rafToken = null;
+        const debounced = () => {
+            if (rafToken != null) cancelAnimationFrame(rafToken);
+            rafToken = requestAnimationFrame(() => { rafToken = null; calcPacking(); });
+        };
         fields.forEach(sel => {
             const el = $(sel);
-            if (el) el.addEventListener('input', calcPacking);
-            if (el) el.addEventListener('change', calcPacking);
+            if (el) el.addEventListener('input', debounced);
+            if (el) el.addEventListener('change', debounced);
         });
 
         // 填充集装箱选项
@@ -170,7 +176,7 @@
                 (fillPractical >= 90 ? 'fill-good' : fillPractical >= 70 ? 'fill-ok' : 'fill-low');
         }
 
-        renderContainerVisual(fit, container);
+        renderContainerVisual(fit, container, boxesPerContainer);
     }
 
     function setText(sel, text) {
@@ -377,38 +383,71 @@
         return sprite;
     }
 
-    function buildCargo(fit, container) {
+    // displayCount = 实际要画的箱数 (受体积 + 重量同时约束)
+    // 优先填满最下层 → 顺时针 → 一层完了再上去，符合实际装柜动作
+    function buildCargo(fit, container, displayCount) {
         const grp = new THREE.Group();
         if (!fit || fit.count === 0) return grp;
 
-        const [a, b, c] = fit.dims; // 实际摆放尺寸 (cm)
+        const [a, b, c] = fit.dims; // 实际摆放尺寸 (cm) — X=a, Y=c, Z=b
         const nL = fit.nL, nW = fit.nW, nH = fit.nH;
+        const max = nL * nW * nH;
+        const N = Math.max(0, Math.min(displayCount == null ? max : displayCount, max));
+        if (N === 0) return grp;
+
         const usableL = container.usableL, usableW = container.usableW;
 
-        // 用 InstancedMesh 一次画完所有纸箱
-        const geo = new THREE.BoxGeometry(a, c, b); // X=a 长, Y=c 高, Z=b 宽
+        // 1) 实例化箱体: 一次 draw call
+        const geo = new THREE.BoxGeometry(a, c, b);
         const mat = new THREE.MeshLambertMaterial({ color: 0xc8102e });
-        const inst = new THREE.InstancedMesh(geo, mat, fit.count);
+        const inst = new THREE.InstancedMesh(geo, mat, N);
         inst.frustumCulled = false;
         const dummy = new THREE.Object3D();
-        const colorAttr = new Float32Array(fit.count * 3);
         const tmpColor = new THREE.Color();
-        let idx = 0;
         const baseR = 200 / 255, baseG = 16 / 255, baseB = 46 / 255;
-        for (let k = 0; k < nH; k++) {       // 层
-            for (let j = 0; j < nW; j++) {   // 列 (沿宽度)
-                for (let i = 0; i < nL; i++) { // 排 (沿长度)
-                    const x = -usableL / 2 + i * a + a / 2;
-                    const y = k * c + c / 2;
-                    const z = -usableW / 2 + j * b + b / 2;
-                    dummy.position.set(x, y, z);
+
+        // 2) 边线: 用单一 BufferGeometry 把所有箱子的 12 条边合并
+        // 单位盒角点 (相对箱中心)
+        const ha = a / 2, hb = b / 2, hc = c / 2;
+        const corners = [
+            [-ha, -hc, -hb], [ ha, -hc, -hb], [ ha,  hc, -hb], [-ha,  hc, -hb],
+            [-ha, -hc,  hb], [ ha, -hc,  hb], [ ha,  hc,  hb], [-ha,  hc,  hb],
+        ];
+        const edgeIdx = [
+            [0,1],[1,2],[2,3],[3,0], [4,5],[5,6],[6,7],[7,4],
+            [0,4],[1,5],[2,6],[3,7],
+        ];
+        const positions = new Float32Array(N * 12 * 2 * 3);
+
+        let idx = 0;
+        let posPtr = 0;
+        let placed = 0;
+        outer:
+        for (let k = 0; k < nH; k++) {
+            for (let j = 0; j < nW; j++) {
+                for (let i = 0; i < nL; i++) {
+                    if (placed >= N) break outer;
+                    const cx = -usableL / 2 + i * a + ha;
+                    const cy = k * c + hc;
+                    const cz = -usableW / 2 + j * b + hb;
+                    dummy.position.set(cx, cy, cz);
                     dummy.updateMatrix();
                     inst.setMatrixAt(idx, dummy.matrix);
-                    // 给每箱微妙的色差，看起来不死板
                     const v = 1 - ((i + j + k) % 3) * 0.06;
                     tmpColor.setRGB(baseR * v, baseG * v, baseB * v);
                     inst.setColorAt(idx, tmpColor);
                     idx++;
+                    // 写入此箱 12 条边
+                    for (let e = 0; e < edgeIdx.length; e++) {
+                        const [e1, e2] = edgeIdx[e];
+                        positions[posPtr++] = corners[e1][0] + cx;
+                        positions[posPtr++] = corners[e1][1] + cy;
+                        positions[posPtr++] = corners[e1][2] + cz;
+                        positions[posPtr++] = corners[e2][0] + cx;
+                        positions[posPtr++] = corners[e2][1] + cy;
+                        positions[posPtr++] = corners[e2][2] + cz;
+                    }
+                    placed++;
                 }
             }
         }
@@ -416,24 +455,13 @@
         inst.instanceMatrix.needsUpdate = true;
         grp.add(inst);
 
-        // 箱子边线（一次性 wireframe overlay，半透明黑色，让箱与箱区分明显）
-        const wireGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(a, c, b));
+        const wireGeo = new THREE.BufferGeometry();
+        wireGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         const wireMat = new THREE.LineBasicMaterial({
-            color: 0x000000, transparent: true, opacity: 0.35
+            color: 0x000000, transparent: true, opacity: 0.4,
         });
-        for (let k = 0; k < nH; k++) {
-            for (let j = 0; j < nW; j++) {
-                for (let i = 0; i < nL; i++) {
-                    const wire = new THREE.LineSegments(wireGeo, wireMat);
-                    wire.position.set(
-                        -usableL / 2 + i * a + a / 2,
-                        k * c + c / 2,
-                        -usableW / 2 + j * b + b / 2
-                    );
-                    grp.add(wire);
-                }
-            }
-        }
+        grp.add(new THREE.LineSegments(wireGeo, wireMat));
+
         return grp;
     }
 
@@ -468,7 +496,7 @@
         controls3d.update();
     }
 
-    function renderContainer3D(fit, container) {
+    function renderContainer3D(fit, container, displayCount) {
         if (!ensureThree()) return; // three.js 没加载就跳过
         if (!init3D()) return;
         clearGroup(containerGroup);
@@ -476,7 +504,7 @@
         if (!container) return;
 
         containerGroup.add(buildContainerWire(container));
-        if (fit && fit.count > 0) cargoGroup.add(buildCargo(fit, container));
+        if (fit && fit.count > 0) cargoGroup.add(buildCargo(fit, container, displayCount));
 
         // 第一次或集装箱换型时重置相机
         if (!renderContainer3D.lastKey || renderContainer3D.lastKey !== container.name) {
@@ -488,8 +516,8 @@
     }
 
     // 旧函数名保留为别名
-    function renderContainerVisual(fit, container) {
-        renderContainer3D(fit, container);
+    function renderContainerVisual(fit, container, displayCount) {
+        renderContainer3D(fit, container, displayCount);
     }
 
     // ============================================================

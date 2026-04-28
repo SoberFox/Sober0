@@ -3318,3 +3318,34 @@ body.on-about .about-version-tag { display: block; }
 .label-diff-row.ld-same .ld-old, .label-diff-row.ld-same .ld-new { color: var(--text-secondary); }
 .label-diff-row del { background: rgba(200,16,46,0.25); color: var(--primary); text-decoration: line-through; padding: 0 2px; border-radius: 2px; }
 .label-diff-row ins { background: rgba(217,119,87,0.28); color: var(--accent); text-decoration: none; padding: 0 2px; border-radius: 2px; }
+
+/* 标对比 - 图像模式 */
+.label-img-pages { display: flex; flex-direction: column; gap: 24px; }
+.label-img-page { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-soft); padding: 14px; }
+.label-img-page-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; font-size: 12px; font-family: "SF Mono", "Menlo", monospace; color: var(--text-secondary); letter-spacing: 0.1em; }
+.label-img-page-stat { color: var(--accent); font-weight: 600; }
+.label-img-page-stat.ok { color: var(--success); }
+.label-img-page-stat.warn { color: var(--warning); }
+.label-img-page-stat.err { color: var(--primary); }
+.label-img-view { position: relative; }
+.label-img-view.mode-side { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.label-img-view.mode-side > .label-img-cell { position: relative; }
+.label-img-cell { background: #ffffff; border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 80px; }
+.label-img-cell canvas { display: block; max-width: 100%; height: auto; }
+.label-img-cell-label { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.7); color: #fff; font-size: 10px; padding: 2px 8px; letter-spacing: 0.15em; border-radius: 3px; font-family: "SF Mono", "Menlo", monospace; text-transform: uppercase; }
+.label-img-cell-label.cell-old { background: rgba(200,16,46,0.9); }
+.label-img-cell-label.cell-new { background: rgba(217,119,87,0.9); }
+.label-img-cell-label.cell-diff { background: rgba(0,0,0,0.85); }
+.label-img-view.mode-diff, .label-img-view.mode-overlay { display: grid; grid-template-columns: 1fr; }
+.label-img-view.mode-diff .label-img-cell:not(.cell-diff), .label-img-view.mode-overlay .label-img-cell:not(.cell-overlay) { display: none; }
+.label-img-view.mode-slider .label-img-cell:not(.cell-slider) { display: none; }
+.label-img-slider { position: relative; background: #fff; overflow: hidden; border-radius: 4px; }
+.label-img-slider canvas { display: block; width: 100%; height: auto; }
+.label-img-slider .layer-new { position: absolute; top: 0; left: 0; height: 100%; overflow: hidden; width: 50%; border-right: 2px solid var(--accent); box-shadow: 2px 0 8px rgba(0,0,0,0.4); }
+.label-img-slider .layer-new canvas { width: auto; max-width: none; }
+.label-img-slider input[type="range"] { position: absolute; bottom: 8px; left: 8px; right: 8px; width: calc(100% - 16px); margin: 0; }
+.label-img-slider .slider-label-old, .label-img-slider .slider-label-new { position: absolute; top: 8px; background: rgba(0,0,0,0.7); color: #fff; padding: 3px 10px; font-size: 10px; font-family: "SF Mono", "Menlo", monospace; letter-spacing: 0.15em; border-radius: 3px; pointer-events: none; }
+.label-img-slider .slider-label-old { left: 10px; background: rgba(200,16,46,0.9); }
+.label-img-slider .slider-label-new { right: 10px; background: rgba(217,119,87,0.9); }
+.label-img-cell.cell-overlay { position: relative; overflow: hidden; }
+.label-img-cell.cell-overlay > canvas:nth-child(2) { position: absolute; inset: 0; mix-blend-mode: difference; }
