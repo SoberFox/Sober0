@@ -3349,3 +3349,14 @@ body.on-about .about-version-tag { display: block; }
 .label-img-slider .slider-label-new { right: 10px; background: rgba(217,119,87,0.9); }
 .label-img-cell.cell-overlay { position: relative; overflow: hidden; }
 .label-img-cell.cell-overlay > canvas:nth-child(2) { position: absolute; inset: 0; mix-blend-mode: difference; }
+
+/* 标牌识别 / OCR */
+.ocr-preview-wrap { background: #ffffff; padding: 8px; border-radius: var(--radius); overflow: auto; max-height: 480px; text-align: center; }
+#ocr-preview-canvas { max-width: 100%; height: auto; display: inline-block; }
+.ocr-result-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+.ocr-result-table { width: 100%; min-width: 720px; margin: 0; border-collapse: collapse; }
+.ocr-result-table th { background: var(--bg-soft); padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-faint); }
+.ocr-result-table td { padding: 4px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.ocr-result-table input[type="text"] { width: 100%; padding: 5px 8px; border: 1px solid transparent; background: transparent; color: var(--text); font-family: "SF Mono", "Menlo", monospace; font-size: 12px; border-radius: 3px; }
+.ocr-result-table input[type="text"]:focus { border-color: var(--primary); background: var(--bg-soft); outline: none; box-shadow: none; }
+.ocr-result-table tbody tr:hover { background: var(--bg-hover); }

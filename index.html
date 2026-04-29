@@ -1671,6 +1671,60 @@ body {
     mix-blend-mode: difference;
 }
 
+/* 标牌识别 / OCR */
+.ocr-preview-wrap {
+    background: #ffffff;
+    padding: 8px;
+    border-radius: var(--radius);
+    overflow: auto;
+    max-height: 480px;
+    text-align: center;
+}
+#ocr-preview-canvas { max-width: 100%; height: auto; display: inline-block; }
+.ocr-result-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+.ocr-result-table {
+    width: 100%;
+    min-width: 720px;
+    margin: 0;
+    border-collapse: collapse;
+}
+.ocr-result-table th {
+    background: var(--bg-soft);
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-faint);
+}
+.ocr-result-table td {
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+.ocr-result-table input[type="text"] {
+    width: 100%;
+    padding: 5px 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text);
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 12px;
+    border-radius: 3px;
+}
+.ocr-result-table input[type="text"]:focus {
+    border-color: var(--primary);
+    background: var(--bg-soft);
+    outline: none;
+    box-shadow: none;
+}
+.ocr-result-table tbody tr:hover { background: var(--bg-hover); }
+
 /* 3D 货柜预览 */
 .pack-3d-wrap {
     position: relative;
@@ -2896,6 +2950,10 @@ body.on-about .about-version-tag { display: block; }
                     <span class="nav-icon">&#128260;</span>
                     <span>格式转换</span>
                 </li>
+                <li class="nav-item" data-page="ocrlabel">
+                    <span class="nav-icon">&#127991;</span>
+                    <span>标牌识别</span>
+                </li>
                 <li class="nav-section-label">关于</li>
                 <li class="nav-item" data-page="about">
                     <span class="nav-icon">&#10070;</span>
@@ -3846,6 +3904,85 @@ body.on-about .about-version-tag { display: block; }
                 </section>
             </div>
 
+            <!-- 标牌识别 (OCR) 页面 -->
+            <div id="page-ocrlabel" class="page">
+                <div class="page-header">
+                    <h1>标牌识别 / UPC 提取</h1>
+                </div>
+
+                <section class="form-section">
+                    <h3>上传标牌图</h3>
+                    <p class="compare-hint">
+                        把贴标 sheet 的截图 / 扫描 / PDF 拖进来，自动识别每张贴纸的 PLU、UPC、颜色、尺码、价格等，最终一键导出 Excel。<br>
+                        支持 Costco / Walmart 等多排多列布局；建议 300 DPI 以上扫描或屏幕高清截图。
+                    </p>
+                    <div class="xls-search-dropzone" id="ocr-dropzone">
+                        <div class="dropzone-icon">&#128247;</div>
+                        <div class="dropzone-text">拖拽图片 / PDF 到这里，或</div>
+                        <input type="file" id="ocr-file-input" accept=".png,.jpg,.jpeg,.gif,.bmp,.webp,.pdf" class="file-input">
+                        <label for="ocr-file-input" class="btn btn-primary upload-btn">选择文件</label>
+                        <div class="dropzone-hint">支持 PNG / JPG / PDF；多页 PDF 会逐页识别</div>
+                    </div>
+                    <div class="compare-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="ocr-opt-enhance" checked> 自动增强对比
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="ocr-opt-cluster" checked> 按位置聚类成贴纸
+                        </label>
+                        <label class="checkbox-label" style="min-width:200px">
+                            渲染 DPI
+                            <select id="ocr-opt-dpi" style="margin-left:8px">
+                                <option value="150">150 (快)</option>
+                                <option value="220" selected>220 (推荐)</option>
+                                <option value="300">300 (慢但准)</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" id="btn-ocr-run">开始识别</button>
+                        <button class="btn btn-outline" id="btn-ocr-clear">清空</button>
+                        <button class="btn btn-accent-outline" id="btn-ocr-add-row" style="display:none">手动加一行</button>
+                        <button class="btn btn-success" id="btn-ocr-export-xlsx" style="display:none">导出 Excel</button>
+                    </div>
+                    <div class="progress-bar-wrap" id="ocr-progress" style="display:none">
+                        <div class="progress-bar-label" id="ocr-progress-label">准备识别…</div>
+                        <div class="progress-bar-track"><div class="progress-bar-fill" id="ocr-progress-fill"></div></div>
+                    </div>
+                </section>
+
+                <section class="form-section" id="ocr-preview-section" style="display:none">
+                    <h3>识别预览</h3>
+                    <div class="ocr-preview-wrap">
+                        <canvas id="ocr-preview-canvas"></canvas>
+                    </div>
+                </section>
+
+                <section class="form-section" id="ocr-result-section" style="display:none">
+                    <h3>
+                        <span>提取结果 <span id="ocr-result-count" style="color:var(--text-faint);font-size:13px;margin-left:8px"></span></span>
+                        <span style="font-size:11px;color:var(--text-faint);font-weight:400">点单元格直接修改</span>
+                    </h3>
+                    <div class="ocr-result-table-wrap">
+                        <table class="data-table ocr-result-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:50px">#</th>
+                                    <th>PLU / 货号</th>
+                                    <th>UPC</th>
+                                    <th>颜色 Color</th>
+                                    <th>尺码 Size</th>
+                                    <th>价格</th>
+                                    <th>备注</th>
+                                    <th style="width:60px">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ocr-result-body"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
             <!-- 客户管理页面 -->
             <div id="page-customers" class="page">
                 <div class="page-header">
@@ -3987,15 +4124,14 @@ body.on-about .about-version-tag { display: block; }
                         </div>
                         <div class="about-log">
                             <div class="about-log-row">
-                                <div class="about-log-ver">v0.8.1</div>
-                                <div class="about-log-date">2026.04.26</div>
+                                <div class="about-log-ver">v0.9.0</div>
+                                <div class="about-log-date">2026.04.27</div>
                                 <div class="about-log-body">
-                                    <b>标对比改图像对比 + 3D 装箱实时联动</b> ——
-                                    标对比默认走<strong>像素级</strong>路线：把两份 PDF / 图片渲染成 canvas 后逐像素对比，
-                                    哪怕图形化设计的标牌没法提取文字也能查出错位 / 错字 / 加减元素。
-                                    四种视图：并排 / 差异高亮 / 叠加 (difference) / 滑动比较，外加可调像素容差。
-                                    文字对比保留为可切换的备用模式。
-                                    顺手修了 3D 装箱不实时刷新的两个 bug：边线几何被共享后重复 dispose；重量限制没传到渲染层。
+                                    <b>标牌识别 / UPC 提取</b> ——
+                                    上传贴标 sheet 图（Costco / Walmart 这种网格标），用 Tesseract.js OCR 自动抽取每张贴纸的
+                                    <strong>PLU / UPC / 颜色 / 尺码 / 价格</strong>，按行 (Y 聚簇) + 列 (X 同列) 还原成结构化表格，
+                                    直接导出 Excel。结果可见可改，识别有偏差的位置直接在表里修正。
+                                    Tesseract.js 仅在打开标牌识别时按需加载。
                                 </div>
                             </div>
                         </div>
@@ -4013,7 +4149,7 @@ body.on-about .about-version-tag { display: block; }
 
         <!-- 右下角 · 版本号水印 -->
         <div class="about-version-tag" aria-hidden="true">
-            v<b id="app-version">0.8.1</b> &middot; <span id="app-build">2026.04.26</span>
+            v<b id="app-version">0.9.0</b> &middot; <span id="app-build">2026.04.27</span>
         </div>
     </div>
 

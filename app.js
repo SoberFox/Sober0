@@ -190,6 +190,10 @@
         compare:   ['compare.js', 'labeldiff.js'],
         xlssearch: ['xlssearch.js'],
         convert:   ['convert.js'],
+        ocrlabel:  [
+            'https://cdn.jsdelivr.net/npm/tesseract.js@5.0.5/dist/tesseract.min.js',
+            'ocrlabel.js',
+        ],
     };
     const PAGE_INIT = {
         orders:    'initOrdersPage',
@@ -200,6 +204,7 @@
         fabric:    'initFabricPage',
         xlssearch: 'initXlsSearchPage',
         convert:   'initConverterPage',
+        ocrlabel:  'initOcrLabelPage',
     };
     const loadedScripts = {};
     function loadScript(src) {
